@@ -44,7 +44,9 @@ export class AreaComunService implements IAreaComunService {
 
     async findAll(): Promise<BaseResponseDto<AreaComun[]>> {
         try {
-            const areasComunes = await this.areaComunRepository.find();
+            const areasComunes = await this.areaComunRepository.find({
+                where: { estaActivo: true }
+            });
             return {
                 success: true,
                 message: areasComunes.length > 0
@@ -74,13 +76,21 @@ export class AreaComunService implements IAreaComunService {
         }
 
         try {
-            const areaComun = await this.areaComunRepository.findOne({ where: { idAreaComun: id } });
+            const areaComun = await this.areaComunRepository.findOne({
+                where: {
+                    idAreaComun: id,
+                    estaActivo: true
+                }
+            });
             if (!areaComun) {
                 return {
                     success: false,
                     message: 'Área común no encontrada',
                     data: null,
-                    error: new BadRequestException('Área común no encontrada.')
+                    error: {
+                        message: 'Área común no encontrada.',
+                        statusCode: 404
+                    }
                 };
             }
             return {
@@ -153,10 +163,17 @@ export class AreaComunService implements IAreaComunService {
                     success: false,
                     message: 'Área común no encontrada',
                     data: undefined,
-                    error: new BadRequestException('Área común no encontrada.')
+                    error: {
+                        message: 'Área común no encontrada.',
+                        statusCode: 404
+                    }
                 };
             }
-            await this.areaComunRepository.remove(areaComun);
+
+            // Eliminación lógica: cambiar estaActivo a false
+            areaComun.estaActivo = false;
+            await this.areaComunRepository.save(areaComun);
+
             return {
                 success: true,
                 message: 'Área común eliminada exitosamente.',

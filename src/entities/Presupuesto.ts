@@ -34,9 +34,9 @@ export class Presupuesto {
   })
   montoEjecutado: string | null;
 
-  @Column("character varying", { name: "estado" })
-  estado: string;
-
   @Column("text", { name: "descripcion", nullable: true })
   descripcion: string | null;
+
+  @Column("boolean", { name: "esta_activo", default: () => "true" })
+  estaActivo: boolean;
 }

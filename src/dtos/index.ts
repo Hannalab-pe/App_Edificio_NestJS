@@ -57,3 +57,7 @@ export { UpdateVotacionDto } from './votacion/update-votacion.dto';
 // Encomienda DTOs
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
+
+// Presupuesto DTOs
+export { CreatePresupuestoDto } from './presupuesto/create-presupuesto.dto';
+export { UpdatePresupuestoDto } from './presupuesto/update-presupuesto.dto';

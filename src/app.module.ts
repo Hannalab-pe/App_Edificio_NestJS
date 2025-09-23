@@ -7,7 +7,6 @@ import { ServicesModule } from './services/services.module';
 import { ControllersModule } from './controllers/controllers.module';
 import { EntitiesModule } from './entities/entities.module';
 import { AuthModule } from './auth/auth.module';
-import { DatabaseModule } from './database/database.module';
 import { RolModule } from './modules/rol/rol.module';
 
 @Module({
@@ -29,7 +28,6 @@ import { RolModule } from './modules/rol/rol.module';
     ControllersModule,
     EntitiesModule,
     AuthModule,
-    DatabaseModule,
     RolModule,
   ],
   controllers: [AppController],
