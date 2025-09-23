@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ServicesModule } from '../services/services.module';
 import { UsuarioController } from './usuario/usuario.controller';
 import { RolController } from './rol/rol.controller';
 import { PropietarioController } from './propietario/propietario.controller';
@@ -43,6 +44,49 @@ import { ResidenciaController } from './residencia/residencia.controller';
 import { UsuarioExternoController } from './usuario-externo/usuario-externo.controller';
 
 @Module({
-  controllers: [UsuarioController, RolController, PropietarioController, PropiedadController, IncidenciaController, NotificacionController, PagoController, DocumentoController, AreaComunController, ReservaController, VotacionController, EncomiendaController, DocumentoIdentidadController, TipoDocumentoController, EspacioArrendableController, ResidenteController, VisitaController, TrabajadorController, MantenimientoController, ConceptoPagoController, ReciboController, PresupuestoController, CajaController, MovimientoCajaController, JuntaPropietariosController, VotoController, OpcionVotoController, MensajePrivadoController, ComentarioIncidenciaController, ContratoController, CronogramaController, ArrendamientoEspacioController, HistorialContratoController, TipoIncidenciaController, TipoContratoController, TipoCronogramaController, TipoEspacioController, TipoContactoController, ContactoController, PropiedadPropietarioController, ResidenciaController, UsuarioExternoController]
+  imports: [ServicesModule],
+  controllers: [UsuarioController,
+    RolController,
+    PropietarioController,
+    PropiedadController,
+    IncidenciaController,
+    NotificacionController,
+    PagoController,
+    DocumentoController,
+    AreaComunController,
+    ReservaController,
+    VotacionController,
+    EncomiendaController,
+    DocumentoIdentidadController,
+    TipoDocumentoController,
+    EspacioArrendableController,
+    ResidenteController,
+    VisitaController,
+    TrabajadorController,
+    MantenimientoController,
+    ConceptoPagoController,
+    ReciboController,
+    PresupuestoController,
+    CajaController,
+    MovimientoCajaController,
+    JuntaPropietariosController,
+    VotoController,
+    OpcionVotoController,
+    MensajePrivadoController,
+    ComentarioIncidenciaController,
+    ContratoController,
+    CronogramaController,
+    ArrendamientoEspacioController,
+    HistorialContratoController,
+    TipoIncidenciaController,
+    TipoContratoController,
+    TipoCronogramaController,
+    TipoEspacioController,
+    TipoContactoController,
+    ContactoController,
+    PropiedadPropietarioController,
+    ResidenciaController,
+    UsuarioExternoController
+  ]
 })
-export class ControllersModule {}
+export class ControllersModule { }

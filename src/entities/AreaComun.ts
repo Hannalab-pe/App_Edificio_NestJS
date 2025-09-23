@@ -23,7 +23,7 @@ export class AreaComun {
   capacidadMaxima: number;
 
   @Column("numeric", { name: "precio_reserva", precision: 10, scale: 2 })
-  precioReserva: string;
+  precioReserva: number;
 
   @Column("time without time zone", { name: "tiempo_minimo_reserva" })
   tiempoMinimoReserva: string;
