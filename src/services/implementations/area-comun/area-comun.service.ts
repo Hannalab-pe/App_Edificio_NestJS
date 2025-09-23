@@ -1,241 +1,130 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateAreaComunDto, UpdateAreaComunDto } from 'src/dtos';
-import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
-import { AreaComun } from 'src/entities/AreaComun';
-import { IAreaComunService } from 'src/services/interfaces';
 import { Repository } from 'typeorm';
+import { IAreaComunService } from '../../interfaces/area-comun.interface';
+import { AreaComun } from '../../../entities/AreaComun';
+import { CreateAreaComunDto, UpdateAreaComunDto } from '../../../dtos';
 
 @Injectable()
 export class AreaComunService implements IAreaComunService {
+  constructor(
+    @InjectRepository(AreaComun)
+    private readonly areaComunRepository: Repository<AreaComun>,
+  ) {}
 
-    constructor(
-        @InjectRepository(AreaComun)
-        private areaComunRepository: Repository<AreaComun>,
-    ) { }
-
-    async createAreaComun(createAreaComunDto: CreateAreaComunDto): Promise<BaseResponseDto<AreaComun>> {
-        if (!createAreaComunDto) {
-            return {
-                success: false,
-                message: 'Datos no válidos',
-                data: null,
-                error: new BadRequestException('Ingrese datos válidos, Intente de Nuevo.')
-            };
-        }
-
-        try {
-            const areaComun = this.areaComunRepository.create(createAreaComunDto);
-            const areaComunGuardado = await this.areaComunRepository.save(areaComun);
-            return {
-                success: true,
-                message: 'Área común creada exitosamente.',
-                data: areaComunGuardado
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Error al crear el área común',
-                data: null,
-                error: new BadRequestException('Error al crear el área común: ' + error.message)
-            };
-        }
+  async create(createAreaComunDto: CreateAreaComunDto): Promise<AreaComun> {
+    // Validar que el horario de apertura sea anterior al de cierre
+    if (createAreaComunDto.horarioApertura >= createAreaComunDto.horarioCierre) {
+      throw new BadRequestException('El horario de apertura debe ser anterior al horario de cierre');
     }
 
-    async findAll(): Promise<BaseResponseDto<AreaComun[]>> {
-        try {
-            const areasComunes = await this.areaComunRepository.find({
-                where: { estaActivo: true }
-            });
-            return {
-                success: true,
-                message: areasComunes.length > 0
-                    ? 'Áreas comunes obtenidas exitosamente.'
-                    : 'No se encontraron áreas comunes.',
-                data: areasComunes
-            };
-        } catch (error) {
-            const exception = new BadRequestException('Error al obtener áreas comunes: ' + error.message);
-            return {
-                success: false,
-                message: 'Error al obtener áreas comunes',
-                data: [],
-                error: exception
-            };
-        }
+    // Validar que el tiempo mínimo sea menor al máximo
+    if (createAreaComunDto.tiempoMinimoReserva >= createAreaComunDto.tiempoMaximoReserva) {
+      throw new BadRequestException('El tiempo mínimo de reserva debe ser menor al tiempo máximo');
     }
 
-    async findOne(id: string): Promise<BaseResponseDto<AreaComun>> {
-        if (!id) {
-            return {
-                success: false,
-                message: 'ID no válido',
-                data: null,
-                error: new BadRequestException('Ingrese un ID válido, Intente de Nuevo.')
-            };
-        }
+    const areaComun = this.areaComunRepository.create({
+      ...createAreaComunDto,
+      estaActivo: true,
+    });
 
-        try {
-            const areaComun = await this.areaComunRepository.findOne({
-                where: {
-                    idAreaComun: id,
-                    estaActivo: true
-                }
-            });
-            if (!areaComun) {
-                return {
-                    success: false,
-                    message: 'Área común no encontrada',
-                    data: null,
-                    error: {
-                        message: 'Área común no encontrada.',
-                        statusCode: 404
-                    }
-                };
-            }
-            return {
-                success: true,
-                message: 'Área común obtenida exitosamente.',
-                data: areaComun
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Error al obtener el área común',
-                data: null,
-                error: new BadRequestException('Error al obtener el área común: ' + error.message)
-            };
-        }
+    const result = await this.areaComunRepository.save(areaComun);
+    return Array.isArray(result) ? result[0] : result;
+  }
+
+  async findAll(): Promise<AreaComun[]> {
+    return await this.areaComunRepository.find({
+      relations: ['incidencias', 'mantenimientos', 'reservas'],
+      order: {
+        nombre: 'ASC'
+      }
+    });
+  }
+
+  async findOne(id: string): Promise<AreaComun> {
+    const areaComun = await this.areaComunRepository.findOne({
+      where: { idAreaComun: id },
+      relations: ['incidencias', 'mantenimientos', 'reservas'],
+    });
+
+    if (!areaComun) {
+      throw new NotFoundException(`Área común con ID ${id} no encontrada`);
     }
 
+    return areaComun;
+  }
 
-    async updateAreaComun(id: string, updateAreaComunDto: UpdateAreaComunDto): Promise<BaseResponseDto<AreaComun>> {
-        if (!id || !updateAreaComunDto) {
-            return {
-                success: false,
-                message: 'Datos no válidos',
-                data: null,
-                error: new BadRequestException('Ingrese datos válidos, Intente de Nuevo.')
-            };
-        }
+  async update(id: string, updateAreaComunDto: UpdateAreaComunDto): Promise<AreaComun> {
+    await this.findOne(id);
 
-        try {
-            const areaComun = await this.areaComunRepository.findOne({ where: { idAreaComun: id } });
-            if (!areaComun) {
-                return {
-                    success: false,
-                    message: 'Área común no encontrada',
-                    data: null,
-                    error: new BadRequestException('Área común no encontrada.')
-                };
-            }
-            this.areaComunRepository.merge(areaComun, updateAreaComunDto);
-            const areaComunActualizada = await this.areaComunRepository.save(areaComun);
-            return {
-                success: true,
-                message: 'Área común actualizada exitosamente.',
-                data: areaComunActualizada
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Error al actualizar el área común',
-                data: null,
-                error: new BadRequestException('Error al actualizar el área común: ' + error.message)
-            };
-        }
+    // Validaciones si se actualizan horarios
+    if (updateAreaComunDto.horarioApertura && updateAreaComunDto.horarioCierre) {
+      if (updateAreaComunDto.horarioApertura >= updateAreaComunDto.horarioCierre) {
+        throw new BadRequestException('El horario de apertura debe ser anterior al horario de cierre');
+      }
     }
 
-    async eliminacionLogica(id: string): Promise<BaseResponseDto<void>> {
-        if (!id) {
-            return {
-                success: false,
-                message: 'ID no válido',
-                data: undefined,
-                error: new BadRequestException('Ingrese un ID válido, Intente de Nuevo.')
-            };
-        }
-
-        try {
-            const areaComun = await this.areaComunRepository.findOne({ where: { idAreaComun: id } });
-            if (!areaComun) {
-                return {
-                    success: false,
-                    message: 'Área común no encontrada',
-                    data: undefined,
-                    error: {
-                        message: 'Área común no encontrada.',
-                        statusCode: 404
-                    }
-                };
-            }
-
-            // Eliminación lógica: cambiar estaActivo a false
-            areaComun.estaActivo = false;
-            await this.areaComunRepository.save(areaComun);
-
-            return {
-                success: true,
-                message: 'Área común eliminada exitosamente.',
-                data: undefined
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Error al eliminar el área común',
-                data: undefined,
-                error: new BadRequestException('Error al eliminar el área común: ' + error.message)
-            };
-        }
+    // Validaciones si se actualizan tiempos de reserva
+    if (updateAreaComunDto.tiempoMinimoReserva && updateAreaComunDto.tiempoMaximoReserva) {
+      if (updateAreaComunDto.tiempoMinimoReserva >= updateAreaComunDto.tiempoMaximoReserva) {
+        throw new BadRequestException('El tiempo mínimo de reserva debe ser menor al tiempo máximo');
+      }
     }
 
-    async findByEstado(estado: boolean): Promise<BaseResponseDto<AreaComun[]>> {
-        if (estado === null || estado === undefined) {
-            return {
-                success: false,
-                message: 'Estado no válido',
-                data: [],
-                error: new BadRequestException('Ingrese un estado válido, Intente de Nuevo.')
-            };
-        }
+    await this.areaComunRepository.update(id, updateAreaComunDto);
+    return await this.findOne(id);
+  }
 
-        try {
-            const areasComunes = await this.areaComunRepository.find({ where: { estaActivo: estado } });
-            return {
-                success: true,
-                message: areasComunes.length > 0
-                    ? `Áreas comunes ${estado ? 'activas' : 'inactivas'} obtenidas exitosamente.`
-                    : `No se encontraron áreas comunes ${estado ? 'activas' : 'inactivas'}.`,
-                data: areasComunes
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Error al obtener áreas comunes por estado',
-                data: [],
-                error: new BadRequestException('Error al obtener áreas comunes por estado: ' + error.message)
-            };
-        }
-    }
+  async remove(id: string): Promise<void> {
+    const areaComun = await this.findOne(id);
 
-    async findAvailable(): Promise<BaseResponseDto<AreaComun[]>> {
-        try {
-            const areasComunes = await this.areaComunRepository.find({ where: { estaActivo: true } });
-            return {
-                success: true,
-                message: areasComunes.length > 0
-                    ? 'Áreas comunes disponibles obtenidas exitosamente.'
-                    : 'No se encontraron áreas comunes disponibles.',
-                data: areasComunes
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Error al obtener áreas comunes disponibles',
-                data: [],
-                error: new BadRequestException('Error al obtener áreas comunes disponibles: ' + error.message)
-            };
-        }
-    }
+    // Eliminación lógica: marcar como inactivo
+    await this.areaComunRepository.update(id, { estaActivo: false });
+  }
 
+  async findByEstado(estado: boolean): Promise<AreaComun[]> {
+    return await this.areaComunRepository.find({
+      where: { estaActivo: estado },
+      relations: ['incidencias', 'mantenimientos', 'reservas'],
+      order: {
+        nombre: 'ASC'
+      }
+    });
+  }
+
+  async findAvailable(): Promise<AreaComun[]> {
+    return await this.areaComunRepository.find({
+      where: { estaActivo: true },
+      relations: ['reservas'],
+      order: {
+        nombre: 'ASC'
+      }
+    });
+  }
+
+  async findByCapacidad(capacidadMinima: number): Promise<AreaComun[]> {
+    return await this.areaComunRepository.find({
+      where: {
+        capacidadMaxima: require('typeorm').MoreThanOrEqual(capacidadMinima),
+        estaActivo: true
+      },
+      relations: ['reservas'],
+      order: {
+        capacidadMaxima: 'ASC'
+      }
+    });
+  }
+
+  async findByPrecio(precioMaximo: number): Promise<AreaComun[]> {
+    return await this.areaComunRepository.find({
+      where: {
+        precioReserva: require('typeorm').LessThanOrEqual(precioMaximo),
+        estaActivo: true
+      },
+      relations: ['reservas'],
+      order: {
+        precioReserva: 'ASC'
+      }
+    });
+  }
 }

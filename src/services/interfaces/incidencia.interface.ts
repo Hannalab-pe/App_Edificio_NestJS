@@ -11,4 +11,8 @@ export interface IIncidenciaService {
     findByPrioridad(prioridad: string): Promise<Incidencia[]>;
     findByTipo(tipoId: string): Promise<Incidencia[]>;
     findByUsuario(usuarioId: string): Promise<Incidencia[]>;
+    findByTrabajador(trabajadorId: string): Promise<Incidencia[]>;
+    resolve(id: string): Promise<Incidencia>;
+    asignarTrabajador(incidenciaId: string, trabajadorId: string): Promise<Incidencia>;
+    findWithFilters(estado?: string, prioridad?: string): Promise<Incidencia[]>;
 }
