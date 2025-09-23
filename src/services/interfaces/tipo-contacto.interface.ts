@@ -1,10 +1,12 @@
+import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
+import { CreateTipoContactoDto, UpdateTipoContactoDto } from 'src/dtos';
 import { TipoContacto } from '../../entities/TipoContacto';
 
 export interface ITipoContactoService {
-    create(createTipoContactoDto: any): Promise<TipoContacto>;
-    findAll(): Promise<TipoContacto[]>;
-    findOne(id: string): Promise<TipoContacto>;
-    update(id: string, updateTipoContactoDto: any): Promise<TipoContacto>;
-    remove(id: string): Promise<void>;
-    findByNombre(nombre: string): Promise<TipoContacto>;
+    create(createTipoContactoDto: CreateTipoContactoDto): Promise<BaseResponseDto<TipoContacto>>;
+    findAll(): Promise<BaseResponseDto<TipoContacto[]>>;
+    findOne(id: string): Promise<BaseResponseDto<TipoContacto>>;
+    update(id: string, updateTipoContactoDto: UpdateTipoContactoDto): Promise<BaseResponseDto<TipoContacto>>;
+    remove(id: string): Promise<BaseResponseDto<undefined>>;
+    findByNombre(nombre: string): Promise<BaseResponseDto<TipoContacto>>;
 }

@@ -52,7 +52,7 @@ export { CronogramaService } from './cronograma/cronograma.service';
 export { TipoDocumentoService } from './tipo-documento/tipo-documento.service';
 export { TipoIncidenciaService } from './tipo-incidencia/tipo-incidencia.service';
 export { TipoContratoService } from './tipo-contrato/tipo-contrato.service';
-export { TipoCroongramaService } from './tipo-croongrama/tipo-croongrama.service';
+export { TipoCronogramaService } from './tipo-cronograma/tipo-cronograma.service';
 export { TipoEspacioService } from './tipo-espacio/tipo-espacio.service';
 export { TipoContactoService } from './tipo-contacto/tipo-contacto.service';
 

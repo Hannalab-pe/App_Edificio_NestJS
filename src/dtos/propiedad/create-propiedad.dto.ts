@@ -109,4 +109,14 @@ export class CreatePropiedadDto {
     @IsOptional()
     @IsString({ message: 'La descripción debe ser una cadena de texto' })
     descripcion?: string;
+
+    @ApiPropertyOptional({
+        description: 'Estado de la propiedad (activo/inactivo)',
+        example: true,
+        type: Boolean,
+        default: true,
+    })
+    @IsOptional()
+    @IsBoolean({ message: 'El estado debe ser un valor booleano' })
+    estaActivo?: boolean;
 }
