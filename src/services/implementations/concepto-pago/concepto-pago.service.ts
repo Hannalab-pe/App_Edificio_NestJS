@@ -13,11 +13,18 @@ export class ConceptoPagoService implements IConceptoPagoService {
 
     async create(createConceptoPagoDto: CreateConceptoPagoDto): Promise<BaseResponseDto<ConceptoPago>> {
         if (!createConceptoPagoDto) {
-            throw new BadRequestException('Ingrese datos válidos, Intente de Nuevo.');
+            return {
+                success: false,
+                message: 'Datos no válidos',
+                data: null,
+                error: {
+                    message: 'Ingrese datos válidos, Intente de Nuevo.',
+                    statusCode: 400
+                }
+            };
         }
 
         try {
-
             const conceptoPago = this.conceptoPagoRepository.create(createConceptoPagoDto);
             const conceptoPagoGuardado = await this.conceptoPagoRepository.save(conceptoPago);
             return {
@@ -26,46 +33,65 @@ export class ConceptoPagoService implements IConceptoPagoService {
                 data: conceptoPagoGuardado
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al crear el concepto de pago: ' + error.message);
             return {
                 success: false,
                 message: 'Error al crear el concepto de pago',
                 data: null,
-                error: exception
-            }
+                error: {
+                    message: 'Error al crear el concepto de pago: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
 
     async findAll(): Promise<BaseResponseDto<ConceptoPago[]>> {
         try {
             const conceptosPago = await this.conceptoPagoRepository.find();
-            if (conceptosPago.length === 0) {
-                throw new BadRequestException('No se encontraron conceptos de pago.');
-            }
             return {
                 success: true,
-                message: 'Conceptos de pago obtenidos exitosamente.',
+                message: conceptosPago.length > 0
+                    ? 'Conceptos de pago obtenidos exitosamente.'
+                    : 'No se encontraron conceptos de pago.',
                 data: conceptosPago
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al obtener conceptos de pago: ' + error.message);
             return {
                 success: false,
                 message: 'Error al obtener conceptos de pago',
                 data: [],
-                error: exception
-            }
+                error: {
+                    message: 'Error al obtener conceptos de pago: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
     async findOne(id: string): Promise<BaseResponseDto<ConceptoPago>> {
         if (!id) {
-            throw new BadRequestException('Ingrese un ID válido, Intente de Nuevo.');
+            return {
+                success: false,
+                message: 'ID no válido',
+                data: null,
+                error: {
+                    message: 'Ingrese un ID válido, Intente de Nuevo.',
+                    statusCode: 400
+                }
+            };
         }
 
         try {
             const conceptoPago = await this.conceptoPagoRepository.findOne({ where: { idConceptoPago: id } });
             if (!conceptoPago) {
-                throw new BadRequestException('Concepto de pago no encontrado.');
+                return {
+                    success: false,
+                    message: 'Concepto de pago no encontrado',
+                    data: null,
+                    error: {
+                        message: 'Concepto de pago no encontrado.',
+                        statusCode: 404
+                    }
+                };
             }
             return {
                 success: true,
@@ -73,24 +99,42 @@ export class ConceptoPagoService implements IConceptoPagoService {
                 data: conceptoPago
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al obtener el concepto de pago: ' + error.message);
             return {
                 success: false,
                 message: 'Error al obtener el concepto de pago',
                 data: null,
-                error: exception
-            }
+                error: {
+                    message: 'Error al obtener el concepto de pago: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
     async update(id: string, updateConceptoPagoDto: UpdateConceptoPagoDto): Promise<BaseResponseDto<ConceptoPago>> {
         if (!id || !updateConceptoPagoDto) {
-            throw new BadRequestException('Ingrese datos válidos, Intente de Nuevo.');
+            return {
+                success: false,
+                message: 'Datos no válidos',
+                data: null,
+                error: {
+                    message: 'Ingrese datos válidos, Intente de Nuevo.',
+                    statusCode: 400
+                }
+            };
         }
 
         try {
             const conceptoPago = await this.conceptoPagoRepository.findOne({ where: { idConceptoPago: id } });
             if (!conceptoPago) {
-                throw new BadRequestException('Concepto de pago no encontrado.');
+                return {
+                    success: false,
+                    message: 'Concepto de pago no encontrado',
+                    data: null,
+                    error: {
+                        message: 'Concepto de pago no encontrado.',
+                        statusCode: 404
+                    }
+                };
             }
 
             const updateData: any = { ...updateConceptoPagoDto };
@@ -102,25 +146,43 @@ export class ConceptoPagoService implements IConceptoPagoService {
                 data: conceptoPagoActualizado
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al actualizar el concepto de pago: ' + error.message);
             return {
                 success: false,
                 message: 'Error al actualizar el concepto de pago',
                 data: null,
-                error: exception
-            }
+                error: {
+                    message: 'Error al actualizar el concepto de pago: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
 
     async remove(id: string): Promise<BaseResponseDto<void>> {
         if (!id) {
-            throw new BadRequestException('Ingrese un ID válido, Intente de Nuevo.');
+            return {
+                success: false,
+                message: 'ID no válido',
+                data: undefined,
+                error: {
+                    message: 'Ingrese un ID válido, Intente de Nuevo.',
+                    statusCode: 400
+                }
+            };
         }
 
         try {
             const conceptoPago = await this.conceptoPagoRepository.findOne({ where: { idConceptoPago: id } });
             if (!conceptoPago) {
-                throw new BadRequestException('Concepto de pago no encontrado.');
+                return {
+                    success: false,
+                    message: 'Concepto de pago no encontrado',
+                    data: undefined,
+                    error: {
+                        message: 'Concepto de pago no encontrado.',
+                        statusCode: 404
+                    }
+                };
             }
 
             // Eliminación lógica: cambiar estaActivo a false
@@ -133,25 +195,43 @@ export class ConceptoPagoService implements IConceptoPagoService {
                 data: undefined
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al eliminar el concepto de pago: ' + error.message);
             return {
                 success: false,
                 message: 'Error al eliminar el concepto de pago',
                 data: undefined,
-                error: exception
-            }
+                error: {
+                    message: 'Error al eliminar el concepto de pago: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
 
     async findByNombre(nombre: string): Promise<BaseResponseDto<ConceptoPago>> {
         if (!nombre) {
-            throw new BadRequestException('Ingrese un nombre válido, Intente de Nuevo.');
+            return {
+                success: false,
+                message: 'Nombre no válido',
+                data: null,
+                error: {
+                    message: 'Ingrese un nombre válido, Intente de Nuevo.',
+                    statusCode: 400
+                }
+            };
         }
 
         try {
             const conceptoPago = await this.conceptoPagoRepository.findOne({ where: { nombre } });
             if (!conceptoPago) {
-                throw new BadRequestException('Concepto de pago no encontrado con ese nombre.');
+                return {
+                    success: false,
+                    message: 'Concepto de pago no encontrado con ese nombre',
+                    data: null,
+                    error: {
+                        message: 'Concepto de pago no encontrado con ese nombre.',
+                        statusCode: 404
+                    }
+                };
             }
             return {
                 success: true,
@@ -159,38 +239,49 @@ export class ConceptoPagoService implements IConceptoPagoService {
                 data: conceptoPago
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al buscar el concepto de pago por nombre: ' + error.message);
             return {
                 success: false,
                 message: 'Error al buscar el concepto de pago por nombre',
                 data: null,
-                error: exception
-            }
+                error: {
+                    message: 'Error al buscar el concepto de pago por nombre: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
     async findByTipo(tipo: string): Promise<BaseResponseDto<ConceptoPago[]>> {
         if (!tipo) {
-            throw new BadRequestException('Ingrese un tipo válido, Intente de Nuevo.');
+            return {
+                success: false,
+                message: 'Tipo no válido',
+                data: [],
+                error: {
+                    message: 'Ingrese un tipo válido, Intente de Nuevo.',
+                    statusCode: 400
+                }
+            };
         }
 
         try {
             const conceptosPago = await this.conceptoPagoRepository.find({ where: { frecuencia: tipo } });
-            if (conceptosPago.length === 0) {
-                throw new BadRequestException('No se encontraron conceptos de pago con ese tipo.');
-            }
             return {
                 success: true,
-                message: 'Conceptos de pago encontrados exitosamente.',
+                message: conceptosPago.length > 0
+                    ? 'Conceptos de pago encontrados exitosamente.'
+                    : 'No se encontraron conceptos de pago con ese tipo.',
                 data: conceptosPago
             };
         } catch (error) {
-            const exception = new BadRequestException('Error al buscar conceptos de pago por tipo: ' + error.message);
             return {
                 success: false,
                 message: 'Error al buscar conceptos de pago por tipo',
                 data: [],
-                error: exception
-            }
+                error: {
+                    message: 'Error al buscar conceptos de pago por tipo: ' + error.message,
+                    statusCode: 400
+                }
+            };
         }
     }
 

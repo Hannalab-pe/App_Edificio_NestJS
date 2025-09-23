@@ -26,11 +26,17 @@ export class AreaComunController {
     async create(@Body() createAreaComunDto: CreateAreaComunDto, @Res() res: Response) {
         try {
             const result = await this.areaComunService.createAreaComun(createAreaComunDto);
-            return res.status(HttpStatus.CREATED).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.CREATED).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al crear el área común',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -48,11 +54,17 @@ export class AreaComunController {
     async findAll(@Res() res: Response) {
         try {
             const result = await this.areaComunService.findAll();
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al obtener áreas comunes',
+                message: 'Error interno del servidor',
+                data: [],
                 error: error.message
             });
         }
@@ -70,11 +82,17 @@ export class AreaComunController {
     async findAvailable(@Res() res: Response) {
         try {
             const result = await this.areaComunService.findAvailable();
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al obtener áreas comunes disponibles',
+                message: 'Error interno del servidor',
+                data: [],
                 error: error.message
             });
         }
@@ -99,11 +117,17 @@ export class AreaComunController {
         try {
             const estadoBoolean = estado === 'true';
             const result = await this.areaComunService.findByEstado(estadoBoolean);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al obtener áreas comunes por estado',
+                message: 'Error interno del servidor',
+                data: [],
                 error: error.message
             });
         }
@@ -131,11 +155,17 @@ export class AreaComunController {
     async findOne(@Param('id') id: string, @Res() res: Response) {
         try {
             const result = await this.areaComunService.findOne(id);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al obtener el área común',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -163,11 +193,17 @@ export class AreaComunController {
     async update(@Param('id') id: string, @Body() updateAreaComunDto: UpdateAreaComunDto, @Res() res: Response) {
         try {
             const result = await this.areaComunService.updateAreaComun(id, updateAreaComunDto);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al actualizar el área común',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -195,11 +231,17 @@ export class AreaComunController {
     async remove(@Param('id') id: string, @Res() res: Response) {
         try {
             const result = await this.areaComunService.eliminacionLogica(id);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al eliminar el área común',
+                message: 'Error interno del servidor',
+                data: undefined,
                 error: error.message
             });
         }

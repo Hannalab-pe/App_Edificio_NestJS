@@ -26,11 +26,17 @@ export class ConceptoPagoController {
     async create(@Body() createConceptoPagoDto: CreateConceptoPagoDto, @Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.create(createConceptoPagoDto);
-            return res.status(HttpStatus.CREATED).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.CREATED).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al crear el concepto de pago',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -48,11 +54,17 @@ export class ConceptoPagoController {
     async findAll(@Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.findAll();
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al obtener conceptos de pago',
+                message: 'Error interno del servidor',
+                data: [],
                 error: error.message
             });
         }
@@ -80,11 +92,17 @@ export class ConceptoPagoController {
     async findByNombre(@Param('nombre') nombre: string, @Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.findByNombre(nombre);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al buscar el concepto de pago por nombre',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -108,11 +126,17 @@ export class ConceptoPagoController {
     async findByTipo(@Query('tipo') tipo: string, @Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.findByTipo(tipo);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al buscar conceptos de pago por tipo',
+                message: 'Error interno del servidor',
+                data: [],
                 error: error.message
             });
         }
@@ -140,11 +164,17 @@ export class ConceptoPagoController {
     async findOne(@Param('id') id: string, @Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.findOne(id);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al obtener el concepto de pago',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -172,11 +202,17 @@ export class ConceptoPagoController {
     async update(@Param('id') id: string, @Body() updateConceptoPagoDto: UpdateConceptoPagoDto, @Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.update(id, updateConceptoPagoDto);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al actualizar el concepto de pago',
+                message: 'Error interno del servidor',
+                data: null,
                 error: error.message
             });
         }
@@ -204,11 +240,17 @@ export class ConceptoPagoController {
     async remove(@Param('id') id: string, @Res() res: Response) {
         try {
             const result = await this.conceptoPagoService.remove(id);
-            return res.status(HttpStatus.OK).json(result);
+
+            if (result.success) {
+                return res.status(HttpStatus.OK).json(result);
+            } else {
+                return res.status(HttpStatus.BAD_REQUEST).json(result);
+            }
         } catch (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: 'Error al eliminar el concepto de pago',
+                message: 'Error interno del servidor',
+                data: undefined,
                 error: error.message
             });
         }
