@@ -9,4 +9,5 @@ export interface IUsuarioService {
     remove(id: string): Promise<void>;
     findByEmail(email: string): Promise<Usuario>;
     findActiveUsers(): Promise<Usuario[]>;
+    emailExists(email: string): Promise<boolean>;
 }

@@ -1,5 +1,6 @@
 // Interfaces principales
 export { IUsuarioService } from './usuario.interface';
+export { IAuthService, LoginResult, RegisterResult } from './auth.interface';
 export { IRolService } from './rol.interface';
 export { IPropietarioService } from './propietario.interface';
 export { IPropiedadService } from './propiedad.interface';

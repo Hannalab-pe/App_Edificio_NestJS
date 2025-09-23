@@ -8,4 +8,5 @@ export interface IRolService {
     update(id: string, updateRolDto: UpdateRolDto): Promise<Rol>;
     remove(id: string): Promise<void>;
     findByNombre(nombre: string): Promise<Rol>;
+    createDefaultRoles(): Promise<void>;
 }

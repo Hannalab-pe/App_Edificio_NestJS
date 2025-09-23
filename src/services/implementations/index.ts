@@ -1,5 +1,6 @@
 // Servicios principales
 export { UsuarioService } from './usuario/usuario.service';
+export { AuthService } from './auth/auth.service';
 export { RolService } from './rol/rol.service';
 export { PropietarioService } from './propietario/propietario.service';
 export { PropiedadService } from './propiedad/propiedad.service';
