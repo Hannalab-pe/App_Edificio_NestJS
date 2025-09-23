@@ -58,18 +58,12 @@ export { UpdateVotacionDto } from './votacion/update-votacion.dto';
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
 
+
+// Trabajador DTOs
+export { CreateTrabajadorDto } from './trabajador/create-trabajador.dto';
+export { UpdateTrabajadorDto } from './trabajador/update-trabajador.dto';
+export { TrabajadorRegisterResponseDto } from './trabajador/trabajador-register-response.dto';
+
 // Presupuesto DTOs
 export { CreatePresupuestoDto } from './presupuesto/create-presupuesto.dto';
 export { UpdatePresupuestoDto } from './presupuesto/update-presupuesto.dto';
-
-// Tipo Contacto DTOs
-export { CreateTipoContactoDto } from './tipo-contacto/create-tipo-contacto.dto';
-export { UpdateTipoContactoDto } from './tipo-contacto/update-tipo-contacto.dto';
-
-// Tipo Contrato DTOs
-export { CreateTipoContratoDto } from './tipo-contrato/create-tipo-contrato.dto';
-export { UpdateTipoContratoDto } from './tipo-contrato/update-tipo-contrato.dto';
-
-// Tipo Cronograma DTOs
-export { CreateTipoCronogramaDto } from './tipo-cronograma/create-tipo-cronograma.dto';
-export { UpdateTipoCronogramaDto } from './tipo-cronograma/update-tipo-cronograma.dto';
