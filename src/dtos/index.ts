@@ -42,6 +42,10 @@ export { UpdateTipoDocumentoDto } from './tipo-documento/update-tipo-documento.d
 export { CreateAreaComunDto } from './area-comun/create-area-comun.dto';
 export { UpdateAreaComunDto } from './area-comun/update-area-comun.dto';
 
+// Concepto Pago DTOs
+export { CreateConceptoPagoDto } from './concepto-pago/create-concepto-pago.dto';
+export { UpdateConceptoPagoDto } from './concepto-pago/update-concepto-pago.dto';
+
 // Espacio Arrendable DTOs
 export { CreateEspacioArrendableDto } from './espacio-arrendable/create-espacio-arrendable.dto';
 export { UpdateEspacioArrendableDto } from './espacio-arrendable/update-espacio-arrendable.dto';

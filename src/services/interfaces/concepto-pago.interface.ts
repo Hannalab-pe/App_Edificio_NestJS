@@ -1,11 +1,13 @@
+import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
+import { CreateConceptoPagoDto, UpdateConceptoPagoDto } from 'src/dtos';
 import { ConceptoPago } from '../../entities/ConceptoPago';
 
 export interface IConceptoPagoService {
-    create(createConceptoPagoDto: any): Promise<ConceptoPago>;
-    findAll(): Promise<ConceptoPago[]>;
-    findOne(id: string): Promise<ConceptoPago>;
-    update(id: string, updateConceptoPagoDto: any): Promise<ConceptoPago>;
-    remove(id: string): Promise<void>;
-    findByNombre(nombre: string): Promise<ConceptoPago>;
-    findByTipo(tipo: string): Promise<ConceptoPago[]>;
+    create(createConceptoPagoDto: CreateConceptoPagoDto): Promise<BaseResponseDto<ConceptoPago>>;
+    findAll(): Promise<BaseResponseDto<ConceptoPago[]>>;
+    findOne(id: string): Promise<BaseResponseDto<ConceptoPago>>;
+    update(id: string, updateConceptoPagoDto: UpdateConceptoPagoDto): Promise<BaseResponseDto<ConceptoPago>>;
+    remove(id: string): Promise<BaseResponseDto<void>>;
+    findByNombre(nombre: string): Promise<BaseResponseDto<ConceptoPago>>;
+    findByTipo(tipo: string): Promise<BaseResponseDto<ConceptoPago[]>>;
 }
