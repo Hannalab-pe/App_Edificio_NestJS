@@ -1,5 +1,5 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNumber, IsDecimal, IsOptional, IsBoolean } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNumber, IsDecimal, IsOptional, IsBoolean, IsNotEmpty, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateAreaComunDto {
@@ -30,15 +30,15 @@ export class UpdateAreaComunDto {
     @IsNumber({}, { message: 'La capacidad máxima debe ser un número' })
     capacidadMaxima?: number;
 
-    @ApiPropertyOptional({
-        description: 'Precio por reserva del área común',
-        example: 150.00,
-        type: Number,
-    })
-    @IsOptional()
-    @Transform(({ value }) => parseFloat(value))
-    @IsDecimal({ decimal_digits: '1,2' }, { message: 'El precio de reserva debe ser un número decimal válido' })
-    precioReserva?: number;
+     @ApiPropertyOptional({
+            description: 'Precio por reserva del área común',
+            example: 150.00,
+            type: Number,
+        })
+        @IsNumber({ maxDecimalPlaces: 2 }, { message: 'El precio de reserva debe ser un número decimal válido con máximo 2 decimales' })
+        @Min(0, { message: 'El precio de reserva debe ser mayor o igual a 0' })
+        @IsNotEmpty({ message: 'El precio de reserva es obligatorio' })
+        precioReserva: number;
 
     @ApiPropertyOptional({
         description: 'Tiempo mínimo de reserva (formato HH:MM:SS)',
