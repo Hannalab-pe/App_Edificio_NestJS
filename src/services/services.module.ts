@@ -33,9 +33,9 @@ import {
   // Servicios financieros
   ConceptoPagoService,
   ReciboService,
-  PresupuestooService,
   CajaService,
   MovimientoCajaService,
+  PresupuestoService,
 
   // Servicios de gestión administrativa
   MantenimientoService,
@@ -174,16 +174,16 @@ import {
       useClass: ReciboService,
     },
     {
-      provide: 'IPresupuestoService',
-      useClass: PresupuestooService,
-    },
-    {
       provide: 'ICajaService',
       useClass: CajaService,
     },
     {
       provide: 'IMovimientoCajaService',
       useClass: MovimientoCajaService,
+    },
+    {
+      provide: 'IPresupuestoService',
+      useClass: PresupuestoService,
     },
 
     // Servicios de gestión administrativa
@@ -284,6 +284,7 @@ import {
     PropiedadService,
     IncidenciaService,
     NotificacionService,
+    PresupuestoService,
     PagoService,
     DocumentoService,
     DocumentoIdentidadService,
@@ -297,7 +298,6 @@ import {
     VisitaService,
     ConceptoPagoService,
     ReciboService,
-    PresupuestooService,
     CajaService,
     MovimientoCajaService,
     MantenimientoService,
@@ -388,9 +388,9 @@ import {
     VisitaService,
     ConceptoPagoService,
     ReciboService,
-    PresupuestooService,
     CajaService,
     MovimientoCajaService,
+    PresupuestoService,
     MantenimientoService,
     VotacionService,
     VotoService,

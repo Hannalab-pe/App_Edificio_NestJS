@@ -27,9 +27,9 @@ export { VisitaService } from './visita/visita.service';
 // Servicios financieros
 export { ConceptoPagoService } from './concepto-pago/concepto-pago.service';
 export { ReciboService } from './recibo/recibo.service';
-export { PresupuestooService } from './presupuestoo/presupuestoo.service';
 export { CajaService } from './caja/caja.service';
 export { MovimientoCajaService } from './movimiento-caja/movimiento-caja.service';
+export { PresupuestoService } from './presupuesto/presupuesto.service';
 
 // Servicios de gestión administrativa
 export { MantenimientoService } from './mantenimiento/mantenimiento.service';

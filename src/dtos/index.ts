@@ -58,7 +58,13 @@ export { UpdateVotacionDto } from './votacion/update-votacion.dto';
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
 
+<<<<<<< HEAD
 // Trabajador DTOs
 export { CreateTrabajadorDto } from './trabajador/create-trabajador.dto';
 export { UpdateTrabajadorDto } from './trabajador/update-trabajador.dto';
 export { TrabajadorRegisterResponseDto } from './trabajador/trabajador-register-response.dto';
+=======
+// Presupuesto DTOs
+export { CreatePresupuestoDto } from './presupuesto/create-presupuesto.dto';
+export { UpdatePresupuestoDto } from './presupuesto/update-presupuesto.dto';
+>>>>>>> c157ae2f3a8f1419298fa65608e008bcd12a3cd9
