@@ -1,11 +1,12 @@
+import { CreateComentarioIncidenciaDto, UpdateComentarioIncidenciaDto } from '../../dtos';
 import { ComentarioIncidencia } from '../../entities/ComentarioIncidencia';
 
 export interface IComentarioIncidenciaService {
-    create(createComentarioIncidenciaDto: any): Promise<ComentarioIncidencia>;
+    create(createComentarioIncidenciaDto: CreateComentarioIncidenciaDto): Promise<ComentarioIncidencia>;
     findAll(): Promise<ComentarioIncidencia[]>;
     findOne(id: string): Promise<ComentarioIncidencia>;
-    update(id: string, updateComentarioIncidenciaDto: any): Promise<ComentarioIncidencia>;
+    update(id: string, updateComentarioIncidenciaDto: UpdateComentarioIncidenciaDto): Promise<ComentarioIncidencia>;
     remove(id: string): Promise<void>;
-    findByIncidencia(incidenciaId: string): Promise<ComentarioIncidencia[]>;
-    findByUsuario(usuarioId: string): Promise<ComentarioIncidencia[]>;
+    findByIncidencia(idIncidencia: string): Promise<ComentarioIncidencia[]>;
+    findByUsuario(idUsuario: string): Promise<ComentarioIncidencia[]>;
 }

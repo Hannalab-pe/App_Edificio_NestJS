@@ -39,7 +39,7 @@ import {
 
   // Servicios de gestión administrativa
   MantenimientoService,
-  VotacionService,
+  VotacionService,                                                               
   VotoService,
   OpcionVotoService,
   JuntaPropietariosService,

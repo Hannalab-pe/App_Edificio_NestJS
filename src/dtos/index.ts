@@ -70,10 +70,6 @@ export { UpdateVotacionDto } from './votacion/update-votacion.dto';
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 56ba60af9806ab17fa9dd2551616d39c4ecc114c
 // Trabajador DTOs
 export { CreateTrabajadorDto } from './trabajador/create-trabajador.dto';
 export { UpdateTrabajadorDto } from './trabajador/update-trabajador.dto';
@@ -83,11 +79,6 @@ export { TrabajadorRegisterResponseDto } from './trabajador/trabajador-register-
 export { CreatePresupuestoDto } from './presupuesto/create-presupuesto.dto';
 export { UpdatePresupuestoDto } from './presupuesto/update-presupuesto.dto';
 
-<<<<<<< HEAD
-// Tipo Incidencia DTOs
-export { CreateTipoIncidenciaDto } from './tipo-incidencia/create-tipo-incidencia.dto';
-export { UpdateTipoIncidenciaDto } from './tipo-incidencia/update-tipo-incidencia.dto';
-=======
 // Tipo Cronograma DTOs
 export { CreateTipoCronogramaDto } from './tipo-cronograma/create-tipo-cronograma.dto';
 export { UpdateTipoCronogramaDto } from './tipo-cronograma/update-tipo-cronograma.dto';
@@ -96,4 +87,15 @@ export { UpdateTipoCronogramaDto } from './tipo-cronograma/update-tipo-cronogram
 export { CreateTipoIncidenciaDto } from './tipo-incidencia/create-tipo-incidencia.dto';
 export { UpdateTipoIncidenciaDto } from './tipo-incidencia/update-tipo-incidencia.dto';
 
->>>>>>> 56ba60af9806ab17fa9dd2551616d39c4ecc114c
+// Comentario Incidencia DTOs
+export { CreateComentarioIncidenciaDto } from './comentario-incidencia/create-comentario-incidencia.dto';
+export { UpdateComentarioIncidenciaDto } from './comentario-incidencia/update-comentario-incidencia.dto';
+
+// Cronograma DTOs
+export { CreateCronogramaDto } from './cronograma/create-cronograma.dto';
+export { UpdateCronogramaDto } from './cronograma/update-cronograma.dto';
+
+// Residente DTOs
+export { CreateResidenteDto } from './residente/create-residente.dto';
+export { UpdateResidenteDto } from './residente/update-residente.dto';
+export { ResidenteRegisterResponseDto } from './residente/residente-register-response.dto';
