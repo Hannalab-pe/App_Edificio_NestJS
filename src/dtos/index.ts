@@ -57,3 +57,8 @@ export { UpdateVotacionDto } from './votacion/update-votacion.dto';
 // Encomienda DTOs
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
+
+// Trabajador DTOs
+export { CreateTrabajadorDto } from './trabajador/create-trabajador.dto';
+export { UpdateTrabajadorDto } from './trabajador/update-trabajador.dto';
+export { TrabajadorRegisterResponseDto } from './trabajador/trabajador-register-response.dto';

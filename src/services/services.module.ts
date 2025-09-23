@@ -1,9 +1,12 @@
 // services/services.module.ts
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EntitiesModule } from '../entities/entities.module';
 import {
   // Servicios principales
   UsuarioService,
+  AuthService,
   RolService,
   PropietarioService,
   PropiedadService,
@@ -66,12 +69,29 @@ import {
 } from './implementations';
 
 @Module({
-  imports: [EntitiesModule],
+  imports: [
+    EntitiesModule,
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key',
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '24h',
+        },
+      }),
+    }),
+  ],
   providers: [
     // Usando string tokens para interfaces - Servicios principales
     {
       provide: 'IUsuarioService',
       useClass: UsuarioService,
+    },
+    {
+      provide: 'IAuthService',
+      useClass: AuthService,
     },
     {
       provide: 'IRolService',
@@ -258,6 +278,7 @@ import {
 
     // También exportar las clases directas para casos específicos
     UsuarioService,
+    AuthService,
     RolService,
     PropietarioService,
     PropiedadService,
@@ -303,6 +324,7 @@ import {
   exports: [
     // String tokens para interfaces
     'IUsuarioService',
+    'IAuthService',
     'IRolService',
     'IPropietarioService',
     'IPropiedadService',
@@ -347,6 +369,7 @@ import {
 
     // Clases directas
     UsuarioService,
+    AuthService,
     RolService,
     PropietarioService,
     PropiedadService,
