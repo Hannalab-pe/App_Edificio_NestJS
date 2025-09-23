@@ -51,7 +51,7 @@ export class TrabajadorService implements ITrabajadorService {
 
     // Verificar si ya existe un documento con el mismo número
     try {
-      await this.documentoIdentidadService.findByNumero(createTrabajadorDto.numeroDocumento.toString());
+      await this.documentoIdentidadService.findByNumero(createTrabajadorDto.numeroDocumento);
       throw new ConflictException('Ya existe un documento de identidad con este número');
     } catch (error) {
       // Si no existe, continuamos (esto es lo esperado)

@@ -1,6 +1,6 @@
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
-import { CreateTipoContactoDto, UpdateTipoContactoDto } from 'src/dtos';
 import { TipoContacto } from '../../entities/TipoContacto';
+import { CreateTipoContactoDto, UpdateTipoContactoDto } from 'src/dtos';
 
 export interface ITipoContactoService {
     create(createTipoContactoDto: CreateTipoContactoDto): Promise<BaseResponseDto<TipoContacto>>;

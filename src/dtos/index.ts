@@ -38,6 +38,14 @@ export { UpdateDocumentoIdentidadDto } from './documento-identidad/update-docume
 export { CreateTipoDocumentoDto } from './tipo-documento/create-tipo-documento.dto';
 export { UpdateTipoDocumentoDto } from './tipo-documento/update-tipo-documento.dto';
 
+// Tipo Contrato DTOs
+export { CreateTipoContratoDto } from './tipo-contrato/create-tipo-contrato.dto';
+export { UpdateTipoContratoDto } from './tipo-contrato/update-tipo-contrato.dto';
+
+// Tipo Contacto DTOs
+export { CreateTipoContactoDto } from './tipo-contacto/create-tipo-contacto.dto';
+export { UpdateTipoContactoDto } from './tipo-contacto/update-tipo-contacto.dto';
+
 // Area Común DTOs
 export { CreateAreaComunDto } from './area-comun/create-area-comun.dto';
 export { UpdateAreaComunDto } from './area-comun/update-area-comun.dto';
@@ -45,6 +53,10 @@ export { UpdateAreaComunDto } from './area-comun/update-area-comun.dto';
 // Concepto Pago DTOs
 export { CreateConceptoPagoDto } from './concepto-pago/create-concepto-pago.dto';
 export { UpdateConceptoPagoDto } from './concepto-pago/update-concepto-pago.dto';
+
+// Tipo Espacio DTOs
+export { CreateTipoEspacioDto } from './tipo-espacio/create-tipo-espacio.dto';
+export { UpdateTipoEspacioDto } from './tipo-espacio/update-tipo-espacio.dto';
 
 // Espacio Arrendable DTOs
 export { CreateEspacioArrendableDto } from './espacio-arrendable/create-espacio-arrendable.dto';
@@ -67,3 +79,12 @@ export { TrabajadorRegisterResponseDto } from './trabajador/trabajador-register-
 // Presupuesto DTOs
 export { CreatePresupuestoDto } from './presupuesto/create-presupuesto.dto';
 export { UpdatePresupuestoDto } from './presupuesto/update-presupuesto.dto';
+
+// Tipo Cronograma DTOs
+export { CreateTipoCronogramaDto } from './tipo-cronograma/create-tipo-cronograma.dto';
+export { UpdateTipoCronogramaDto } from './tipo-cronograma/update-tipo-cronograma.dto';
+
+// Tipo Incidencia DTOs
+export { CreateTipoIncidenciaDto } from './tipo-incidencia/create-tipo-incidencia.dto';
+export { UpdateTipoIncidenciaDto } from './tipo-incidencia/update-tipo-incidencia.dto';
+
