@@ -18,7 +18,7 @@ export class ConceptoPago {
   descripcion: string | null;
 
   @Column("numeric", { name: "monto_base", precision: 10, scale: 2 })
-  montoBase: string;
+  montoBase: number;
 
   @Column("boolean", { name: "es_variable", default: () => "false" })
   esVariable: boolean;
