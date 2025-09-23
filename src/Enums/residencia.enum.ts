@@ -1,0 +1,6 @@
+export enum Residencia {
+    PROPIETARIO = 'PROPIETARIO',
+    INQUILINO = 'INQUILINO',
+    FAMILIAR = 'FAMILIAR',
+    OTRO = 'OTRO',
+}

@@ -1,0 +1,393 @@
+// services/services.module.ts
+import { Module } from '@nestjs/common';
+import { EntitiesModule } from '../entities/entities.module';
+import {
+  // Servicios principales
+  UsuarioService,
+  RolService,
+  PropietarioService,
+  PropiedadService,
+
+  // Servicios de gestión
+  IncidenciaService,
+  NotificacionService,
+  PagoService,
+  DocumentoService,
+  DocumentoIdentidadService,
+
+  // Servicios de áreas y espacios
+  AreaComunService,
+  EspacioArrendableService,
+  ReservaService,
+  ArrendamientoEspacioService,
+
+  // Servicios de usuarios
+  ResidenteService,
+  TrabajadorService,
+  UsuarioExternoService,
+  VisitaService,
+
+  // Servicios financieros
+  ConceptoPagoService,
+  ReciboService,
+  PresupuestooService,
+  CajaService,
+  MovimientoCajaService,
+
+  // Servicios de gestión administrativa
+  MantenimientoService,
+  VotacionService,
+  VotoService,
+  OpcionVotoService,
+  JuntaPropietariosService,
+
+  // Servicios de comunicación
+  MensajePrivadoService,
+  ComentarioIncidenciaService,
+  EncomiendaService,
+
+  // Servicios de contratos
+  ContratoService,
+  HistorialContratoService,
+  CronogramaService,
+
+  // Servicios de tipos
+  TipoDocumentoService,
+  TipoIncidenciaService,
+  TipoContratoService,
+  TipoCroongramaService,
+  TipoEspacioService,
+  TipoContactoService,
+
+  // Servicios de relaciones
+  ContactoService,
+  PropiedadPropietarioService,
+  ResidenciaService
+} from './implementations';
+
+@Module({
+  imports: [EntitiesModule],
+  providers: [
+    // Usando string tokens para interfaces - Servicios principales
+    {
+      provide: 'IUsuarioService',
+      useClass: UsuarioService,
+    },
+    {
+      provide: 'IRolService',
+      useClass: RolService,
+    },
+    {
+      provide: 'IPropietarioService',
+      useClass: PropietarioService,
+    },
+    {
+      provide: 'IPropiedadService',
+      useClass: PropiedadService,
+    },
+
+    // Servicios de gestión
+    {
+      provide: 'IIncidenciaService',
+      useClass: IncidenciaService,
+    },
+    {
+      provide: 'INotificacionService',
+      useClass: NotificacionService,
+    },
+    {
+      provide: 'IPagoService',
+      useClass: PagoService,
+    },
+    {
+      provide: 'IDocumentoService',
+      useClass: DocumentoService,
+    },
+    {
+      provide: 'IDocumentoIdentidadService',
+      useClass: DocumentoIdentidadService,
+    },
+
+    // Servicios de áreas y espacios
+    {
+      provide: 'IAreaComunService',
+      useClass: AreaComunService,
+    },
+    {
+      provide: 'IEspacioArrendableService',
+      useClass: EspacioArrendableService,
+    },
+    {
+      provide: 'IReservaService',
+      useClass: ReservaService,
+    },
+    {
+      provide: 'IArrendamientoEspacioService',
+      useClass: ArrendamientoEspacioService,
+    },
+
+    // Servicios de usuarios
+    {
+      provide: 'IResidenteService',
+      useClass: ResidenteService,
+    },
+    {
+      provide: 'ITrabajadorService',
+      useClass: TrabajadorService,
+    },
+    {
+      provide: 'IUsuarioExternoService',
+      useClass: UsuarioExternoService,
+    },
+    {
+      provide: 'IVisitaService',
+      useClass: VisitaService,
+    },
+
+    // Servicios financieros
+    {
+      provide: 'IConceptoPagoService',
+      useClass: ConceptoPagoService,
+    },
+    {
+      provide: 'IReciboService',
+      useClass: ReciboService,
+    },
+    {
+      provide: 'IPresupuestoService',
+      useClass: PresupuestooService,
+    },
+    {
+      provide: 'ICajaService',
+      useClass: CajaService,
+    },
+    {
+      provide: 'IMovimientoCajaService',
+      useClass: MovimientoCajaService,
+    },
+
+    // Servicios de gestión administrativa
+    {
+      provide: 'IMantenimientoService',
+      useClass: MantenimientoService,
+    },
+    {
+      provide: 'IVotacionService',
+      useClass: VotacionService,
+    },
+    {
+      provide: 'IVotoService',
+      useClass: VotoService,
+    },
+    {
+      provide: 'IOpcionVotoService',
+      useClass: OpcionVotoService,
+    },
+    {
+      provide: 'IJuntaPropietariosService',
+      useClass: JuntaPropietariosService,
+    },
+
+    // Servicios de comunicación
+    {
+      provide: 'IMensajePrivadoService',
+      useClass: MensajePrivadoService,
+    },
+    {
+      provide: 'IComentarioIncidenciaService',
+      useClass: ComentarioIncidenciaService,
+    },
+    {
+      provide: 'IEncomiendaService',
+      useClass: EncomiendaService,
+    },
+
+    // Servicios de contratos
+    {
+      provide: 'IContratoService',
+      useClass: ContratoService,
+    },
+    {
+      provide: 'IHistorialContratoService',
+      useClass: HistorialContratoService,
+    },
+    {
+      provide: 'ICronogramaService',
+      useClass: CronogramaService,
+    },
+
+    // Servicios de tipos
+    {
+      provide: 'ITipoDocumentoService',
+      useClass: TipoDocumentoService,
+    },
+    {
+      provide: 'ITipoIncidenciaService',
+      useClass: TipoIncidenciaService,
+    },
+    {
+      provide: 'ITipoContratoService',
+      useClass: TipoContratoService,
+    },
+    {
+      provide: 'ITipoCronogramaService',
+      useClass: TipoCroongramaService,
+    },
+    {
+      provide: 'ITipoEspacioService',
+      useClass: TipoEspacioService,
+    },
+    {
+      provide: 'ITipoContactoService',
+      useClass: TipoContactoService,
+    },
+
+    // Servicios de relaciones
+    {
+      provide: 'IContactoService',
+      useClass: ContactoService,
+    },
+    {
+      provide: 'IPropiedadPropietarioService',
+      useClass: PropiedadPropietarioService,
+    },
+    {
+      provide: 'IResidenciaService',
+      useClass: ResidenciaService,
+    },
+
+    // También exportar las clases directas para casos específicos
+    UsuarioService,
+    RolService,
+    PropietarioService,
+    PropiedadService,
+    IncidenciaService,
+    NotificacionService,
+    PagoService,
+    DocumentoService,
+    DocumentoIdentidadService,
+    AreaComunService,
+    EspacioArrendableService,
+    ReservaService,
+    ArrendamientoEspacioService,
+    ResidenteService,
+    TrabajadorService,
+    UsuarioExternoService,
+    VisitaService,
+    ConceptoPagoService,
+    ReciboService,
+    PresupuestooService,
+    CajaService,
+    MovimientoCajaService,
+    MantenimientoService,
+    VotacionService,
+    VotoService,
+    OpcionVotoService,
+    JuntaPropietariosService,
+    MensajePrivadoService,
+    ComentarioIncidenciaService,
+    EncomiendaService,
+    ContratoService,
+    HistorialContratoService,
+    CronogramaService,
+    TipoDocumentoService,
+    TipoIncidenciaService,
+    TipoContratoService,
+    TipoCroongramaService,
+    TipoEspacioService,
+    TipoContactoService,
+    ContactoService,
+    PropiedadPropietarioService,
+    ResidenciaService,
+  ],
+  exports: [
+    // String tokens para interfaces
+    'IUsuarioService',
+    'IRolService',
+    'IPropietarioService',
+    'IPropiedadService',
+    'IIncidenciaService',
+    'INotificacionService',
+    'IPagoService',
+    'IDocumentoService',
+    'IDocumentoIdentidadService',
+    'IAreaComunService',
+    'IEspacioArrendableService',
+    'IReservaService',
+    'IArrendamientoEspacioService',
+    'IResidenteService',
+    'ITrabajadorService',
+    'IUsuarioExternoService',
+    'IVisitaService',
+    'IConceptoPagoService',
+    'IReciboService',
+    'IPresupuestoService',
+    'ICajaService',
+    'IMovimientoCajaService',
+    'IMantenimientoService',
+    'IVotacionService',
+    'IVotoService',
+    'IOpcionVotoService',
+    'IJuntaPropietariosService',
+    'IMensajePrivadoService',
+    'IComentarioIncidenciaService',
+    'IEncomiendaService',
+    'IContratoService',
+    'IHistorialContratoService',
+    'ICronogramaService',
+    'ITipoDocumentoService',
+    'ITipoIncidenciaService',
+    'ITipoContratoService',
+    'ITipoCronogramaService',
+    'ITipoEspacioService',
+    'ITipoContactoService',
+    'IContactoService',
+    'IPropiedadPropietarioService',
+    'IResidenciaService',
+
+    // Clases directas
+    UsuarioService,
+    RolService,
+    PropietarioService,
+    PropiedadService,
+    IncidenciaService,
+    NotificacionService,
+    PagoService,
+    DocumentoService,
+    DocumentoIdentidadService,
+    AreaComunService,
+    EspacioArrendableService,
+    ReservaService,
+    ArrendamientoEspacioService,
+    ResidenteService,
+    TrabajadorService,
+    UsuarioExternoService,
+    VisitaService,
+    ConceptoPagoService,
+    ReciboService,
+    PresupuestooService,
+    CajaService,
+    MovimientoCajaService,
+    MantenimientoService,
+    VotacionService,
+    VotoService,
+    OpcionVotoService,
+    JuntaPropietariosService,
+    MensajePrivadoService,
+    ComentarioIncidenciaService,
+    EncomiendaService,
+    ContratoService,
+    HistorialContratoService,
+    CronogramaService,
+    TipoDocumentoService,
+    TipoIncidenciaService,
+    TipoContratoService,
+    TipoCroongramaService,
+    TipoEspacioService,
+    TipoContactoService,
+    ContactoService,
+    PropiedadPropietarioService,
+    ResidenciaService,
+  ]
+})
+export class ServicesModule { }
