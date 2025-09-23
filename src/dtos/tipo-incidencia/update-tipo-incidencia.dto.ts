@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsEnum, IsHexColor } from 'class-validator';
 import { PrioridadIncidencia } from '../../Enums/inicidencias.enum';
@@ -39,3 +40,9 @@ export class UpdateTipoIncidenciaDto {
     @IsHexColor({ message: 'El color debe ser un código hexadecimal válido (ejemplo: #E91E63)' })
     colorHex?: string;
 }
+=======
+import { PartialType } from '@nestjs/swagger';
+import { CreateTipoIncidenciaDto } from './create-tipo-incidencia.dto';
+
+export class UpdateTipoIncidenciaDto extends PartialType(CreateTipoIncidenciaDto) {}
+>>>>>>> 56ba60af9806ab17fa9dd2551616d39c4ecc114c

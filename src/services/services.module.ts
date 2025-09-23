@@ -58,7 +58,7 @@ import {
   TipoDocumentoService,
   TipoIncidenciaService,
   TipoContratoService,
-  TipoCroongramaService,
+  TipoCronogramaService,
   TipoEspacioService,
   TipoContactoService,
 
@@ -251,7 +251,7 @@ import {
     },
     {
       provide: 'ITipoCronogramaService',
-      useClass: TipoCroongramaService,
+      useClass: TipoCronogramaService,
     },
     {
       provide: 'ITipoEspacioService',
@@ -314,7 +314,7 @@ import {
     TipoDocumentoService,
     TipoIncidenciaService,
     TipoContratoService,
-    TipoCroongramaService,
+    TipoCronogramaService,
     TipoEspacioService,
     TipoContactoService,
     ContactoService,
@@ -405,7 +405,7 @@ import {
     TipoDocumentoService,
     TipoIncidenciaService,
     TipoContratoService,
-    TipoCroongramaService,
+    TipoCronogramaService,
     TipoEspacioService,
     TipoContactoService,
     ContactoService,
