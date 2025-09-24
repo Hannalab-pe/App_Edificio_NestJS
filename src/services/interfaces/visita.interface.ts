@@ -14,4 +14,7 @@ export interface IVisitaService {
   findByEstado(estado: string): Promise<Visita[]>;
   findByPropiedad(propiedadId: string): Promise<Visita[]>;
   findByFechaRange(fechaInicio: Date, fechaFin: Date): Promise<Visita[]>;
+  findByUsuarioAutorizador(usuarioId: string): Promise<Visita[]>;
+  registrarIngreso(codigoQr: string): Promise<Visita>;
+  registrarSalida(codigoQr: string): Promise<Visita>;
 }

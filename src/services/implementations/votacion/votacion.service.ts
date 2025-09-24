@@ -25,14 +25,22 @@ export class VotacionService implements IVotacionService {
   ) {}
 
   async create(createVotacionDto: CreateVotacionDto): Promise<Votacion> {
-    // Validar que el usuario creador existe
+    // Validar que el usuario creador existe y cargar su rol
     const usuarioCreador = await this.usuarioRepository.findOne({
-      where: { idUsuario: createVotacionDto.creadoPorUsuario },
+      where: { idUsuario: createVotacionDto.creadoPorUsuario, estaActivo: true },
+      relations: ['idRol'],
     });
 
     if (!usuarioCreador) {
       throw new NotFoundException(
-        `Usuario con ID ${createVotacionDto.creadoPorUsuario} no encontrado`,
+        `Usuario con ID ${createVotacionDto.creadoPorUsuario} no encontrado o inactivo`,
+      );
+    }
+
+    // Validar que el usuario tiene rol de administrador
+    if (!usuarioCreador.idRol || usuarioCreador.idRol.nombre !== 'Administrador') {
+      throw new BadRequestException(
+        'Solo los usuarios con rol de Administrador pueden crear votaciones',
       );
     }
 
