@@ -14,6 +14,7 @@ import { Encomienda } from './Encomienda';
 import { Incidencia } from './Incidencia';
 import { DocumentoIdentidad } from './DocumentoIdentidad';
 import { Usuario } from './Usuario';
+import { Edificio } from './Edificio';
 
 @Index('idx_trabajador_correo', ['correo'], {})
 @Index('trabajador_pkey', ['idTrabajador'], { unique: true })
@@ -88,4 +89,7 @@ export class Trabajador {
   @ManyToOne(() => Usuario, (usuario) => usuario.trabajadors)
   @JoinColumn([{ name: 'id_usuario', referencedColumnName: 'idUsuario' }])
   idUsuario: Usuario;
+
+  @OneToMany(() => Edificio, (edificio) => edificio.idAdministradorEdificio)
+  edificios: Edificio[];
 }
