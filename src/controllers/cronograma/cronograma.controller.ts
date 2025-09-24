@@ -11,15 +11,8 @@ import {
   Inject,
   Query,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiBody,
-  ApiQuery,
-} from '@nestjs/swagger';
-import { CreateCronogramaDto, UpdateCronogramaDto } from '../../dtos';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { CreateCronogramaDto, UpdateCronogramaDto, CronogramaRegisterResponseDto } from '../../dtos';
 import { Cronograma } from '../../entities/Cronograma';
 import { ICronogramaService } from '../../services/interfaces/cronograma.interface';
 
@@ -44,15 +37,13 @@ export class CronogramaController {
   @ApiResponse({
     status: 201,
     description: 'Cronograma creado exitosamente',
-    type: Cronograma,
+    type: CronogramaRegisterResponseDto
   })
   @ApiResponse({
     status: 400,
     description: 'Datos inválidos o fecha de fin anterior a fecha de inicio',
   })
-  async create(
-    @Body() createCronogramaDto: CreateCronogramaDto,
-  ): Promise<Cronograma> {
+  async create(@Body() createCronogramaDto: CreateCronogramaDto): Promise<CronogramaRegisterResponseDto> {
     return await this.cronogramaService.create(createCronogramaDto);
   }
 
