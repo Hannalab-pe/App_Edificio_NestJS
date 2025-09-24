@@ -17,11 +17,11 @@ export { AreaComunService } from './area-comun/area-comun.service';
 export { EspacioArrendableService } from './espacio-arrendable/espacio-arrendable.service';
 export { ReservaService } from './reserva/reserva.service';
 export { ArrendamientoEspacioService } from './arrendamiento-espacio/arrendamiento-espacio.service';
+export { ArrendatarioService } from './arrendatario/arrendatario.service';
 
 // Servicios de usuarios
 export { ResidenteService } from './residente/residente.service';
 export { TrabajadorService } from './trabajador/trabajador.service';
-export { UsuarioExternoService } from './usuario-externo/usuario-externo.service';
 export { VisitaService } from './visita/visita.service';
 
 // Servicios financieros

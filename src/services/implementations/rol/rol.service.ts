@@ -103,24 +103,24 @@ export class RolService implements IRolService {
       const defaultRoles = [
         {
           nombre: 'Administrador',
-          descripcion: 'Administrador del sistema con acceso completo'
+          descripcion: 'Administrador del sistema con acceso completo',
         },
         {
           nombre: 'Propietario',
-          descripcion: 'Propietario de una unidad en el edificio'
+          descripcion: 'Propietario de una unidad en el edificio',
         },
         {
           nombre: 'Residente',
-          descripcion: 'Residente que vive en una unidad del edificio'
+          descripcion: 'Residente que vive en una unidad del edificio',
         },
         {
           nombre: 'Portero',
-          descripcion: 'Personal de portería y seguridad'
+          descripcion: 'Personal de portería y seguridad',
         },
         {
           nombre: 'Conserje',
-          descripcion: 'Personal de mantenimiento y servicios'
-        }
+          descripcion: 'Personal de mantenimiento y servicios',
+        },
       ];
 
       for (const rolData of defaultRoles) {

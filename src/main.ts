@@ -30,7 +30,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Ejecutar seeders al iniciar la aplicación
-  
 
   await app.listen(process.env.PORT ?? 3000);
 }

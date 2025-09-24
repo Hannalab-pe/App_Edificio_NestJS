@@ -1,4 +1,10 @@
-import { Injectable, Inject, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { IResidenteService } from '../../interfaces/residente.interface';
@@ -9,7 +15,12 @@ import { IDocumentoIdentidadService } from '../../interfaces/documento-identidad
 import { Residente } from '../../../entities/Residente';
 import { Usuario } from '../../../entities/Usuario';
 import { DocumentoIdentidad } from '../../../entities/DocumentoIdentidad';
-import { CreateResidenteDto, UpdateResidenteDto, ResidenteRegisterResponseDto, CreateUsuarioDto } from '../../../dtos';
+import {
+  CreateResidenteDto,
+  UpdateResidenteDto,
+  ResidenteRegisterResponseDto,
+  CreateUsuarioDto,
+} from '../../../dtos';
 
 @Injectable()
 export class ResidenteService implements IResidenteService {
@@ -37,22 +48,34 @@ export class ResidenteService implements IResidenteService {
    * Registrar un nuevo residente con usuario y documento de identidad
    * Utiliza transacción para asegurar consistencia
    */
-  async register(createResidenteDto: CreateResidenteDto): Promise<ResidenteRegisterResponseDto> {
+  async register(
+    createResidenteDto: CreateResidenteDto,
+  ): Promise<ResidenteRegisterResponseDto> {
     // Validar que las contraseñas coincidan
-    if (createResidenteDto.contrasena !== createResidenteDto.confirmarContrasena) {
+    if (
+      createResidenteDto.contrasena !== createResidenteDto.confirmarContrasena
+    ) {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
 
     // Verificar si el correo ya está registrado
-    const emailExists = await this.usuarioService.emailExists(createResidenteDto.correo);
+    const emailExists = await this.usuarioService.emailExists(
+      createResidenteDto.correo,
+    );
     if (emailExists) {
-      throw new ConflictException('Ya existe un usuario con este correo electrónico');
+      throw new ConflictException(
+        'Ya existe un usuario con este correo electrónico',
+      );
     }
 
     // Verificar si ya existe un documento con el mismo número
     try {
-      await this.documentoIdentidadService.findByNumero(createResidenteDto.numeroDocumento.toString());
-      throw new ConflictException('Ya existe un documento de identidad con este número');
+      await this.documentoIdentidadService.findByNumero(
+        createResidenteDto.numeroDocumento.toString(),
+      );
+      throw new ConflictException(
+        'Ya existe un documento de identidad con este número',
+      );
     } catch (error) {
       // Si no existe, continuamos (esto es lo esperado)
       if (error instanceof ConflictException) {
@@ -76,18 +99,26 @@ export class ResidenteService implements IResidenteService {
           // Si no existe el rol Residente, usar el primer rol disponible
           const roles = await this.rolService.findAll();
           if (roles.length === 0) {
-            throw new BadRequestException('No hay roles disponibles en el sistema');
+            throw new BadRequestException(
+              'No hay roles disponibles en el sistema',
+            );
           }
           rolId = roles[0].idRol;
         }
       }
 
       // 1. Crear documento de identidad
-      const documentoIdentidad = queryRunner.manager.create(DocumentoIdentidad, {
-        tipoDocumento: createResidenteDto.tipoDocumento,
-        numero: createResidenteDto.numeroDocumento,
-      });
-      const savedDocumentoIdentidad = await queryRunner.manager.save(DocumentoIdentidad, documentoIdentidad);
+      const documentoIdentidad = queryRunner.manager.create(
+        DocumentoIdentidad,
+        {
+          tipoDocumento: createResidenteDto.tipoDocumento,
+          numero: createResidenteDto.numeroDocumento,
+        },
+      );
+      const savedDocumentoIdentidad = await queryRunner.manager.save(
+        DocumentoIdentidad,
+        documentoIdentidad,
+      );
 
       // 2. Crear usuario
       const createUsuarioDto: CreateUsuarioDto = {
@@ -97,7 +128,9 @@ export class ResidenteService implements IResidenteService {
       };
 
       // Hashear la contraseña antes de guardar
-      const hashedPassword = await this.authService.hashPassword(createResidenteDto.contrasena);
+      const hashedPassword = await this.authService.hashPassword(
+        createResidenteDto.contrasena,
+      );
 
       const usuario = queryRunner.manager.create(Usuario, {
         correo: createUsuarioDto.correo,
@@ -118,7 +151,10 @@ export class ResidenteService implements IResidenteService {
         idDocumentoIdentidad: savedDocumentoIdentidad,
         idUsuario: savedUsuario,
       });
-      const savedResidente = await queryRunner.manager.save(Residente, residente);
+      const savedResidente = await queryRunner.manager.save(
+        Residente,
+        residente,
+      );
 
       // Confirmar transacción
       await queryRunner.commitTransaction();
@@ -138,16 +174,20 @@ export class ResidenteService implements IResidenteService {
         residente: residenteConRelaciones!,
         accessToken: loginResult.access_token,
       };
-
     } catch (error) {
       // Rollback en caso de error
       await queryRunner.rollbackTransaction();
 
-      if (error instanceof BadRequestException || error instanceof ConflictException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ConflictException
+      ) {
         throw error;
       }
 
-      throw new BadRequestException(`Error al registrar residente: ${error.message}`);
+      throw new BadRequestException(
+        `Error al registrar residente: ${error.message}`,
+      );
     } finally {
       // Liberar la conexión
       await queryRunner.release();
@@ -158,15 +198,20 @@ export class ResidenteService implements IResidenteService {
     return await this.residenteRepository.find({
       relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias'],
       order: {
-        fechaRegistro: 'DESC'
-      }
+        fechaRegistro: 'DESC',
+      },
     });
   }
 
   async findOne(id: string): Promise<Residente> {
     const residente = await this.residenteRepository.findOne({
       where: { idResidente: id },
-      relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+      relations: [
+        'idUsuario',
+        'idDocumentoIdentidad',
+        'residencias',
+        'cronogramas',
+      ],
     });
 
     if (!residente) {
@@ -176,7 +221,10 @@ export class ResidenteService implements IResidenteService {
     return residente;
   }
 
-  async update(id: string, updateResidenteDto: UpdateResidenteDto): Promise<Residente> {
+  async update(
+    id: string,
+    updateResidenteDto: UpdateResidenteDto,
+  ): Promise<Residente> {
     await this.findOne(id);
 
     const updateData: any = {};
@@ -209,7 +257,9 @@ export class ResidenteService implements IResidenteService {
 
     // También desactivar el usuario asociado
     if (residente.idUsuario) {
-      await this.usuarioService.update(residente.idUsuario.idUsuario, { estaActivo: false });
+      await this.usuarioService.update(residente.idUsuario.idUsuario, {
+        estaActivo: false,
+      });
     }
   }
 
@@ -230,12 +280,16 @@ export class ResidenteService implements IResidenteService {
       .createQueryBuilder('residente')
       .leftJoinAndSelect('residente.idDocumentoIdentidad', 'documentoIdentidad')
       .leftJoinAndSelect('residente.idUsuario', 'usuario')
-      .where('documentoIdentidad.numero = :numeroDocumento', { numeroDocumento: parseInt(numeroDocumento) })
+      .where('documentoIdentidad.numero = :numeroDocumento', {
+        numeroDocumento: parseInt(numeroDocumento),
+      })
       .andWhere('residente.estaActivo = :activo', { activo: true })
       .getOne();
 
     if (!residente) {
-      throw new NotFoundException(`Residente con número de documento ${numeroDocumento} no encontrado`);
+      throw new NotFoundException(
+        `Residente con número de documento ${numeroDocumento} no encontrado`,
+      );
     }
 
     return residente;
@@ -245,13 +299,15 @@ export class ResidenteService implements IResidenteService {
     const residente = await this.residenteRepository.findOne({
       where: {
         correo,
-        estaActivo: true
+        estaActivo: true,
       },
       relations: ['idUsuario', 'idDocumentoIdentidad'],
     });
 
     if (!residente) {
-      throw new NotFoundException(`Residente con correo ${correo} no encontrado`);
+      throw new NotFoundException(
+        `Residente con correo ${correo} no encontrado`,
+      );
     }
 
     return residente;

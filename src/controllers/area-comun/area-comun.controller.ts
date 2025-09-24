@@ -9,9 +9,16 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  Inject
+  Inject,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { CreateAreaComunDto, UpdateAreaComunDto } from '../../dtos';
 import { AreaComun } from '../../entities/AreaComun';
 import { IAreaComunService } from '../../services/interfaces/area-comun.interface';
@@ -28,34 +35,36 @@ export class AreaComunController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Crear una nueva área común',
-    description: 'Crea una nueva área común en el edificio'
+    description: 'Crea una nueva área común en el edificio',
   })
   @ApiBody({
     type: CreateAreaComunDto,
-    description: 'Datos del área común a crear'
+    description: 'Datos del área común a crear',
   })
   @ApiResponse({
     status: 201,
     description: 'Área común creada exitosamente',
-    type: AreaComun
+    type: AreaComun,
   })
   @ApiResponse({
     status: 400,
-    description: 'Datos inválidos'
+    description: 'Datos inválidos',
   })
-  async create(@Body() createAreaComunDto: CreateAreaComunDto): Promise<AreaComun> {
+  async create(
+    @Body() createAreaComunDto: CreateAreaComunDto,
+  ): Promise<AreaComun> {
     return await this.areaComunService.create(createAreaComunDto);
   }
 
   @Get()
   @ApiOperation({
     summary: 'Obtener todas las áreas comunes',
-    description: 'Retorna una lista de todas las áreas comunes del edificio'
+    description: 'Retorna una lista de todas las áreas comunes del edificio',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de áreas comunes obtenida exitosamente',
-    type: [AreaComun]
+    type: [AreaComun],
   })
   async findAll(): Promise<AreaComun[]> {
     return await this.areaComunService.findAll();
@@ -64,21 +73,21 @@ export class AreaComunController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un área común por ID',
-    description: 'Retorna un área común específica por su ID'
+    description: 'Retorna un área común específica por su ID',
   })
   @ApiParam({
     name: 'id',
     description: 'ID único del área común',
-    example: '123e4567-e89b-12d3-a456-426614174000'
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
     status: 200,
     description: 'Área común encontrada exitosamente',
-    type: AreaComun
+    type: AreaComun,
   })
   @ApiResponse({
     status: 404,
-    description: 'Área común no encontrada'
+    description: 'Área común no encontrada',
   })
   async findOne(@Param('id') id: string): Promise<AreaComun> {
     return await this.areaComunService.findOne(id);
@@ -87,17 +96,18 @@ export class AreaComunController {
   @Get('estado/:estado')
   @ApiOperation({
     summary: 'Obtener áreas comunes por estado',
-    description: 'Retorna una lista de áreas comunes filtradas por su estado (activo/inactivo)'
+    description:
+      'Retorna una lista de áreas comunes filtradas por su estado (activo/inactivo)',
   })
   @ApiParam({
     name: 'estado',
     description: 'Estado del área común (true = activo, false = inactivo)',
-    example: 'true'
+    example: 'true',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de áreas comunes por estado obtenida exitosamente',
-    type: [AreaComun]
+    type: [AreaComun],
   })
   async findByEstado(@Param('estado') estado: string): Promise<AreaComun[]> {
     const estadoBoolean = estado.toLowerCase() === 'true';
@@ -107,12 +117,13 @@ export class AreaComunController {
   @Get('disponibles/activas')
   @ApiOperation({
     summary: 'Obtener áreas comunes disponibles',
-    description: 'Retorna una lista de todas las áreas comunes activas/disponibles'
+    description:
+      'Retorna una lista de todas las áreas comunes activas/disponibles',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de áreas comunes disponibles obtenida exitosamente',
-    type: [AreaComun]
+    type: [AreaComun],
   })
   async findAvailable(): Promise<AreaComun[]> {
     return await this.areaComunService.findAvailable();
@@ -121,19 +132,22 @@ export class AreaComunController {
   @Get('capacidad/:capacidadMinima')
   @ApiOperation({
     summary: 'Obtener áreas comunes por capacidad mínima',
-    description: 'Retorna áreas comunes que tienen al menos la capacidad especificada'
+    description:
+      'Retorna áreas comunes que tienen al menos la capacidad especificada',
   })
   @ApiParam({
     name: 'capacidadMinima',
     description: 'Capacidad mínima requerida',
-    example: '50'
+    example: '50',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de áreas comunes por capacidad obtenida exitosamente',
-    type: [AreaComun]
+    type: [AreaComun],
   })
-  async findByCapacidad(@Param('capacidadMinima') capacidadMinima: string): Promise<AreaComun[]> {
+  async findByCapacidad(
+    @Param('capacidadMinima') capacidadMinima: string,
+  ): Promise<AreaComun[]> {
     const capacidad = parseInt(capacidadMinima);
     return await this.areaComunService.findByCapacidad(capacidad);
   }
@@ -141,19 +155,22 @@ export class AreaComunController {
   @Get('precio/:precioMaximo')
   @ApiOperation({
     summary: 'Obtener áreas comunes por precio máximo',
-    description: 'Retorna áreas comunes que cuestan máximo el precio especificado'
+    description:
+      'Retorna áreas comunes que cuestan máximo el precio especificado',
   })
   @ApiParam({
     name: 'precioMaximo',
     description: 'Precio máximo de reserva',
-    example: '200'
+    example: '200',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de áreas comunes por precio obtenida exitosamente',
-    type: [AreaComun]
+    type: [AreaComun],
   })
-  async findByPrecio(@Param('precioMaximo') precioMaximo: string): Promise<AreaComun[]> {
+  async findByPrecio(
+    @Param('precioMaximo') precioMaximo: string,
+  ): Promise<AreaComun[]> {
     const precio = parseFloat(precioMaximo);
     return await this.areaComunService.findByPrecio(precio);
   }
@@ -161,29 +178,29 @@ export class AreaComunController {
   @Put(':id')
   @ApiOperation({
     summary: 'Actualizar un área común',
-    description: 'Actualiza los datos de un área común existente'
+    description: 'Actualiza los datos de un área común existente',
   })
   @ApiParam({
     name: 'id',
     description: 'ID único del área común',
-    example: '123e4567-e89b-12d3-a456-426614174000'
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiBody({
     type: UpdateAreaComunDto,
-    description: 'Datos del área común a actualizar'
+    description: 'Datos del área común a actualizar',
   })
   @ApiResponse({
     status: 200,
     description: 'Área común actualizada exitosamente',
-    type: AreaComun
+    type: AreaComun,
   })
   @ApiResponse({
     status: 404,
-    description: 'Área común no encontrada'
+    description: 'Área común no encontrada',
   })
   async update(
     @Param('id') id: string,
-    @Body() updateAreaComunDto: UpdateAreaComunDto
+    @Body() updateAreaComunDto: UpdateAreaComunDto,
   ): Promise<AreaComun> {
     return await this.areaComunService.update(id, updateAreaComunDto);
   }
@@ -192,20 +209,20 @@ export class AreaComunController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Eliminar un área común (eliminación lógica)',
-    description: 'Elimina lógicamente un área común marcándola como inactiva'
+    description: 'Elimina lógicamente un área común marcándola como inactiva',
   })
   @ApiParam({
     name: 'id',
     description: 'ID único del área común',
-    example: '123e4567-e89b-12d3-a456-426614174000'
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
     status: 204,
-    description: 'Área común eliminada exitosamente'
+    description: 'Área común eliminada exitosamente',
   })
   @ApiResponse({
     status: 404,
-    description: 'Área común no encontrada'
+    description: 'Área común no encontrada',
   })
   async remove(@Param('id') id: string): Promise<void> {
     return await this.areaComunService.remove(id);

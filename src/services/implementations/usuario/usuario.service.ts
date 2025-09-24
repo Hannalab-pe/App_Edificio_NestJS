@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IUsuarioService } from '../../interfaces/usuario.interface';
@@ -19,11 +23,13 @@ export class UsuarioService implements IUsuarioService {
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
     // Verificar si el correo ya existe
     const existingUser = await this.usuarioRepository.findOne({
-      where: { correo: createUsuarioDto.correo }
+      where: { correo: createUsuarioDto.correo },
     });
 
     if (existingUser) {
-      throw new ConflictException('Ya existe un usuario con este correo electrónico');
+      throw new ConflictException(
+        'Ya existe un usuario con este correo electrónico',
+      );
     }
 
     // Crear el nuevo usuario con la estructura correcta
@@ -85,18 +91,23 @@ export class UsuarioService implements IUsuarioService {
   /**
    * Actualizar un usuario
    */
-  async update(id: string, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario> {
+  async update(
+    id: string,
+    updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<Usuario> {
     // Verificar que el usuario existe
     const usuario = await this.findOne(id);
 
     // Si se está actualizando el correo, verificar que no esté en uso
     if (updateUsuarioDto.correo && updateUsuarioDto.correo !== usuario.correo) {
       const existingUser = await this.usuarioRepository.findOne({
-        where: { correo: updateUsuarioDto.correo }
+        where: { correo: updateUsuarioDto.correo },
       });
 
       if (existingUser) {
-        throw new ConflictException('Ya existe un usuario con este correo electrónico');
+        throw new ConflictException(
+          'Ya existe un usuario con este correo electrónico',
+        );
       }
     }
 
@@ -145,7 +156,7 @@ export class UsuarioService implements IUsuarioService {
    */
   async emailExists(email: string): Promise<boolean> {
     const count = await this.usuarioRepository.count({
-      where: { correo: email }
+      where: { correo: email },
     });
 
     return count > 0;

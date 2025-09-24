@@ -39,60 +39,58 @@ import { TipoEspacio } from './TipoEspacio';
 import { TipoIncidencia } from './TipoIncidencia';
 import { Trabajador } from './Trabajador';
 import { Usuario } from './Usuario';
-import { UsuarioExterno } from './UsuarioExterno';
 import { Visita } from './Visita';
 import { Votacion } from './Votacion';
 import { Voto } from './Voto';
+import { Arrendatario } from './Arrendatario';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([
-            AreaComun,
-            ArrendamientoEspacio,
-            Caja,
-            ComentarioIncidencia,
-            ConceptoPago,
-            Contacto,
-            Contrato,
-            Cronograma,
-            Documento,
-            DocumentoIdentidad,
-            Encomienda,
-            EspacioArrendable,
-            HistorialContrato,
-            Incidencia,
-            JuntaPropietarios,
-            Mantenimiento,
-            MensajePrivado,
-            MovimientoCaja,
-            Notificacion,
-            OpcionVoto,
-            Pago,
-            Presupuesto,
-            Propiedad,
-            PropiedadPropietario,
-            Propietario,
-            Recibo,
-            Reserva,
-            Residencia,
-            Residente,
-            Rol,
-            TipoContacto,
-            TipoContrato,
-            TipoCronograma,
-            TipoDocumento,
-            TipoEspacio,
-            TipoIncidencia,
-            Trabajador,
-            Usuario,
-            UsuarioExterno,
-            Visita,
-            Votacion,
-            Voto
-        ])
-    ],
-    exports: [
-        TypeOrmModule
-    ]
+  imports: [
+    TypeOrmModule.forFeature([
+      AreaComun,
+      ArrendamientoEspacio,
+      Caja,
+      ComentarioIncidencia,
+      ConceptoPago,
+      Arrendatario,
+      Contacto,
+      Contrato,
+      Cronograma,
+      Documento,
+      DocumentoIdentidad,
+      Encomienda,
+      EspacioArrendable,
+      HistorialContrato,
+      Incidencia,
+      JuntaPropietarios,
+      Mantenimiento,
+      MensajePrivado,
+      MovimientoCaja,
+      Notificacion,
+      OpcionVoto,
+      Pago,
+      Presupuesto,
+      Propiedad,
+      PropiedadPropietario,
+      Propietario,
+      Recibo,
+      Reserva,
+      Residencia,
+      Residente,
+      Rol,
+      TipoContacto,
+      TipoContrato,
+      TipoCronograma,
+      TipoDocumento,
+      TipoEspacio,
+      TipoIncidencia,
+      Trabajador,
+      Usuario,
+      Visita,
+      Votacion,
+      Voto,
+    ]),
+  ],
+  exports: [TypeOrmModule],
 })
-export class EntitiesModule { }
+export class EntitiesModule {}

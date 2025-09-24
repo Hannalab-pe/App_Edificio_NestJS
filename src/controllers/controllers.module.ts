@@ -32,6 +32,7 @@ import { ComentarioIncidenciaController } from './comentario-incidencia/comentar
 import { ContratoController } from './contrato/contrato.controller';
 import { CronogramaController } from './cronograma/cronograma.controller';
 import { ArrendamientoEspacioController } from './arrendamiento-espacio/arrendamiento-espacio.controller';
+import { ArrendatarioController } from './arrendatario/arrendatario.controller';
 import { HistorialContratoController } from './historial-contrato/historial-contrato.controller';
 import { TipoIncidenciaController } from './tipo-incidencia/tipo-incidencia.controller';
 import { TipoContratoController } from './tipo-contrato/tipo-contrato.controller';
@@ -41,11 +42,11 @@ import { TipoContactoController } from './tipo-contacto/tipo-contacto.controller
 import { ContactoController } from './contacto/contacto.controller';
 import { PropiedadPropietarioController } from './propiedad-propietario/propiedad-propietario.controller';
 import { ResidenciaController } from './residencia/residencia.controller';
-import { UsuarioExternoController } from './usuario-externo/usuario-externo.controller';
 
 @Module({
   imports: [ServicesModule],
-  controllers: [UsuarioController,
+  controllers: [
+    UsuarioController,
     RolController,
     PropietarioController,
     PropiedadController,
@@ -77,6 +78,7 @@ import { UsuarioExternoController } from './usuario-externo/usuario-externo.cont
     ContratoController,
     CronogramaController,
     ArrendamientoEspacioController,
+    ArrendatarioController,
     HistorialContratoController,
     TipoIncidenciaController,
     TipoContratoController,
@@ -86,7 +88,6 @@ import { UsuarioExternoController } from './usuario-externo/usuario-externo.cont
     ContactoController,
     PropiedadPropietarioController,
     ResidenciaController,
-    UsuarioExternoController
-  ]
+  ],
 })
-export class ControllersModule { }
+export class ControllersModule {}

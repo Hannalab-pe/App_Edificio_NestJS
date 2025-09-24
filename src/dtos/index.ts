@@ -99,3 +99,15 @@ export { UpdateCronogramaDto } from './cronograma/update-cronograma.dto';
 export { CreateResidenteDto } from './residente/create-residente.dto';
 export { UpdateResidenteDto } from './residente/update-residente.dto';
 export { ResidenteRegisterResponseDto } from './residente/residente-register-response.dto';
+
+// Arrendatario DTOs
+export { CreateArrendatarioDto } from './arrendatario/create-arrendatario.dto';
+export { UpdateArrendatarioDto } from './arrendatario/update-arrendatario.dto';
+
+// Arrendamiento Espacio DTOs
+export { CreateArrendamientoEspacioDto } from './arrendamiento-espacio/create-arrendamiento-espacio.dto';
+export { UpdateArrendamientoEspacioDto } from './arrendamiento-espacio/update-arrendamiento-espacio.dto';
+export {
+  CreateArrendamientoCompletoDto,
+  ArrendatarioDataDto,
+} from './arrendamiento-espacio/create-arrendamiento-completo.dto';

@@ -5,51 +5,51 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-} from "typeorm";
-import { OpcionVoto } from "./OpcionVoto";
-import { Usuario } from "./Usuario";
-import { Voto } from "./Voto";
+} from 'typeorm';
+import { OpcionVoto } from './OpcionVoto';
+import { Usuario } from './Usuario';
+import { Voto } from './Voto';
 
-@Index("idx_votacion_fecha_fin", ["fechaFin"], {})
-@Index("idx_votacion_fecha_inicio", ["fechaInicio"], {})
-@Index("votacion_pkey", ["idVotacion"], { unique: true })
-@Entity("votacion", { schema: "public" })
+@Index('idx_votacion_fecha_fin', ['fechaFin'], {})
+@Index('idx_votacion_fecha_inicio', ['fechaInicio'], {})
+@Index('votacion_pkey', ['idVotacion'], { unique: true })
+@Entity('votacion', { schema: 'public' })
 export class Votacion {
-  @Column("uuid", {
+  @Column('uuid', {
     primary: true,
-    name: "id_votacion",
-    default: () => "uuid_generate_v4()",
+    name: 'id_votacion',
+    default: () => 'uuid_generate_v4()',
   })
   idVotacion: string;
 
-  @Column("character varying", { name: "titulo" })
+  @Column('character varying', { name: 'titulo' })
   titulo: string;
 
-  @Column("text", { name: "descripcion" })
+  @Column('text', { name: 'descripcion' })
   descripcion: string;
 
-  @Column("timestamp without time zone", { name: "fecha_inicio" })
+  @Column('timestamp without time zone', { name: 'fecha_inicio' })
   fechaInicio: Date;
 
-  @Column("timestamp without time zone", { name: "fecha_fin" })
+  @Column('timestamp without time zone', { name: 'fecha_fin' })
   fechaFin: Date;
 
-  @Column("character varying", { name: "estado" })
+  @Column('character varying', { name: 'estado' })
   estado: string;
 
-  @Column("character varying", { name: "tipo" })
+  @Column('character varying', { name: 'tipo' })
   tipo: string;
 
-  @Column("boolean", { name: "requiere_quorum", default: () => "false" })
+  @Column('boolean', { name: 'requiere_quorum', default: () => 'false' })
   requiereQuorum: boolean;
 
-  @Column("integer", { name: "quorum_minimo", nullable: true })
+  @Column('integer', { name: 'quorum_minimo', nullable: true })
   quorumMinimo: number | null;
 
-  @Column("timestamp without time zone", {
-    name: "fecha_creacion",
+  @Column('timestamp without time zone', {
+    name: 'fecha_creacion',
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
+    default: () => 'CURRENT_TIMESTAMP',
   })
   fechaCreacion: Date | null;
 
@@ -58,7 +58,7 @@ export class Votacion {
 
   @ManyToOne(() => Usuario, (usuario) => usuario.votacions)
   @JoinColumn([
-    { name: "creado_por_usuario", referencedColumnName: "idUsuario" },
+    { name: 'creado_por_usuario', referencedColumnName: 'idUsuario' },
   ])
   creadoPorUsuario: Usuario;
 

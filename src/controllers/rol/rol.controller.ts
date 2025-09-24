@@ -10,9 +10,14 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Inject,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { IRolService } from '../../services/interfaces/rol.interface';
 import { CreateRolDto, UpdateRolDto } from '../../dtos';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
@@ -41,19 +46,21 @@ export class RolController {
     status: 400,
     description: 'Datos de entrada inválidos',
   })
-  async create(@Body() createRolDto: CreateRolDto): Promise<BaseResponseDto<Rol>> {
+  async create(
+    @Body() createRolDto: CreateRolDto,
+  ): Promise<BaseResponseDto<Rol>> {
     try {
       const rol = await this.rolService.create(createRolDto);
       return BaseResponseDto.success(
         rol,
         'Rol creado exitosamente',
-        HttpStatus.CREATED
+        HttpStatus.CREATED,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al crear el rol',
         HttpStatus.BAD_REQUEST,
-        error.message
+        error.message,
       );
     }
   }
@@ -71,13 +78,13 @@ export class RolController {
       return BaseResponseDto.success(
         roles,
         'Roles obtenidos exitosamente',
-        HttpStatus.OK
+        HttpStatus.OK,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al obtener los roles',
         HttpStatus.INTERNAL_SERVER_ERROR,
-        error.message
+        error.message,
       );
     }
   }
@@ -93,19 +100,21 @@ export class RolController {
     status: 404,
     description: 'Rol no encontrado',
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<BaseResponseDto<Rol>> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<BaseResponseDto<Rol>> {
     try {
       const rol = await this.rolService.findOne(id);
       return BaseResponseDto.success(
         rol,
         'Rol encontrado exitosamente',
-        HttpStatus.OK
+        HttpStatus.OK,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al obtener el rol',
         HttpStatus.NOT_FOUND,
-        error.message
+        error.message,
       );
     }
   }
@@ -121,19 +130,21 @@ export class RolController {
     status: 404,
     description: 'Rol no encontrado',
   })
-  async findByNombre(@Param('nombre') nombre: string): Promise<BaseResponseDto<Rol>> {
+  async findByNombre(
+    @Param('nombre') nombre: string,
+  ): Promise<BaseResponseDto<Rol>> {
     try {
       const rol = await this.rolService.findByNombre(nombre);
       return BaseResponseDto.success(
         rol,
         'Rol encontrado exitosamente',
-        HttpStatus.OK
+        HttpStatus.OK,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al obtener el rol',
         HttpStatus.NOT_FOUND,
-        error.message
+        error.message,
       );
     }
   }
@@ -158,13 +169,13 @@ export class RolController {
       return BaseResponseDto.success(
         rol,
         'Rol actualizado exitosamente',
-        HttpStatus.OK
+        HttpStatus.OK,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al actualizar el rol',
         error.status || HttpStatus.BAD_REQUEST,
-        error.message
+        error.message,
       );
     }
   }
@@ -180,19 +191,21 @@ export class RolController {
     status: 404,
     description: 'Rol no encontrado',
   })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<BaseResponseDto<null>> {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<BaseResponseDto<null>> {
     try {
       await this.rolService.remove(id);
       return BaseResponseDto.success(
         null,
         'Rol eliminado exitosamente',
-        HttpStatus.NO_CONTENT
+        HttpStatus.NO_CONTENT,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al eliminar el rol',
         error.status || HttpStatus.BAD_REQUEST,
-        error.message
+        error.message,
       );
     }
   }
@@ -210,13 +223,13 @@ export class RolController {
       return BaseResponseDto.success(
         null,
         'Roles por defecto procesados exitosamente',
-        HttpStatus.OK
+        HttpStatus.OK,
       );
     } catch (error) {
       return BaseResponseDto.error(
         'Error al crear roles por defecto',
         HttpStatus.INTERNAL_SERVER_ERROR,
-        error.message
+        error.message,
       );
     }
   }

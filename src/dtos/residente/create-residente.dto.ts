@@ -1,5 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsOptional, IsDateString, IsUUID, IsEnum, IsNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsOptional,
+  IsDateString,
+  IsUUID,
+  IsEnum,
+  IsNumber,
+} from 'class-validator';
 import { TipoDocumentoIdentidad } from 'src/Enums/documento-identidad.enum';
 
 export class CreateResidenteDto {
@@ -46,7 +56,9 @@ export class CreateResidenteDto {
     example: 'MiContraseña123!',
     type: String,
   })
-  @IsString({ message: 'La confirmación de contraseña debe ser una cadena de texto' })
+  @IsString({
+    message: 'La confirmación de contraseña debe ser una cadena de texto',
+  })
   @IsNotEmpty({ message: 'La confirmación de contraseña es obligatoria' })
   confirmarContrasena: string;
 
@@ -67,7 +79,13 @@ export class CreateResidenteDto {
     required: false,
   })
   @IsOptional()
-  @IsDateString({}, { message: 'La fecha de nacimiento debe tener un formato válido (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    {
+      message:
+        'La fecha de nacimiento debe tener un formato válido (YYYY-MM-DD)',
+    },
+  )
   fechaNacimiento?: string;
 
   @ApiProperty({
@@ -75,7 +93,9 @@ export class CreateResidenteDto {
     example: TipoDocumentoIdentidad.DNI,
     enum: TipoDocumentoIdentidad,
   })
-  @IsEnum(TipoDocumentoIdentidad, { message: 'El tipo de documento debe ser uno de los valores válidos' })
+  @IsEnum(TipoDocumentoIdentidad, {
+    message: 'El tipo de documento debe ser uno de los valores válidos',
+  })
   @IsNotEmpty({ message: 'El tipo de documento es obligatorio' })
   tipoDocumento: TipoDocumentoIdentidad;
 
@@ -89,7 +109,8 @@ export class CreateResidenteDto {
   numeroDocumento: number;
 
   @ApiProperty({
-    description: 'ID del rol asignado al residente (opcional - por defecto será Residente)',
+    description:
+      'ID del rol asignado al residente (opcional - por defecto será Residente)',
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
     required: false,

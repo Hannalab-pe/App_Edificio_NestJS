@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IAreaComunService } from '../../interfaces/area-comun.interface';
@@ -14,13 +18,22 @@ export class AreaComunService implements IAreaComunService {
 
   async create(createAreaComunDto: CreateAreaComunDto): Promise<AreaComun> {
     // Validar que el horario de apertura sea anterior al de cierre
-    if (createAreaComunDto.horarioApertura >= createAreaComunDto.horarioCierre) {
-      throw new BadRequestException('El horario de apertura debe ser anterior al horario de cierre');
+    if (
+      createAreaComunDto.horarioApertura >= createAreaComunDto.horarioCierre
+    ) {
+      throw new BadRequestException(
+        'El horario de apertura debe ser anterior al horario de cierre',
+      );
     }
 
     // Validar que el tiempo mínimo sea menor al máximo
-    if (createAreaComunDto.tiempoMinimoReserva >= createAreaComunDto.tiempoMaximoReserva) {
-      throw new BadRequestException('El tiempo mínimo de reserva debe ser menor al tiempo máximo');
+    if (
+      createAreaComunDto.tiempoMinimoReserva >=
+      createAreaComunDto.tiempoMaximoReserva
+    ) {
+      throw new BadRequestException(
+        'El tiempo mínimo de reserva debe ser menor al tiempo máximo',
+      );
     }
 
     const areaComun = this.areaComunRepository.create({
@@ -36,8 +49,8 @@ export class AreaComunService implements IAreaComunService {
     return await this.areaComunRepository.find({
       relations: ['incidencias', 'mantenimientos', 'reservas'],
       order: {
-        nombre: 'ASC'
-      }
+        nombre: 'ASC',
+      },
     });
   }
 
@@ -54,20 +67,38 @@ export class AreaComunService implements IAreaComunService {
     return areaComun;
   }
 
-  async update(id: string, updateAreaComunDto: UpdateAreaComunDto): Promise<AreaComun> {
+  async update(
+    id: string,
+    updateAreaComunDto: UpdateAreaComunDto,
+  ): Promise<AreaComun> {
     await this.findOne(id);
 
     // Validaciones si se actualizan horarios
-    if (updateAreaComunDto.horarioApertura && updateAreaComunDto.horarioCierre) {
-      if (updateAreaComunDto.horarioApertura >= updateAreaComunDto.horarioCierre) {
-        throw new BadRequestException('El horario de apertura debe ser anterior al horario de cierre');
+    if (
+      updateAreaComunDto.horarioApertura &&
+      updateAreaComunDto.horarioCierre
+    ) {
+      if (
+        updateAreaComunDto.horarioApertura >= updateAreaComunDto.horarioCierre
+      ) {
+        throw new BadRequestException(
+          'El horario de apertura debe ser anterior al horario de cierre',
+        );
       }
     }
 
     // Validaciones si se actualizan tiempos de reserva
-    if (updateAreaComunDto.tiempoMinimoReserva && updateAreaComunDto.tiempoMaximoReserva) {
-      if (updateAreaComunDto.tiempoMinimoReserva >= updateAreaComunDto.tiempoMaximoReserva) {
-        throw new BadRequestException('El tiempo mínimo de reserva debe ser menor al tiempo máximo');
+    if (
+      updateAreaComunDto.tiempoMinimoReserva &&
+      updateAreaComunDto.tiempoMaximoReserva
+    ) {
+      if (
+        updateAreaComunDto.tiempoMinimoReserva >=
+        updateAreaComunDto.tiempoMaximoReserva
+      ) {
+        throw new BadRequestException(
+          'El tiempo mínimo de reserva debe ser menor al tiempo máximo',
+        );
       }
     }
 
@@ -87,8 +118,8 @@ export class AreaComunService implements IAreaComunService {
       where: { estaActivo: estado },
       relations: ['incidencias', 'mantenimientos', 'reservas'],
       order: {
-        nombre: 'ASC'
-      }
+        nombre: 'ASC',
+      },
     });
   }
 
@@ -97,8 +128,8 @@ export class AreaComunService implements IAreaComunService {
       where: { estaActivo: true },
       relations: ['reservas'],
       order: {
-        nombre: 'ASC'
-      }
+        nombre: 'ASC',
+      },
     });
   }
 
@@ -106,12 +137,12 @@ export class AreaComunService implements IAreaComunService {
     return await this.areaComunRepository.find({
       where: {
         capacidadMaxima: require('typeorm').MoreThanOrEqual(capacidadMinima),
-        estaActivo: true
+        estaActivo: true,
       },
       relations: ['reservas'],
       order: {
-        capacidadMaxima: 'ASC'
-      }
+        capacidadMaxima: 'ASC',
+      },
     });
   }
 
@@ -119,12 +150,12 @@ export class AreaComunService implements IAreaComunService {
     return await this.areaComunRepository.find({
       where: {
         precioReserva: require('typeorm').LessThanOrEqual(precioMaximo),
-        estaActivo: true
+        estaActivo: true,
       },
       relations: ['reservas'],
       order: {
-        precioReserva: 'ASC'
-      }
+        precioReserva: 'ASC',
+      },
     });
   }
 }

@@ -7,11 +7,11 @@ import { Usuario } from '../../entities/Usuario';
 
 // Interfaz para el payload que viene del JWT decodificado
 export interface JwtPayload {
-  sub: string;        // ID del usuario (subject)
-  correo: string;     // Email del usuario
-  rol: any;          // Rol del usuario
-  iat?: number;      // Issued at (cuando se emitió el token)
-  exp?: number;      // Expiration time (cuando expira el token)
+  sub: string; // ID del usuario (subject)
+  correo: string; // Email del usuario
+  rol: any; // Rol del usuario
+  iat?: number; // Issued at (cuando se emitió el token)
+  exp?: number; // Expiration time (cuando expira el token)
 }
 
 @Injectable()
@@ -30,7 +30,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
 
       // Secret para verificar la firma del JWT (debe coincidir con el usado para firmarlo)
-      secretOrKey: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key',
+      secretOrKey:
+        configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key',
     });
   }
 
@@ -49,7 +50,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
       // Si el usuario no existe, el token es inválido
       if (!usuario) {
-        throw new UnauthorizedException('Token inválido - usuario no encontrado');
+        throw new UnauthorizedException(
+          'Token inválido - usuario no encontrado',
+        );
       }
 
       // Si el usuario está inactivo, no puede usar el sistema
@@ -60,7 +63,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // Si todo está bien, retornamos el usuario completo
       // Este usuario estará disponible en req.user en los controladores
       return usuario;
-
     } catch (error) {
       // Si hay cualquier error, el token se considera inválido
       throw new UnauthorizedException('Token inválido');

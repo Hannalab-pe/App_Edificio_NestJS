@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { ICronogramaService } from '../../interfaces/cronograma.interface';
@@ -15,7 +19,9 @@ export class CronogramaService implements ICronogramaService {
   async create(createCronogramaDto: CreateCronogramaDto): Promise<Cronograma> {
     // Validar que la fecha de fin sea posterior a la fecha de inicio
     if (createCronogramaDto.fechaFin <= createCronogramaDto.fechaInicio) {
-      throw new BadRequestException('La fecha de fin debe ser posterior a la fecha de inicio');
+      throw new BadRequestException(
+        'La fecha de fin debe ser posterior a la fecha de inicio',
+      );
     }
 
     const cronograma = this.cronogramaRepository.create({
@@ -23,9 +29,15 @@ export class CronogramaService implements ICronogramaService {
       descripcion: createCronogramaDto.descripcion,
       fechaInicio: createCronogramaDto.fechaInicio,
       fechaFin: createCronogramaDto.fechaFin,
-      idResidente: createCronogramaDto.idResidente ? { idResidente: createCronogramaDto.idResidente } as any : null,
-      idTipoCronograma: { idTipoCronograma: createCronogramaDto.idTipoCronograma } as any,
-      idTrabajador: createCronogramaDto.idTrabajador ? { idTrabajador: createCronogramaDto.idTrabajador } as any : null,
+      idResidente: createCronogramaDto.idResidente
+        ? ({ idResidente: createCronogramaDto.idResidente } as any)
+        : null,
+      idTipoCronograma: {
+        idTipoCronograma: createCronogramaDto.idTipoCronograma,
+      } as any,
+      idTrabajador: createCronogramaDto.idTrabajador
+        ? ({ idTrabajador: createCronogramaDto.idTrabajador } as any)
+        : null,
     });
 
     return await this.cronogramaRepository.save(cronograma);
@@ -35,8 +47,8 @@ export class CronogramaService implements ICronogramaService {
     return await this.cronogramaRepository.find({
       relations: ['idResidente', 'idTipoCronograma', 'idTrabajador'],
       order: {
-        fechaInicio: 'ASC'
-      }
+        fechaInicio: 'ASC',
+      },
     });
   }
 
@@ -53,13 +65,18 @@ export class CronogramaService implements ICronogramaService {
     return cronograma;
   }
 
-  async update(id: string, updateCronogramaDto: UpdateCronogramaDto): Promise<Cronograma> {
+  async update(
+    id: string,
+    updateCronogramaDto: UpdateCronogramaDto,
+  ): Promise<Cronograma> {
     await this.findOne(id);
 
     // Validar fechas si se están actualizando
     if (updateCronogramaDto.fechaInicio && updateCronogramaDto.fechaFin) {
       if (updateCronogramaDto.fechaFin <= updateCronogramaDto.fechaInicio) {
-        throw new BadRequestException('La fecha de fin debe ser posterior a la fecha de inicio');
+        throw new BadRequestException(
+          'La fecha de fin debe ser posterior a la fecha de inicio',
+        );
       }
     }
 
@@ -78,13 +95,19 @@ export class CronogramaService implements ICronogramaService {
       updateData.fechaFin = updateCronogramaDto.fechaFin;
     }
     if (updateCronogramaDto.idResidente !== undefined) {
-      updateData.idResidente = updateCronogramaDto.idResidente ? { idResidente: updateCronogramaDto.idResidente } as any : null;
+      updateData.idResidente = updateCronogramaDto.idResidente
+        ? ({ idResidente: updateCronogramaDto.idResidente } as any)
+        : null;
     }
     if (updateCronogramaDto.idTipoCronograma !== undefined) {
-      updateData.idTipoCronograma = { idTipoCronograma: updateCronogramaDto.idTipoCronograma } as any;
+      updateData.idTipoCronograma = {
+        idTipoCronograma: updateCronogramaDto.idTipoCronograma,
+      } as any;
     }
     if (updateCronogramaDto.idTrabajador !== undefined) {
-      updateData.idTrabajador = updateCronogramaDto.idTrabajador ? { idTrabajador: updateCronogramaDto.idTrabajador } as any : null;
+      updateData.idTrabajador = updateCronogramaDto.idTrabajador
+        ? ({ idTrabajador: updateCronogramaDto.idTrabajador } as any)
+        : null;
     }
 
     await this.cronogramaRepository.update(id, updateData);
@@ -101,8 +124,8 @@ export class CronogramaService implements ICronogramaService {
       where: { idTipoCronograma: { idTipoCronograma } as any },
       relations: ['idResidente', 'idTrabajador'],
       order: {
-        fechaInicio: 'ASC'
-      }
+        fechaInicio: 'ASC',
+      },
     });
   }
 
@@ -111,8 +134,8 @@ export class CronogramaService implements ICronogramaService {
       where: { idResidente: { idResidente } as any },
       relations: ['idTipoCronograma', 'idTrabajador'],
       order: {
-        fechaInicio: 'ASC'
-      }
+        fechaInicio: 'ASC',
+      },
     });
   }
 
@@ -121,20 +144,23 @@ export class CronogramaService implements ICronogramaService {
       where: { idTrabajador: { idTrabajador } as any },
       relations: ['idResidente', 'idTipoCronograma'],
       order: {
-        fechaInicio: 'ASC'
-      }
+        fechaInicio: 'ASC',
+      },
     });
   }
 
-  async findByFechaRange(fechaInicio: string, fechaFin: string): Promise<Cronograma[]> {
+  async findByFechaRange(
+    fechaInicio: string,
+    fechaFin: string,
+  ): Promise<Cronograma[]> {
     return await this.cronogramaRepository.find({
       where: {
-        fechaInicio: Between(fechaInicio, fechaFin)
+        fechaInicio: Between(fechaInicio, fechaFin),
       },
       relations: ['idResidente', 'idTipoCronograma', 'idTrabajador'],
       order: {
-        fechaInicio: 'ASC'
-      }
+        fechaInicio: 'ASC',
+      },
     });
   }
 
@@ -143,12 +169,12 @@ export class CronogramaService implements ICronogramaService {
 
     return await this.cronogramaRepository.find({
       where: {
-        fechaFin: Between(today, '2099-12-31') // Cronogramas que no han terminado
+        fechaFin: Between(today, '2099-12-31'), // Cronogramas que no han terminado
       },
       relations: ['idResidente', 'idTipoCronograma', 'idTrabajador'],
       order: {
-        fechaInicio: 'ASC'
-      }
+        fechaInicio: 'ASC',
+      },
     });
   }
 }

@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsUUID,
+  IsOptional,
+} from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty({
@@ -27,12 +34,15 @@ export class RegisterDto {
     example: 'MiContraseña123!',
     type: String,
   })
-  @IsString({ message: 'La confirmación de contraseña debe ser una cadena de texto' })
+  @IsString({
+    message: 'La confirmación de contraseña debe ser una cadena de texto',
+  })
   @IsNotEmpty({ message: 'La confirmación de contraseña es obligatoria' })
   confirmarContrasena: string;
 
   @ApiProperty({
-    description: 'ID del rol asignado al usuario (opcional - por defecto será Propietario)',
+    description:
+      'ID del rol asignado al usuario (opcional - por defecto será Propietario)',
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
     required: false,
