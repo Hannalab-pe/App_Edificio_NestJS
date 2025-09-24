@@ -37,9 +37,8 @@ export class CreatePropiedadDto {
         type: Number,
     })
     @IsOptional()
-    @Transform(({ value }) => parseFloat(value))
-    @IsDecimal({ decimal_digits: '1,2' }, { message: 'El área debe ser un número decimal válido' })
-    areaM2?: number;
+    @IsDecimal({ decimal_digits: '0,2' }, { message: 'El área debe ser un número decimal válido' })
+    areaM2?: string;
 
     @ApiPropertyOptional({
         description: 'Número de cuartos',
@@ -96,10 +95,9 @@ export class CreatePropiedadDto {
         example: 250000.00,
         type: Number,
     })
-    @IsOptional()
-    @Transform(({ value }) => parseFloat(value))
-    @IsDecimal({ decimal_digits: '1,2' }, { message: 'El valor comercial debe ser un número decimal válido' })
-    valorComercial?: number;
+    @IsOptional() 
+    @IsDecimal({ decimal_digits: '0,2' }, { message: 'El valor comercial debe ser un número decimal válido' })
+    valorComercial?: string;
 
     @ApiPropertyOptional({
         description: 'Descripción adicional de la propiedad',
