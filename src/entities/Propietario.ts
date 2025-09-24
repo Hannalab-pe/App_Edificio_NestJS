@@ -68,6 +68,7 @@ export class Propietario {
 
   @ManyToOne(() => Usuario, (usuario) => usuario.propietarios)
   @JoinColumn([{ name: "id_usuario", referencedColumnName: "idUsuario" }])
+  
   idUsuario: Usuario;
 
   @OneToMany(() => Residencia, (residencia) => residencia.idPropietario)

@@ -45,7 +45,6 @@ export class PropiedadService implements IPropiedadService {
                 success: true,
                 message: 'Propiedad creada exitosamente',
                 data: propiedadGuardada,
-                error: null
             };
         } catch (error) {
             return {
@@ -68,7 +67,6 @@ export class PropiedadService implements IPropiedadService {
                 success: true,
                 message: propiedades.length > 0 ? 'Propiedades encontradas' : 'No se encontraron propiedades',
                 data: propiedades,
-                error: null
             };
         } catch (error) {
             return {
