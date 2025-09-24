@@ -94,6 +94,7 @@ export { UpdateComentarioIncidenciaDto } from './comentario-incidencia/update-co
 // Cronograma DTOs
 export { CreateCronogramaDto } from './cronograma/create-cronograma.dto';
 export { UpdateCronogramaDto } from './cronograma/update-cronograma.dto';
+export { CronogramaRegisterResponseDto } from './cronograma/cronograma-register-response.dto';
 
 // Residente DTOs
 export { CreateResidenteDto } from './residente/create-residente.dto';

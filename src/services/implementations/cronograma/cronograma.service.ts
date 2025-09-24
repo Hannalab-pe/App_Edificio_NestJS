@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { ICronogramaService } from '../../interfaces/cronograma.interface';
 import { Cronograma } from '../../../entities/Cronograma';
-import { CreateCronogramaDto, UpdateCronogramaDto } from '../../../dtos';
+import { CreateCronogramaDto, UpdateCronogramaDto, CronogramaRegisterResponseDto } from '../../../dtos';
 
 @Injectable()
 export class CronogramaService implements ICronogramaService {
@@ -12,7 +12,7 @@ export class CronogramaService implements ICronogramaService {
     private readonly cronogramaRepository: Repository<Cronograma>,
   ) {}
 
-  async create(createCronogramaDto: CreateCronogramaDto): Promise<Cronograma> {
+  async create(createCronogramaDto: CreateCronogramaDto): Promise<CronogramaRegisterResponseDto> {
     // Validar que la fecha de fin sea posterior a la fecha de inicio
     if (createCronogramaDto.fechaFin <= createCronogramaDto.fechaInicio) {
       throw new BadRequestException('La fecha de fin debe ser posterior a la fecha de inicio');
@@ -28,7 +28,18 @@ export class CronogramaService implements ICronogramaService {
       idTrabajador: createCronogramaDto.idTrabajador ? { idTrabajador: createCronogramaDto.idTrabajador } as any : null,
     });
 
-    return await this.cronogramaRepository.save(cronograma);
+    const savedCronograma = await this.cronogramaRepository.save(cronograma);
+
+    const cronogramaConRelaciones = await this.cronogramaRepository.findOne({
+      where: { idCronograma: savedCronograma.idCronograma },
+      relations: ['idResidente', 'idTipoCronograma', 'idTrabajador'],
+    });
+
+    return {
+      success: true,
+      message: 'Cronograma registrado exitosamente',
+      cronograma: cronogramaConRelaciones!,
+    };
   }
 
   async findAll(): Promise<Cronograma[]> {
