@@ -1,8 +1,8 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
+import { Arrendatario } from './Arrendatario';
 import { Propietario } from './Propietario';
 import { Residente } from './Residente';
 import { Trabajador } from './Trabajador';
-import { UsuarioExterno } from './UsuarioExterno';
 
 @Index('documento_identidad_pkey', ['idDocumentoIdentidad'], { unique: true })
 @Index('documento_identidad_numero_key', ['numero'], { unique: true })
@@ -22,6 +22,12 @@ export class DocumentoIdentidad {
   numero: number;
 
   @OneToMany(
+    () => Arrendatario,
+    (arrendatario) => arrendatario.idDocumentoIdentidad,
+  )
+  arrendatarios: Arrendatario[];
+
+  @OneToMany(
     () => Propietario,
     (propietario) => propietario.idDocumentoIdentidad,
   )
@@ -32,10 +38,4 @@ export class DocumentoIdentidad {
 
   @OneToMany(() => Trabajador, (trabajador) => trabajador.idDocumentoIdentidad)
   trabajadors: Trabajador[];
-
-  @OneToMany(
-    () => UsuarioExterno,
-    (usuarioExterno) => usuarioExterno.idDocumentoIdentidad,
-  )
-  usuarioExternos: UsuarioExterno[];
 }

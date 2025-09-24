@@ -15,11 +15,11 @@ export { IAreaComunService } from './area-comun.interface';
 export { IEspacioArrendableService } from './espacio-arrendable.interface';
 export { IReservaService } from './reserva.interface';
 export { IArrendamientoEspacioService } from './arrendamiento-espacio.interface';
+export { IArrendatarioService } from './arrendatario.interface';
 
 // Interfaces de usuarios y roles
 export { IResidenteService } from './residente.interface';
 export { ITrabajadorService } from './trabajador.interface';
-export { IUsuarioExternoService } from './usuario-externo.interface';
 export { IVisitaService } from './visita.interface';
 
 // Interfaces de finanzas

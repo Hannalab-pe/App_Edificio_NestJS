@@ -101,13 +101,14 @@ export { CreateResidenteDto } from './residente/create-residente.dto';
 export { UpdateResidenteDto } from './residente/update-residente.dto';
 export { ResidenteRegisterResponseDto } from './residente/residente-register-response.dto';
 
-// Visita DTOs
-export { CreateVisitaDto } from './visita/create-visita.dto';
-export { UpdateVisitaDto } from './visita/update-visita.dto';
+// Arrendatario DTOs
+export { CreateArrendatarioDto } from './arrendatario/create-arrendatario.dto';
+export { UpdateArrendatarioDto } from './arrendatario/update-arrendatario.dto';
+
+// Arrendamiento Espacio DTOs
+export { CreateArrendamientoEspacioDto } from './arrendamiento-espacio/create-arrendamiento-espacio.dto';
+export { UpdateArrendamientoEspacioDto } from './arrendamiento-espacio/update-arrendamiento-espacio.dto';
 export {
-  VisitaDto,
-  VisitaResponseDto,
-  VisitaListResponseDto,
-  UsuarioAutorizadorDto,
-  PropiedadVisitaDto,
-} from './visita/visita-response.dto';
+  CreateArrendamientoCompletoDto,
+  ArrendatarioDataDto,
+} from './arrendamiento-espacio/create-arrendamiento-completo.dto';

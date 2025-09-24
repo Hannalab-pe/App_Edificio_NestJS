@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
+import { Arrendatario } from './Arrendatario';
 import { ComentarioIncidencia } from './ComentarioIncidencia';
 import { Incidencia } from './Incidencia';
 import { JuntaPropietarios } from './JuntaPropietarios';
@@ -26,7 +26,6 @@ import { Voto } from './Voto';
 @Index('usuario_pkey', ['idUsuario'], { unique: true })
 @Entity('usuario', { schema: 'public' })
 export class Usuario {
-  @ApiProperty({ description: 'ID único del usuario' })
   @Column('uuid', {
     primary: true,
     name: 'id_usuario',
@@ -34,16 +33,20 @@ export class Usuario {
   })
   idUsuario: string;
 
-  @ApiProperty({ description: 'Correo electrónico del usuario' })
   @Column('character varying', { name: 'correo', unique: true })
   correo: string;
 
   @Column('character varying', { name: 'contrasena' })
   contrasena: string;
 
-  @ApiProperty({ description: 'Estado activo del usuario' })
   @Column('boolean', { name: 'esta_activo', default: () => 'true' })
   estaActivo: boolean;
+
+  @OneToMany(() => Arrendatario, (arrendatario) => arrendatario.idUsuario)
+  arrendatarios: Arrendatario[];
+
+  @OneToMany(() => Arrendatario, (arrendatario) => arrendatario.registradoPor)
+  arrendatarios2: Arrendatario[];
 
   @OneToMany(
     () => ComentarioIncidencia,
@@ -93,7 +96,6 @@ export class Usuario {
   @OneToMany(() => Trabajador, (trabajador) => trabajador.idUsuario)
   trabajadors: Trabajador[];
 
-  @ApiProperty({ description: 'Rol del usuario', type: () => Rol })
   @ManyToOne(() => Rol, (rol) => rol.usuarios)
   @JoinColumn([{ name: 'id_rol', referencedColumnName: 'idRol' }])
   idRol: Rol;

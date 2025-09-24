@@ -6,12 +6,12 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
+import { Arrendatario } from './Arrendatario';
 import { EspacioArrendable } from './EspacioArrendable';
-import { UsuarioExterno } from './UsuarioExterno';
 import { Pago } from './Pago';
 
 @Index('arrendamiento_espacio_pkey', ['idArrendamiento'], { unique: true })
-@Index('idx_arrendamiento_externo', ['idUsuarioExterno'], {})
+@Index('idx_arrendamiento_externo', ['idArrendatario'], {})
 @Entity('arrendamiento_espacio', { schema: 'public' })
 export class ArrendamientoEspacio {
   @Column('uuid', {
@@ -51,8 +51,17 @@ export class ArrendamientoEspacio {
   })
   fechaCreacion: Date | null;
 
-  @Column('uuid', { name: 'id_usuario_externo' })
-  idUsuarioExterno: string;
+  @Column('uuid', { name: 'id_arrendatario' })
+  idArrendatario: string;
+
+  @ManyToOne(
+    () => Arrendatario,
+    (arrendatario) => arrendatario.arrendamientoEspacios,
+  )
+  @JoinColumn([
+    { name: 'id_arrendatario', referencedColumnName: 'idArrendatario' },
+  ])
+  idArrendatario2: Arrendatario;
 
   @ManyToOne(
     () => EspacioArrendable,
@@ -60,15 +69,6 @@ export class ArrendamientoEspacio {
   )
   @JoinColumn([{ name: 'id_espacio', referencedColumnName: 'idEspacio' }])
   idEspacio: EspacioArrendable;
-
-  @ManyToOne(
-    () => UsuarioExterno,
-    (usuarioExterno) => usuarioExterno.arrendamientoEspacios,
-  )
-  @JoinColumn([
-    { name: 'id_usuario_externo', referencedColumnName: 'idUsuarioExterno' },
-  ])
-  idUsuarioExterno2: UsuarioExterno;
 
   @OneToMany(() => Pago, (pago) => pago.idArrendamiento)
   pagos: Pago[];

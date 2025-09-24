@@ -23,11 +23,11 @@ import {
   EspacioArrendableService,
   ReservaService,
   ArrendamientoEspacioService,
+  ArrendatarioService,
 
   // Servicios de usuarios
   ResidenteService,
   TrabajadorService,
-  UsuarioExternoService,
   VisitaService,
 
   // Servicios financieros
@@ -147,6 +147,12 @@ import {
       provide: 'IArrendamientoEspacioService',
       useClass: ArrendamientoEspacioService,
     },
+    {
+      provide: 'IArrendatarioService',
+      useClass: ArrendatarioService,
+    },
+    // Asegurar que ArrendatarioService tenga acceso a DocumentoIdentidadService
+    ArrendatarioService,
 
     // Servicios de usuarios
     {
@@ -156,10 +162,6 @@ import {
     {
       provide: 'ITrabajadorService',
       useClass: TrabajadorService,
-    },
-    {
-      provide: 'IUsuarioExternoService',
-      useClass: UsuarioExternoService,
     },
     {
       provide: 'IVisitaService',
@@ -294,9 +296,9 @@ import {
     EspacioArrendableService,
     ReservaService,
     ArrendamientoEspacioService,
+    ArrendatarioService,
     ResidenteService,
     TrabajadorService,
-    UsuarioExternoService,
     VisitaService,
     ConceptoPagoService,
     ReciboService,
@@ -339,9 +341,9 @@ import {
     'IEspacioArrendableService',
     'IReservaService',
     'IArrendamientoEspacioService',
+    'IArrendatarioService',
     'IResidenteService',
     'ITrabajadorService',
-    'IUsuarioExternoService',
     'IVisitaService',
     'IConceptoPagoService',
     'IReciboService',
@@ -384,9 +386,9 @@ import {
     EspacioArrendableService,
     ReservaService,
     ArrendamientoEspacioService,
+    ArrendatarioService,
     ResidenteService,
     TrabajadorService,
-    UsuarioExternoService,
     VisitaService,
     ConceptoPagoService,
     ReciboService,

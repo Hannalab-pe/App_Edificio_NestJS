@@ -39,10 +39,10 @@ import { TipoEspacio } from './TipoEspacio';
 import { TipoIncidencia } from './TipoIncidencia';
 import { Trabajador } from './Trabajador';
 import { Usuario } from './Usuario';
-import { UsuarioExterno } from './UsuarioExterno';
 import { Visita } from './Visita';
 import { Votacion } from './Votacion';
 import { Voto } from './Voto';
+import { Arrendatario } from './Arrendatario';
 
 @Module({
   imports: [
@@ -52,6 +52,7 @@ import { Voto } from './Voto';
       Caja,
       ComentarioIncidencia,
       ConceptoPago,
+      Arrendatario,
       Contacto,
       Contrato,
       Cronograma,
@@ -85,7 +86,6 @@ import { Voto } from './Voto';
       TipoIncidencia,
       Trabajador,
       Usuario,
-      UsuarioExterno,
       Visita,
       Votacion,
       Voto,
