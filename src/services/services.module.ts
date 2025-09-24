@@ -39,7 +39,7 @@ import {
 
   // Servicios de gestión administrativa
   MantenimientoService,
-  VotacionService,                                                               
+  VotacionService,
   VotoService,
   OpcionVotoService,
   JuntaPropietariosService,
@@ -65,7 +65,7 @@ import {
   // Servicios de relaciones
   ContactoService,
   PropiedadPropietarioService,
-  ResidenciaService
+  ResidenciaService,
 } from './implementations';
 
 @Module({
@@ -76,7 +76,9 @@ import {
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key',
+        secret:
+          configService.get<string>('JWT_SECRET') ||
+          'your-super-secret-jwt-key',
         signOptions: {
           expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '24h',
         },
@@ -411,6 +413,6 @@ import {
     ContactoService,
     PropiedadPropietarioService,
     ResidenciaService,
-  ]
+  ],
 })
-export class ServicesModule { }
+export class ServicesModule {}

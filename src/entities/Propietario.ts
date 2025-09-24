@@ -5,70 +5,69 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-} from "typeorm";
-import { PropiedadPropietario } from "./PropiedadPropietario";
-import { DocumentoIdentidad } from "./DocumentoIdentidad";
-import { Usuario } from "./Usuario";
-import { Residencia } from "./Residencia";
+} from 'typeorm';
+import { PropiedadPropietario } from './PropiedadPropietario';
+import { DocumentoIdentidad } from './DocumentoIdentidad';
+import { Usuario } from './Usuario';
+import { Residencia } from './Residencia';
 
-@Index("idx_propietario_correo", ["correo"], {})
-@Index("propietario_correo_key", ["correo"], { unique: true })
-@Index("propietario_pkey", ["idPropietario"], { unique: true })
-@Entity("propietario", { schema: "public" })
+@Index('idx_propietario_correo', ['correo'], {})
+@Index('propietario_correo_key', ['correo'], { unique: true })
+@Index('propietario_pkey', ['idPropietario'], { unique: true })
+@Entity('propietario', { schema: 'public' })
 export class Propietario {
-  @Column("uuid", {
+  @Column('uuid', {
     primary: true,
-    name: "id_propietario",
-    default: () => "uuid_generate_v4()",
+    name: 'id_propietario',
+    default: () => 'uuid_generate_v4()',
   })
   idPropietario: string;
 
-  @Column("character varying", { name: "nombre" })
+  @Column('character varying', { name: 'nombre' })
   nombre: string;
 
-  @Column("character varying", { name: "apellido" })
+  @Column('character varying', { name: 'apellido' })
   apellido: string;
 
-  @Column("character varying", { name: "correo", unique: true })
+  @Column('character varying', { name: 'correo', unique: true })
   correo: string;
 
-  @Column("character varying", { name: "telefono", nullable: true })
+  @Column('character varying', { name: 'telefono', nullable: true })
   telefono: string | null;
 
-  @Column("text", { name: "direccion", nullable: true })
+  @Column('text', { name: 'direccion', nullable: true })
   direccion: string | null;
 
-  @Column("boolean", { name: "esta_activo", default: () => "true" })
+  @Column('boolean', { name: 'esta_activo', default: () => 'true' })
   estaActivo: boolean;
 
-  @Column("timestamp without time zone", {
-    name: "fecha_registro",
+  @Column('timestamp without time zone', {
+    name: 'fecha_registro',
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
+    default: () => 'CURRENT_TIMESTAMP',
   })
   fechaRegistro: Date | null;
 
   @OneToMany(
     () => PropiedadPropietario,
-    (propiedadPropietario) => propiedadPropietario.idPropietario
+    (propiedadPropietario) => propiedadPropietario.idPropietario,
   )
   propiedadPropietarios: PropiedadPropietario[];
 
   @ManyToOne(
     () => DocumentoIdentidad,
-    (documentoIdentidad) => documentoIdentidad.propietarios
+    (documentoIdentidad) => documentoIdentidad.propietarios,
   )
   @JoinColumn([
     {
-      name: "id_documento_identidad",
-      referencedColumnName: "idDocumentoIdentidad",
+      name: 'id_documento_identidad',
+      referencedColumnName: 'idDocumentoIdentidad',
     },
   ])
   idDocumentoIdentidad: DocumentoIdentidad;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.propietarios)
-  @JoinColumn([{ name: "id_usuario", referencedColumnName: "idUsuario" }])
-  
+  @JoinColumn([{ name: 'id_usuario', referencedColumnName: 'idUsuario' }])
   idUsuario: Usuario;
 
   @OneToMany(() => Residencia, (residencia) => residencia.idPropietario)

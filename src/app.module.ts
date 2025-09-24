@@ -8,6 +8,7 @@ import { ControllersModule } from './controllers/controllers.module';
 import { EntitiesModule } from './entities/entities.module';
 import { AuthModule } from './auth/auth.module';
 import { RolModule } from './modules/rol/rol.module';
+import { VotacionModule } from './modules/votacion/votacion.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RolModule } from './modules/rol/rol.module';
     EntitiesModule,
     AuthModule,
     RolModule,
+    VotacionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

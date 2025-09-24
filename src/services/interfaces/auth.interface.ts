@@ -16,5 +16,8 @@ export interface IAuthService {
   login(usuario: Usuario): Promise<LoginResult>;
   register(registerDto: RegisterDto): Promise<RegisterResult>;
   hashPassword(password: string): Promise<string>;
-  comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean>;
+  comparePasswords(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean>;
 }

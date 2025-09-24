@@ -1,9 +1,17 @@
-import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ITipoIncidenciaService } from '../../interfaces/tipo-incidencia.interface';
 import { TipoIncidencia } from '../../../entities/TipoIncidencia';
-import { CreateTipoIncidenciaDto, UpdateTipoIncidenciaDto } from '../../../dtos';
+import {
+  CreateTipoIncidenciaDto,
+  UpdateTipoIncidenciaDto,
+} from '../../../dtos';
 
 @Injectable()
 export class TipoIncidenciaService implements ITipoIncidenciaService {
@@ -12,14 +20,18 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
     private readonly tipoIncidenciaRepository: Repository<TipoIncidencia>,
   ) {}
 
-  async create(createTipoIncidenciaDto: CreateTipoIncidenciaDto): Promise<TipoIncidencia> {
+  async create(
+    createTipoIncidenciaDto: CreateTipoIncidenciaDto,
+  ): Promise<TipoIncidencia> {
     // Verificar si ya existe un tipo de incidencia con el mismo nombre
     const existingTipo = await this.tipoIncidenciaRepository.findOne({
-      where: { nombre: createTipoIncidenciaDto.nombre }
+      where: { nombre: createTipoIncidenciaDto.nombre },
     });
 
     if (existingTipo) {
-      throw new ConflictException('Ya existe un tipo de incidencia con este nombre');
+      throw new ConflictException(
+        'Ya existe un tipo de incidencia con este nombre',
+      );
     }
 
     const tipoIncidencia = this.tipoIncidenciaRepository.create({
@@ -35,8 +47,8 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
     return await this.tipoIncidenciaRepository.find({
       relations: ['incidencias'],
       order: {
-        nombre: 'ASC'
-      }
+        nombre: 'ASC',
+      },
     });
   }
 
@@ -47,13 +59,18 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
     });
 
     if (!tipoIncidencia) {
-      throw new NotFoundException(`Tipo de incidencia con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        `Tipo de incidencia con ID ${id} no encontrado`,
+      );
     }
 
     return tipoIncidencia;
   }
 
-  async update(id: string, updateTipoIncidenciaDto: UpdateTipoIncidenciaDto): Promise<TipoIncidencia> {
+  async update(
+    id: string,
+    updateTipoIncidenciaDto: UpdateTipoIncidenciaDto,
+  ): Promise<TipoIncidencia> {
     await this.findOne(id);
 
     // Si se actualiza el nombre, verificar que no exista otro con el mismo nombre
@@ -61,12 +78,14 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
       const existingTipo = await this.tipoIncidenciaRepository.findOne({
         where: {
           nombre: updateTipoIncidenciaDto.nombre,
-          idTipoIncidencia: require('typeorm').Not(id)
-        }
+          idTipoIncidencia: require('typeorm').Not(id),
+        },
       });
 
       if (existingTipo) {
-        throw new ConflictException('Ya existe otro tipo de incidencia con este nombre');
+        throw new ConflictException(
+          'Ya existe otro tipo de incidencia con este nombre',
+        );
       }
     }
 
@@ -86,7 +105,9 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
       .getCount();
 
     if (incidenciasActivas > 0) {
-      throw new BadRequestException('No se puede eliminar un tipo de incidencia que tiene incidencias activas asociadas');
+      throw new BadRequestException(
+        'No se puede eliminar un tipo de incidencia que tiene incidencias activas asociadas',
+      );
     }
 
     // Eliminación lógica: marcar como inactivo
@@ -97,13 +118,15 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
     const tipoIncidencia = await this.tipoIncidenciaRepository.findOne({
       where: {
         nombre,
-        estaActivo: true
+        estaActivo: true,
       },
       relations: ['incidencias'],
     });
 
     if (!tipoIncidencia) {
-      throw new NotFoundException(`Tipo de incidencia con nombre '${nombre}' no encontrado`);
+      throw new NotFoundException(
+        `Tipo de incidencia con nombre '${nombre}' no encontrado`,
+      );
     }
 
     return tipoIncidencia;
@@ -113,12 +136,12 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
     return await this.tipoIncidenciaRepository.find({
       where: {
         prioridad,
-        estaActivo: true
+        estaActivo: true,
       },
       relations: ['incidencias'],
       order: {
-        nombre: 'ASC'
-      }
+        nombre: 'ASC',
+      },
     });
   }
 
@@ -127,8 +150,8 @@ export class TipoIncidenciaService implements ITipoIncidenciaService {
       where: { estaActivo: true },
       relations: ['incidencias'],
       order: {
-        nombre: 'ASC'
-      }
+        nombre: 'ASC',
+      },
     });
   }
 }

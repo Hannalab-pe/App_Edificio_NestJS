@@ -45,7 +45,8 @@ import { UsuarioExternoController } from './usuario-externo/usuario-externo.cont
 
 @Module({
   imports: [ServicesModule],
-  controllers: [UsuarioController,
+  controllers: [
+    UsuarioController,
     RolController,
     PropietarioController,
     PropiedadController,
@@ -86,7 +87,7 @@ import { UsuarioExternoController } from './usuario-externo/usuario-externo.cont
     ContactoController,
     PropiedadPropietarioController,
     ResidenciaController,
-    UsuarioExternoController
-  ]
+    UsuarioExternoController,
+  ],
 })
-export class ControllersModule { }
+export class ControllersModule {}

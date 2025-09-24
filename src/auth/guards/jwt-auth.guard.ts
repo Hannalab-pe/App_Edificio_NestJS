@@ -15,8 +15,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     // Verificar si la ruta está marcada como pública
     const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
-      context.getHandler(),  // Método del controlador
-      context.getClass(),    // Clase del controlador
+      context.getHandler(), // Método del controlador
+      context.getClass(), // Clase del controlador
     ]);
 
     // Si la ruta es pública, permitir acceso sin autenticación

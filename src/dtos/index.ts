@@ -100,3 +100,14 @@ export { CronogramaRegisterResponseDto } from './cronograma/cronograma-register-
 export { CreateResidenteDto } from './residente/create-residente.dto';
 export { UpdateResidenteDto } from './residente/update-residente.dto';
 export { ResidenteRegisterResponseDto } from './residente/residente-register-response.dto';
+
+// Visita DTOs
+export { CreateVisitaDto } from './visita/create-visita.dto';
+export { UpdateVisitaDto } from './visita/update-visita.dto';
+export {
+  VisitaDto,
+  VisitaResponseDto,
+  VisitaListResponseDto,
+  UsuarioAutorizadorDto,
+  PropiedadVisitaDto,
+} from './visita/visita-response.dto';

@@ -1,7 +1,17 @@
-import { Injectable, UnauthorizedException, Inject, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  Inject,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { IAuthService, LoginResult, RegisterResult } from '../../interfaces/auth.interface';
+import {
+  IAuthService,
+  LoginResult,
+  RegisterResult,
+} from '../../interfaces/auth.interface';
 import { IUsuarioService } from '../../interfaces/usuario.interface';
 import { IRolService } from '../../interfaces/rol.interface';
 import { Usuario } from '../../../entities/Usuario';
@@ -18,7 +28,10 @@ export class AuthService implements IAuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(correo: string, contrasena: string): Promise<Usuario | null> {
+  async validateUser(
+    correo: string,
+    contrasena: string,
+  ): Promise<Usuario | null> {
     try {
       const usuario = await this.usuarioService.findByEmail(correo);
 
@@ -30,7 +43,10 @@ export class AuthService implements IAuthService {
         throw new UnauthorizedException('Usuario inactivo');
       }
 
-      const isPasswordValid = await this.comparePasswords(contrasena, usuario.contrasena);
+      const isPasswordValid = await this.comparePasswords(
+        contrasena,
+        usuario.contrasena,
+      );
 
       if (!isPasswordValid) {
         return null;
@@ -62,7 +78,10 @@ export class AuthService implements IAuthService {
     return await bcrypt.hash(password, saltRounds);
   }
 
-  async comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  async comparePasswords(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 
@@ -77,9 +96,13 @@ export class AuthService implements IAuthService {
     }
 
     // Verificar si el correo ya está registrado
-    const emailExists = await this.usuarioService.emailExists(registerDto.correo);
+    const emailExists = await this.usuarioService.emailExists(
+      registerDto.correo,
+    );
     if (emailExists) {
-      throw new ConflictException('Ya existe un usuario con este correo electrónico');
+      throw new ConflictException(
+        'Ya existe un usuario con este correo electrónico',
+      );
     }
 
     // Obtener rol por defecto si no se especifica
@@ -93,7 +116,9 @@ export class AuthService implements IAuthService {
         // Si no existe el rol Propietario, usar el primer rol disponible
         const roles = await this.rolService.findAll();
         if (roles.length === 0) {
-          throw new BadRequestException('No hay roles disponibles en el sistema');
+          throw new BadRequestException(
+            'No hay roles disponibles en el sistema',
+          );
         }
         rolId = roles[0].idRol;
       }

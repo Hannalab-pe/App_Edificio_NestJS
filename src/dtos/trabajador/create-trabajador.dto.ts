@@ -1,5 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsOptional, IsDateString, IsDecimal, IsUUID, IsEnum, IsNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsOptional,
+  IsDateString,
+  IsDecimal,
+  IsUUID,
+  IsEnum,
+  IsNumber,
+} from 'class-validator';
 import { TipoDocumentoIdentidad } from 'src/Enums/documento-identidad.enum';
 
 export class CreateTrabajadorDto {
@@ -46,7 +57,9 @@ export class CreateTrabajadorDto {
     example: 'MiContraseña123!',
     type: String,
   })
-  @IsString({ message: 'La confirmación de contraseña debe ser una cadena de texto' })
+  @IsString({
+    message: 'La confirmación de contraseña debe ser una cadena de texto',
+  })
   @IsNotEmpty({ message: 'La confirmación de contraseña es obligatoria' })
   confirmarContrasena: string;
 
@@ -67,7 +80,13 @@ export class CreateTrabajadorDto {
     required: false,
   })
   @IsOptional()
-  @IsDateString({}, { message: 'La fecha de nacimiento debe tener un formato válido (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    {
+      message:
+        'La fecha de nacimiento debe tener un formato válido (YYYY-MM-DD)',
+    },
+  )
   fechaNacimiento?: string;
 
   @ApiProperty({
@@ -77,7 +96,12 @@ export class CreateTrabajadorDto {
     required: false,
   })
   @IsOptional()
-  @IsDateString({}, { message: 'La fecha de ingreso debe tener un formato válido (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    {
+      message: 'La fecha de ingreso debe tener un formato válido (YYYY-MM-DD)',
+    },
+  )
   fechaIngreso?: string;
 
   @ApiProperty({
@@ -87,7 +111,10 @@ export class CreateTrabajadorDto {
     required: false,
   })
   @IsOptional()
-  @IsDecimal({ decimal_digits: '0,2' }, { message: 'El salario debe ser un número decimal válido' })
+  @IsDecimal(
+    { decimal_digits: '0,2' },
+    { message: 'El salario debe ser un número decimal válido' },
+  )
   salarioActual?: string;
 
   @ApiProperty({
@@ -95,7 +122,9 @@ export class CreateTrabajadorDto {
     example: TipoDocumentoIdentidad.DNI,
     enum: TipoDocumentoIdentidad,
   })
-  @IsEnum(TipoDocumentoIdentidad, { message: 'El tipo de documento debe ser uno de los valores válidos' })
+  @IsEnum(TipoDocumentoIdentidad, {
+    message: 'El tipo de documento debe ser uno de los valores válidos',
+  })
   @IsNotEmpty({ message: 'El tipo de documento es obligatorio' })
   tipoDocumento: TipoDocumentoIdentidad;
 
@@ -109,7 +138,8 @@ export class CreateTrabajadorDto {
   numeroDocumento: number;
 
   @ApiProperty({
-    description: 'ID del rol asignado al trabajador (opcional - por defecto será Trabajador)',
+    description:
+      'ID del rol asignado al trabajador (opcional - por defecto será Trabajador)',
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
     required: false,

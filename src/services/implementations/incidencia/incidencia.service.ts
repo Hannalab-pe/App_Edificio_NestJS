@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IIncidenciaService } from '../../interfaces/incidencia.interface';
@@ -20,13 +24,19 @@ export class IncidenciaService implements IIncidenciaService {
       estado: createIncidenciaDto.estado,
       prioridad: createIncidenciaDto.prioridad,
       ubicacion: createIncidenciaDto.ubicacion,
-      fechaIncidente: createIncidenciaDto.fechaIncidente ? new Date(createIncidenciaDto.fechaIncidente) : null,
+      fechaIncidente: createIncidenciaDto.fechaIncidente
+        ? new Date(createIncidenciaDto.fechaIncidente)
+        : null,
       fechaCreacion: new Date(),
       idAreaComun: { idAreaComun: createIncidenciaDto.idAreaComun } as any,
-      idTipoIncidencia: { idTipoIncidencia: createIncidenciaDto.idTipoIncidencia } as any,
-      reportadoPorUsuario: { idUsuario: createIncidenciaDto.reportadoPorUsuario } as any,
+      idTipoIncidencia: {
+        idTipoIncidencia: createIncidenciaDto.idTipoIncidencia,
+      } as any,
+      reportadoPorUsuario: {
+        idUsuario: createIncidenciaDto.reportadoPorUsuario,
+      } as any,
       asignadoATrabajador: createIncidenciaDto.asignadoATrabajador
-        ? { idTrabajador: createIncidenciaDto.asignadoATrabajador } as any
+        ? ({ idTrabajador: createIncidenciaDto.asignadoATrabajador } as any)
         : null,
     });
 
@@ -41,11 +51,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idTipoIncidencia',
         'reportadoPorUsuario',
         'asignadoATrabajador',
-        'comentarioIncidencias'
+        'comentarioIncidencias',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 
@@ -57,7 +67,7 @@ export class IncidenciaService implements IIncidenciaService {
         'idTipoIncidencia',
         'reportadoPorUsuario',
         'asignadoATrabajador',
-        'comentarioIncidencias'
+        'comentarioIncidencias',
       ],
     });
 
@@ -68,7 +78,10 @@ export class IncidenciaService implements IIncidenciaService {
     return incidencia;
   }
 
-  async update(id: string, updateIncidenciaDto: UpdateIncidenciaDto): Promise<Incidencia> {
+  async update(
+    id: string,
+    updateIncidenciaDto: UpdateIncidenciaDto,
+  ): Promise<Incidencia> {
     await this.findOne(id);
 
     const updateData: any = { ...updateIncidenciaDto };
@@ -80,7 +93,9 @@ export class IncidenciaService implements IIncidenciaService {
 
     // Si se asigna un trabajador, formatear correctamente
     if (updateIncidenciaDto.asignadoATrabajador) {
-      updateData.asignadoATrabajador = { idTrabajador: updateIncidenciaDto.asignadoATrabajador };
+      updateData.asignadoATrabajador = {
+        idTrabajador: updateIncidenciaDto.asignadoATrabajador,
+      };
     }
 
     await this.incidenciaRepository.update(id, updateData);
@@ -99,11 +114,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idAreaComun',
         'idTipoIncidencia',
         'reportadoPorUsuario',
-        'asignadoATrabajador'
+        'asignadoATrabajador',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 
@@ -114,11 +129,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idAreaComun',
         'idTipoIncidencia',
         'reportadoPorUsuario',
-        'asignadoATrabajador'
+        'asignadoATrabajador',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 
@@ -129,11 +144,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idAreaComun',
         'idTipoIncidencia',
         'reportadoPorUsuario',
-        'asignadoATrabajador'
+        'asignadoATrabajador',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 
@@ -144,11 +159,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idAreaComun',
         'idTipoIncidencia',
         'reportadoPorUsuario',
-        'asignadoATrabajador'
+        'asignadoATrabajador',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 
@@ -159,11 +174,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idAreaComun',
         'idTipoIncidencia',
         'reportadoPorUsuario',
-        'asignadoATrabajador'
+        'asignadoATrabajador',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 
@@ -176,24 +191,30 @@ export class IncidenciaService implements IIncidenciaService {
 
     await this.incidenciaRepository.update(id, {
       estado: EstadoIncidencia.RESUELTO,
-      fechaResolucion: new Date()
+      fechaResolucion: new Date(),
     });
 
     return await this.findOne(id);
   }
 
-  async asignarTrabajador(incidenciaId: string, trabajadorId: string): Promise<Incidencia> {
+  async asignarTrabajador(
+    incidenciaId: string,
+    trabajadorId: string,
+  ): Promise<Incidencia> {
     await this.findOne(incidenciaId);
 
     await this.incidenciaRepository.update(incidenciaId, {
       asignadoATrabajador: { idTrabajador: trabajadorId } as any,
-      estado: EstadoIncidencia.EN_PROCESO
+      estado: EstadoIncidencia.EN_PROCESO,
     });
 
     return await this.findOne(incidenciaId);
   }
 
-  async findWithFilters(estado?: string, prioridad?: string): Promise<Incidencia[]> {
+  async findWithFilters(
+    estado?: string,
+    prioridad?: string,
+  ): Promise<Incidencia[]> {
     const where: any = {};
 
     if (estado) {
@@ -210,11 +231,11 @@ export class IncidenciaService implements IIncidenciaService {
         'idAreaComun',
         'idTipoIncidencia',
         'reportadoPorUsuario',
-        'asignadoATrabajador'
+        'asignadoATrabajador',
       ],
       order: {
-        fechaCreacion: 'DESC'
-      }
+        fechaCreacion: 'DESC',
+      },
     });
   }
 }

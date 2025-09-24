@@ -26,8 +26,8 @@ export class ProfileDataDto {
     example: {
       idRol: 'uuid-del-rol',
       nombre: 'Administrador',
-      descripcion: 'Administrador del sistema'
-    }
+      descripcion: 'Administrador del sistema',
+    },
   })
   idRol: any;
 }

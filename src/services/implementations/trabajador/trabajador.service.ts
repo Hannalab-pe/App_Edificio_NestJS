@@ -1,4 +1,9 @@
-import { Injectable, Inject, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { ITrabajadorService } from '../../interfaces/trabajador.interface';
@@ -9,7 +14,11 @@ import { IDocumentoIdentidadService } from '../../interfaces/documento-identidad
 import { Trabajador } from '../../../entities/Trabajador';
 import { Usuario } from '../../../entities/Usuario';
 import { DocumentoIdentidad } from '../../../entities/DocumentoIdentidad';
-import { CreateTrabajadorDto, TrabajadorRegisterResponseDto, CreateUsuarioDto } from '../../../dtos';
+import {
+  CreateTrabajadorDto,
+  TrabajadorRegisterResponseDto,
+  CreateUsuarioDto,
+} from '../../../dtos';
 
 @Injectable()
 export class TrabajadorService implements ITrabajadorService {
@@ -37,22 +46,34 @@ export class TrabajadorService implements ITrabajadorService {
    * Registrar un nuevo trabajador con usuario y documento de identidad
    * Utiliza transacción para asegurar consistencia
    */
-  async register(createTrabajadorDto: CreateTrabajadorDto): Promise<TrabajadorRegisterResponseDto> {
+  async register(
+    createTrabajadorDto: CreateTrabajadorDto,
+  ): Promise<TrabajadorRegisterResponseDto> {
     // Validar que las contraseñas coincidan
-    if (createTrabajadorDto.contrasena !== createTrabajadorDto.confirmarContrasena) {
+    if (
+      createTrabajadorDto.contrasena !== createTrabajadorDto.confirmarContrasena
+    ) {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
 
     // Verificar si el correo ya está registrado
-    const emailExists = await this.usuarioService.emailExists(createTrabajadorDto.correo);
+    const emailExists = await this.usuarioService.emailExists(
+      createTrabajadorDto.correo,
+    );
     if (emailExists) {
-      throw new ConflictException('Ya existe un usuario con este correo electrónico');
+      throw new ConflictException(
+        'Ya existe un usuario con este correo electrónico',
+      );
     }
 
     // Verificar si ya existe un documento con el mismo número
     try {
-      await this.documentoIdentidadService.findByNumero(createTrabajadorDto.numeroDocumento.toString());
-      throw new ConflictException('Ya existe un documento de identidad con este número');
+      await this.documentoIdentidadService.findByNumero(
+        createTrabajadorDto.numeroDocumento.toString(),
+      );
+      throw new ConflictException(
+        'Ya existe un documento de identidad con este número',
+      );
     } catch (error) {
       // Si no existe, continuamos (esto es lo esperado)
       if (error instanceof ConflictException) {
@@ -70,28 +91,39 @@ export class TrabajadorService implements ITrabajadorService {
       let rolId = createTrabajadorDto.idRol;
       if (!rolId) {
         try {
-          const trabajadorRol = await this.rolService.findByNombre('Trabajador');
+          const trabajadorRol =
+            await this.rolService.findByNombre('Trabajador');
           rolId = trabajadorRol.idRol;
         } catch (error) {
           // Si no existe el rol Trabajador, usar el primer rol disponible
           const roles = await this.rolService.findAll();
           if (roles.length === 0) {
-            throw new BadRequestException('No hay roles disponibles en el sistema');
+            throw new BadRequestException(
+              'No hay roles disponibles en el sistema',
+            );
           }
           rolId = roles[0].idRol;
         }
       }
 
       // 1. Crear el documento de identidad primero
-      const documentoIdentidad = queryRunner.manager.create(DocumentoIdentidad, {
-        tipoDocumento: createTrabajadorDto.tipoDocumento,
-        numero: createTrabajadorDto.numeroDocumento,
-      });
+      const documentoIdentidad = queryRunner.manager.create(
+        DocumentoIdentidad,
+        {
+          tipoDocumento: createTrabajadorDto.tipoDocumento,
+          numero: createTrabajadorDto.numeroDocumento,
+        },
+      );
 
-      const nuevoDocumentoIdentidad = await queryRunner.manager.save(DocumentoIdentidad, documentoIdentidad);
+      const nuevoDocumentoIdentidad = await queryRunner.manager.save(
+        DocumentoIdentidad,
+        documentoIdentidad,
+      );
 
       // 2. Hashear la contraseña
-      const hashedPassword = await this.authService.hashPassword(createTrabajadorDto.contrasena);
+      const hashedPassword = await this.authService.hashPassword(
+        createTrabajadorDto.contrasena,
+      );
 
       // 3. Crear el usuario
       const createUsuarioDto: CreateUsuarioDto = {
@@ -124,7 +156,10 @@ export class TrabajadorService implements ITrabajadorService {
       };
 
       const trabajador = queryRunner.manager.create(Trabajador, trabajadorData);
-      const nuevoTrabajador = await queryRunner.manager.save(Trabajador, trabajador);
+      const nuevoTrabajador = await queryRunner.manager.save(
+        Trabajador,
+        trabajador,
+      );
 
       // Confirmar transacción
       await queryRunner.commitTransaction();
@@ -184,7 +219,9 @@ export class TrabajadorService implements ITrabajadorService {
     });
 
     if (!trabajador) {
-      throw new BadRequestException(`Trabajador con número de documento ${numeroDocumento} no encontrado`);
+      throw new BadRequestException(
+        `Trabajador con número de documento ${numeroDocumento} no encontrado`,
+      );
     }
 
     return trabajador;

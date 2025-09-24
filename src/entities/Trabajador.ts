@@ -5,50 +5,50 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-} from "typeorm";
-import { Caja } from "./Caja";
-import { Contrato } from "./Contrato";
-import { Cronograma } from "./Cronograma";
-import { Documento } from "./Documento";
-import { Encomienda } from "./Encomienda";
-import { Incidencia } from "./Incidencia";
-import { DocumentoIdentidad } from "./DocumentoIdentidad";
-import { Usuario } from "./Usuario";
+} from 'typeorm';
+import { Caja } from './Caja';
+import { Contrato } from './Contrato';
+import { Cronograma } from './Cronograma';
+import { Documento } from './Documento';
+import { Encomienda } from './Encomienda';
+import { Incidencia } from './Incidencia';
+import { DocumentoIdentidad } from './DocumentoIdentidad';
+import { Usuario } from './Usuario';
 
-@Index("idx_trabajador_correo", ["correo"], {})
-@Index("trabajador_pkey", ["idTrabajador"], { unique: true })
-@Entity("trabajador", { schema: "public" })
+@Index('idx_trabajador_correo', ['correo'], {})
+@Index('trabajador_pkey', ['idTrabajador'], { unique: true })
+@Entity('trabajador', { schema: 'public' })
 export class Trabajador {
-  @Column("uuid", {
+  @Column('uuid', {
     primary: true,
-    name: "id_trabajador",
-    default: () => "uuid_generate_v4()",
+    name: 'id_trabajador',
+    default: () => 'uuid_generate_v4()',
   })
   idTrabajador: string;
 
-  @Column("character varying", { name: "nombre" })
+  @Column('character varying', { name: 'nombre' })
   nombre: string;
 
-  @Column("character varying", { name: "apellido" })
+  @Column('character varying', { name: 'apellido' })
   apellido: string;
 
-  @Column("character varying", { name: "correo" })
+  @Column('character varying', { name: 'correo' })
   correo: string;
 
-  @Column("boolean", { name: "esta_activo", default: () => "true" })
+  @Column('boolean', { name: 'esta_activo', default: () => 'true' })
   estaActivo: boolean;
 
-  @Column("character varying", { name: "telefono", nullable: true })
+  @Column('character varying', { name: 'telefono', nullable: true })
   telefono: string | null;
 
-  @Column("date", { name: "fecha_nacimiento", nullable: true })
+  @Column('date', { name: 'fecha_nacimiento', nullable: true })
   fechaNacimiento: string | null;
 
-  @Column("date", { name: "fecha_ingreso", nullable: true })
+  @Column('date', { name: 'fecha_ingreso', nullable: true })
   fechaIngreso: string | null;
 
-  @Column("numeric", {
-    name: "salario_actual",
+  @Column('numeric', {
+    name: 'salario_actual',
     nullable: true,
     precision: 10,
     scale: 2,
@@ -75,17 +75,17 @@ export class Trabajador {
 
   @ManyToOne(
     () => DocumentoIdentidad,
-    (documentoIdentidad) => documentoIdentidad.trabajadors
+    (documentoIdentidad) => documentoIdentidad.trabajadors,
   )
   @JoinColumn([
     {
-      name: "id_documento_identidad",
-      referencedColumnName: "idDocumentoIdentidad",
+      name: 'id_documento_identidad',
+      referencedColumnName: 'idDocumentoIdentidad',
     },
   ])
   idDocumentoIdentidad: DocumentoIdentidad;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.trabajadors)
-  @JoinColumn([{ name: "id_usuario", referencedColumnName: "idUsuario" }])
+  @JoinColumn([{ name: 'id_usuario', referencedColumnName: 'idUsuario' }])
   idUsuario: Usuario;
 }

@@ -8,9 +8,21 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AuthService } from '../services/implementations/auth/auth.service';
-import { LoginDto, LoginResponseDto, RegisterDto, RegisterResponseDto, ProfileResponseDto, ErrorResponseDto } from '../dtos/auth';
+import {
+  LoginDto,
+  LoginResponseDto,
+  RegisterDto,
+  RegisterResponseDto,
+  ProfileResponseDto,
+  ErrorResponseDto,
+} from '../dtos/auth';
 import { Public } from './decorators/public.decorator';
 import { GetUser } from './decorators/get-user.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -30,7 +42,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK) // Retorna 200 en lugar de 201 por defecto
   @ApiOperation({
     summary: 'Iniciar sesión',
-    description: 'Autentica un usuario con correo y contraseña, retorna JWT token'
+    description:
+      'Autentica un usuario con correo y contraseña, retorna JWT token',
   })
   @ApiResponse({
     status: 200,
@@ -58,8 +71,8 @@ export class AuthController {
         error: {
           code: 'INVALID_CREDENTIALS',
           timestamp: new Date().toISOString(),
-          path: '/api/v1/auth/login'
-        }
+          path: '/api/v1/auth/login',
+        },
       });
     }
 
@@ -83,7 +96,8 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED) // Retorna 201 para creación exitosa
   @ApiOperation({
     summary: 'Registrar nuevo usuario',
-    description: 'Crea un nuevo usuario en el sistema y retorna JWT token para login automático'
+    description:
+      'Crea un nuevo usuario en el sistema y retorna JWT token para login automático',
   })
   @ApiResponse({
     status: 201,
@@ -100,7 +114,9 @@ export class AuthController {
     description: 'El correo ya está registrado',
     type: ErrorResponseDto,
   })
-  async register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
+  async register(
+    @Body() registerDto: RegisterDto,
+  ): Promise<RegisterResponseDto> {
     try {
       // Llamar al servicio de registro
       const result = await this.authService.register(registerDto);
@@ -126,7 +142,7 @@ export class AuthController {
   @ApiBearerAuth() // Indica en Swagger que requiere Bearer token
   @ApiOperation({
     summary: 'Obtener perfil del usuario',
-    description: 'Retorna la información del usuario autenticado'
+    description: 'Retorna la información del usuario autenticado',
   })
   @ApiResponse({
     status: 200,
@@ -161,7 +177,8 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Endpoint de prueba protegido',
-    description: 'Endpoint para probar que la autenticación funciona correctamente'
+    description:
+      'Endpoint para probar que la autenticación funciona correctamente',
   })
   @ApiResponse({
     status: 200,
@@ -171,9 +188,9 @@ export class AuthController {
         success: true,
         message: 'Acceso autorizado a ruta protegida',
         user: 'admin@viveconecta.com',
-        timestamp: '2024-01-01T12:00:00.000Z'
-      }
-    }
+        timestamp: '2024-01-01T12:00:00.000Z',
+      },
+    },
   })
   async testProtected(@GetUser() user: Usuario) {
     return {
@@ -192,7 +209,7 @@ export class AuthController {
   @Get('test-public')
   @ApiOperation({
     summary: 'Endpoint público de prueba',
-    description: 'Endpoint para verificar que las rutas públicas funcionan'
+    description: 'Endpoint para verificar que las rutas públicas funcionan',
   })
   @ApiResponse({
     status: 200,
@@ -201,9 +218,9 @@ export class AuthController {
       example: {
         success: true,
         message: 'Endpoint público funcionando correctamente',
-        timestamp: '2024-01-01T12:00:00.000Z'
-      }
-    }
+        timestamp: '2024-01-01T12:00:00.000Z',
+      },
+    },
   })
   async testPublic() {
     return {

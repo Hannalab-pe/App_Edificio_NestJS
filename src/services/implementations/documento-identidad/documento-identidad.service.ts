@@ -12,10 +12,12 @@ export class DocumentoIdentidadService implements IDocumentoIdentidadService {
     private readonly documentoIdentidadRepository: Repository<DocumentoIdentidad>,
   ) {}
 
-  async create(createDocumentoIdentidadDto: CreateDocumentoIdentidadDto): Promise<DocumentoIdentidad> {
+  async create(
+    createDocumentoIdentidadDto: CreateDocumentoIdentidadDto,
+  ): Promise<DocumentoIdentidad> {
     // Verificar si ya existe un documento con el mismo número
     const existingDoc = await this.documentoIdentidadRepository.findOne({
-      where: { numero: createDocumentoIdentidadDto.numero }
+      where: { numero: createDocumentoIdentidadDto.numero },
     });
 
     if (existingDoc) {
@@ -40,15 +42,23 @@ export class DocumentoIdentidadService implements IDocumentoIdentidadService {
     });
 
     if (!documentoIdentidad) {
-      throw new BadRequestException(`Documento de identidad con ID ${id} no encontrado`);
+      throw new BadRequestException(
+        `Documento de identidad con ID ${id} no encontrado`,
+      );
     }
 
     return documentoIdentidad;
   }
 
-  async update(id: string, updateDocumentoIdentidadDto: any): Promise<DocumentoIdentidad> {
+  async update(
+    id: string,
+    updateDocumentoIdentidadDto: any,
+  ): Promise<DocumentoIdentidad> {
     await this.findOne(id);
-    await this.documentoIdentidadRepository.update(id, updateDocumentoIdentidadDto);
+    await this.documentoIdentidadRepository.update(
+      id,
+      updateDocumentoIdentidadDto,
+    );
     return await this.findOne(id);
   }
 
@@ -69,7 +79,9 @@ export class DocumentoIdentidadService implements IDocumentoIdentidadService {
     });
 
     if (!documentoIdentidad) {
-      throw new BadRequestException(`Documento de identidad con número ${numero} no encontrado`);
+      throw new BadRequestException(
+        `Documento de identidad con número ${numero} no encontrado`,
+      );
     }
 
     return documentoIdentidad;

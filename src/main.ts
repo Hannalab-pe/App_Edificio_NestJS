@@ -31,13 +31,23 @@ async function bootstrap() {
     .setDescription('API documentation for ViveConecta')
     .setVersion('1.0')
     .addTag('viveconecta')
+    .addBearerAuth(
+      {
+        description: 'JWT Authorization header using the Bearer scheme',
+        name: 'Authorization',
+        bearerFormat: 'JWT',
+        scheme: 'Bearer',
+        type: 'http',
+        in: 'Header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   // Ejecutar seeders al iniciar la aplicación
-  
 
   await app.listen(process.env.PORT ?? 3000);
 }
