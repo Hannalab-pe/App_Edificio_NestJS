@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { AsignacionAreaEdificio } from '../../entities/AsignacionAreaEdificio';
 import { Edificio } from '../../entities/Edificio';
 import { AreaComun } from '../../entities/AreaComun';
@@ -8,19 +8,19 @@ import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 import {
     CreateAsignacionAreaEdificioDto,
     UpdateAsignacionAreaEdificioDto,
-    AsignacionAreaEdificioResponseDto
+    AsignacionAreaEdificioResponseDto,
+    CreateMultipleAsignacionAreaEdificioDto
 } from '../../dtos/asignacion-area-edificio';
-import { IAsignacionAreaEdificioService } from './asignacion-area-edificio.service.interface';
+import { IAsignacionAreaEdificioService } from '../interfaces/asignacion-area-edificio.service.interface';
+import { AreaComunService, EdificioService } from '../implementations';
 
 @Injectable()
 export class AsignacionAreaEdificioService implements IAsignacionAreaEdificioService {
     constructor(
         @InjectRepository(AsignacionAreaEdificio)
         private readonly asignacionRepository: Repository<AsignacionAreaEdificio>,
-        @InjectRepository(Edificio)
-        private readonly edificioRepository: Repository<Edificio>,
-        @InjectRepository(AreaComun)
-        private readonly areaComunRepository: Repository<AreaComun>,
+        private readonly edificioRepository: EdificioService,
+        private readonly areaComunRepository: AreaComunService,
     ) { }
 
     async create(
@@ -34,19 +34,18 @@ export class AsignacionAreaEdificioService implements IAsignacionAreaEdificioSer
                 );
             }
 
-            // Verificar que el edificio existe
-            const edificio = await this.edificioRepository.findOne({
-                where: { idEdificio: createAsignacionDto.idEdificio },
-            });
-            if (!edificio) {
+            // Verificar que el edificio existe usando el servicio
+            const edificioResponse = await this.edificioRepository.findOne(createAsignacionDto.idEdificio);
+            if (!edificioResponse.success || !edificioResponse.data) {
                 return BaseResponseDto.error('Edificio no encontrado', HttpStatus.NOT_FOUND);
             }
+            const edificio = edificioResponse.data;
 
-            // Verificar que el área común existe
-            const areaComun = await this.areaComunRepository.findOne({
-                where: { idAreaComun: createAsignacionDto.idAreaComun },
-            });
-            if (!areaComun) {
+            // Verificar que el área común existe usando el servicio
+            let areaComun;
+            try {
+                areaComun = await this.areaComunRepository.findOne(createAsignacionDto.idAreaComun);
+            } catch (error) {
                 return BaseResponseDto.error('Área común no encontrada', HttpStatus.NOT_FOUND);
             }
 
@@ -71,8 +70,6 @@ export class AsignacionAreaEdificioService implements IAsignacionAreaEdificioSer
                 observaciones: createAsignacionDto.observaciones || null,
                 estaActivo: createAsignacionDto.estaActivo ?? true,
                 fechaAsignacion: new Date(),
-                idEdificio: edificio,
-                idAreaComun: areaComun,
             });
 
             const asignacionGuardada = await this.asignacionRepository.save(nuevaAsignacion);
@@ -104,6 +101,111 @@ export class AsignacionAreaEdificioService implements IAsignacionAreaEdificioSer
         } catch (error) {
             return BaseResponseDto.error(
                 'Error al crear la asignación: ' + error.message,
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
+
+    async createMultiple(
+        createMultipleDto: CreateMultipleAsignacionAreaEdificioDto,
+    ): Promise<BaseResponseDto<AsignacionAreaEdificioResponseDto[]>> {
+        try {
+            if (!createMultipleDto || !createMultipleDto.idEdificio || !createMultipleDto.asignaciones || createMultipleDto.asignaciones.length === 0) {
+                return BaseResponseDto.error(
+                    'Ingrese datos válidos con al menos una asignación.',
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+
+            // Verificar que el edificio existe
+            const edificioResponse = await this.edificioRepository.findOne(createMultipleDto.idEdificio);
+            if (!edificioResponse.success || !edificioResponse.data) {
+                return BaseResponseDto.error('Edificio no encontrado', HttpStatus.NOT_FOUND);
+            }
+            const edificio = edificioResponse.data;
+
+            // Verificar que todas las áreas comunes existen
+            const areasComunes = new Map<string, any>();
+            const areasNoEncontradas: string[] = [];
+
+            for (const asignacion of createMultipleDto.asignaciones) {
+                try {
+                    const areaComun = await this.areaComunRepository.findOne(asignacion.idAreaComun);
+                    areasComunes.set(asignacion.idAreaComun, areaComun);
+                } catch (error) {
+                    areasNoEncontradas.push(asignacion.idAreaComun);
+                }
+            }
+
+            if (areasNoEncontradas.length > 0) {
+                return BaseResponseDto.error(
+                    `Áreas comunes no encontradas: ${areasNoEncontradas.join(', ')}`,
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+
+            // Verificar duplicados existentes
+            const idsAreasComunes = createMultipleDto.asignaciones.map(a => a.idAreaComun);
+            const asignacionesExistentes = await this.asignacionRepository.find({
+                where: {
+                    idEdificioUuid: createMultipleDto.idEdificio,
+                    idAreaComunUuid: In(idsAreasComunes),
+                },
+            });
+
+            if (asignacionesExistentes.length > 0) {
+                const duplicados = asignacionesExistentes.map(a => a.idAreaComunUuid);
+                return BaseResponseDto.error(
+                    `Ya existen asignaciones para las áreas comunes: ${duplicados.join(', ')}`,
+                    HttpStatus.CONFLICT,
+                );
+            }
+
+            // Crear todas las asignaciones
+            const nuevasAsignaciones = createMultipleDto.asignaciones.map(asignacion => {
+                return this.asignacionRepository.create({
+                    idEdificioUuid: createMultipleDto.idEdificio,
+                    idAreaComunUuid: asignacion.idAreaComun,
+                    observaciones: asignacion.observaciones || null,
+                    estaActivo: true,
+                    fechaAsignacion: new Date(),
+                });
+            });
+
+            // Guardar todas las asignaciones en una transacción
+            const asignacionesGuardadas = await this.asignacionRepository.save(nuevasAsignaciones);
+
+            // Construir la respuesta con datos completos
+            const response: AsignacionAreaEdificioResponseDto[] = asignacionesGuardadas.map(asignacion => {
+                const areaComun = areasComunes.get(asignacion.idAreaComunUuid);
+                return {
+                    idAsignacion: asignacion.idAsignacion,
+                    idEdificioUuid: asignacion.idEdificioUuid,
+                    idAreaComunUuid: asignacion.idAreaComunUuid,
+                    fechaAsignacion: asignacion.fechaAsignacion,
+                    estaActivo: asignacion.estaActivo,
+                    observaciones: asignacion.observaciones,
+                    idEdificio: {
+                        idEdificio: edificio.idEdificio,
+                        nombreEdificio: edificio.nombreEdificio,
+                        direccion: edificio.direccion,
+                    },
+                    idAreaComun: {
+                        idAreaComun: areaComun.idAreaComun,
+                        nombre: areaComun.nombre,
+                        descripcion: areaComun.descripcion,
+                    },
+                };
+            });
+
+            return BaseResponseDto.success(
+                response,
+                `${response.length} asignaciones creadas exitosamente.`,
+                HttpStatus.CREATED,
+            );
+        } catch (error) {
+            return BaseResponseDto.error(
+                'Error al crear las asignaciones: ' + error.message,
                 HttpStatus.BAD_REQUEST,
             );
         }

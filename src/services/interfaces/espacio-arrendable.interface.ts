@@ -1,15 +1,10 @@
-import { EspacioArrendable } from '../../entities/EspacioArrendable';
+import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
+import { CreateEspacioArrendableDto, UpdateEspacioArrendableDto, EspacioArrendableResponseDto } from 'src/dtos/espacio-arrendable';
 
 export interface IEspacioArrendableService {
-  create(createEspacioArrendableDto: any): Promise<EspacioArrendable>;
-  findAll(): Promise<EspacioArrendable[]>;
-  findOne(id: string): Promise<EspacioArrendable>;
-  update(
-    id: string,
-    updateEspacioArrendableDto: any,
-  ): Promise<EspacioArrendable>;
-  remove(id: string): Promise<void>;
-  findByEstado(estado: string): Promise<EspacioArrendable[]>;
-  findAvailable(): Promise<EspacioArrendable[]>;
-  findByTipo(tipoId: string): Promise<EspacioArrendable[]>;
+  create(createEspacioArrendableDto: CreateEspacioArrendableDto): Promise<BaseResponseDto<EspacioArrendableResponseDto>>;
+  findAll(): Promise<BaseResponseDto<EspacioArrendableResponseDto[]>>;
+  findOne(id: string): Promise<BaseResponseDto<EspacioArrendableResponseDto>>;
+  update(id: string, updateEspacioArrendableDto: UpdateEspacioArrendableDto): Promise<BaseResponseDto<EspacioArrendableResponseDto>>;
+  remove(id: string): Promise<BaseResponseDto<void>>;
 }

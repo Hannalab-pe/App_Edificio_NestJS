@@ -18,7 +18,6 @@ import { Usuario } from '../../../entities/Usuario';
 import { BaseResponseDto } from '../../../dtos/baseResponse/baseResponse.dto';
 import { ArrendatarioService } from '../arrendatario/arrendatario.service';
 import { UsuarioService } from '../usuario/usuario.service';
-import { EspacioArrendableService } from '../espacio-arrendable/espacio-arrendable.service';
 import { RolService } from '../rol/rol.service';
 import { Rol } from 'src/entities/Rol';
 
@@ -36,18 +35,8 @@ export class ArrendamientoEspacioService
     private readonly arrendatarioService: ArrendatarioService,
     private readonly usuarioService: UsuarioService,
     private readonly rolService: RolService,
-    private readonly espacioArrendableService: EspacioArrendableService,
   ) { }
 
-  /**
-   * TRANSACCIÓN PRINCIPAL - Crear arrendamiento completo
-   * Este método orquesta toda la lógica de negocio:
-   * 1. Validar espacio disponible
-   * 2. Crear arrendatario
-   * 3. Generar usuario automáticamente
-   * 4. Crear el arrendamiento
-   * 5. Actualizar estado del espacio
-   */
   async crearArrendamientoCompleto(
     dto: CreateArrendamientoCompletoDto,
   ): Promise<BaseResponseDto<ArrendamientoEspacio>> {

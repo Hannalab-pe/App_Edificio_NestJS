@@ -61,6 +61,7 @@ export { UpdateTipoEspacioDto } from './tipo-espacio/update-tipo-espacio.dto';
 // Espacio Arrendable DTOs
 export { CreateEspacioArrendableDto } from './espacio-arrendable/create-espacio-arrendable.dto';
 export { UpdateEspacioArrendableDto } from './espacio-arrendable/update-espacio-arrendable.dto';
+export { EspacioArrendableResponseDto } from './espacio-arrendable/espacio-arrendable-response.dto';
 
 // Votación DTOs
 export { CreateVotacionDto } from './votacion/create-votacion.dto';
@@ -125,3 +126,4 @@ export { UpdateInmobiliariaDto } from './inmobiliaria/update-inmobiliaria.dto';
 export { CreateAsignacionAreaEdificioDto } from './asignacion-area-edificio/create-asignacion-area-edificio.dto';
 export { UpdateAsignacionAreaEdificioDto } from './asignacion-area-edificio/update-asignacion-area-edificio.dto';
 export { AsignacionAreaEdificioResponseDto } from './asignacion-area-edificio/asignacion-area-edificio-response.dto';
+export { CreateMultipleAsignacionAreaEdificioDto, AsignacionAreaDto } from './asignacion-area-edificio/create-multiple-asignacion-area-edificio.dto';

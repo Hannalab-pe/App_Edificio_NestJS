@@ -22,6 +22,7 @@ import {
     CreateAsignacionAreaEdificioDto,
     UpdateAsignacionAreaEdificioDto,
     AsignacionAreaEdificioResponseDto,
+    CreateMultipleAsignacionAreaEdificioDto,
 } from '../../dtos/asignacion-area-edificio';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 
@@ -65,6 +66,39 @@ export class AsignacionAreaEdificioController {
         return await this.asignacionAreaEdificioService.create(
             createAsignacionAreaEdificioDto,
         );
+    }
+
+    @Post('multiple')
+    @HttpCode(HttpStatus.CREATED)
+    @ApiOperation({
+        summary: 'Crear múltiples asignaciones de áreas comunes a un edificio',
+        description: 'Crea múltiples asignaciones de áreas comunes para un edificio específico',
+    })
+    @ApiBody({
+        type: CreateMultipleAsignacionAreaEdificioDto,
+        description: 'Datos para crear las asignaciones múltiples',
+    })
+    @ApiResponse({
+        status: HttpStatus.CREATED,
+        description: 'Asignaciones creadas exitosamente',
+        type: [BaseResponseDto<AsignacionAreaEdificioResponseDto[]>],
+    })
+    @ApiResponse({
+        status: HttpStatus.BAD_REQUEST,
+        description: 'Datos inválidos',
+    })
+    @ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        description: 'Edificio o áreas comunes no encontradas',
+    })
+    @ApiResponse({
+        status: HttpStatus.CONFLICT,
+        description: 'Ya existen asignaciones para algunas áreas comunes',
+    })
+    async createMultiple(
+        @Body() createMultipleDto: CreateMultipleAsignacionAreaEdificioDto,
+    ): Promise<BaseResponseDto<AsignacionAreaEdificioResponseDto[]>> {
+        return await this.asignacionAreaEdificioService.createMultiple(createMultipleDto);
     }
 
     @Get()
