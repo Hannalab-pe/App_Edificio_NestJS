@@ -3,6 +3,7 @@ import { Edificio } from "./Edificio";
 import { Incidencia } from "./Incidencia";
 import { Mantenimiento } from "./Mantenimiento";
 import { Reserva } from "./Reserva";
+import { AsignacionAreaEdificio } from "./AsignacionAreaEdificio";
 
 @Index("area_comun_pkey", ["idAreaComun"], { unique: true })
 @Entity("area_comun", { schema: "public" })
@@ -44,8 +45,7 @@ export class AreaComun {
   @Column("boolean", { name: "esta_activo", default: () => "true" })
   estaActivo: boolean;
 
-  @OneToMany(() => Edificio, (edificio) => edificio.idAreasComunes)
-  edificios: Edificio[];
+
 
   @OneToMany(() => Incidencia, (incidencia) => incidencia.idAreaComun)
   incidencias: Incidencia[];
@@ -55,4 +55,7 @@ export class AreaComun {
 
   @OneToMany(() => Reserva, (reserva) => reserva.idAreaComun)
   reservas: Reserva[];
+
+  @OneToMany(() => AsignacionAreaEdificio, (asignacion) => asignacion.idAreaComun)
+  asignacionesEdificio: AsignacionAreaEdificio[];
 }

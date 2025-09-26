@@ -1,34 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEdificioDto, UpdateEdificioDto } from 'src/dtos';
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 import { Edificio } from 'src/entities/Edificio';
 import { IEdificioService } from 'src/services/interfaces';
 import { Repository } from 'typeorm';
+import { InmobiliariaService } from '../inmobiliaria/inmobiliaria.service';
 
 @Injectable()
 export class EdificioService implements IEdificioService {
     constructor(
         @InjectRepository(Edificio)
         private readonly edificioRepository: Repository<Edificio>,
+        private readonly inmobiliariaService: InmobiliariaService
     ) { }
 
     async create(
         createEdificioDto: CreateEdificioDto,
     ): Promise<BaseResponseDto<Edificio>> {
         if (!createEdificioDto) {
-            return {
-                success: false,
-                message: 'Datos no válidos',
-                data: null,
-                error: {
-                    message: 'Ingrese datos válidos, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese datos válidos, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
+            const inmobiliariaFound = await this.inmobiliariaService.findOne(createEdificioDto.idInmobiliaria);
+            if (!inmobiliariaFound.data) {
+                return BaseResponseDto.error('Inmobiliaria no encontrada', HttpStatus.NOT_FOUND);
+            }
+
             // Crear la entidad edificio con relaciones
             const edificioData = {
                 ...createEdificioDto,
@@ -40,106 +39,52 @@ export class EdificioService implements IEdificioService {
                 numeroAreasComunes: createEdificioDto.numeroAreasComunes ?? 0,
                 // Configurar relaciones
                 idAdministradorEdificio: { idTrabajador: createEdificioDto.idAdministradorEdificio } as any,
-                idInmobiliaria: { idInmobiliaria: createEdificioDto.idInmobiliaria } as any,
-                ...(createEdificioDto.idAreasComunes && {
-                    idAreasComunes: { idAreaComun: createEdificioDto.idAreasComunes } as any,
-                }),
+                idInmobiliaria: inmobiliariaFound.data,
             };
 
             const edificio = this.edificioRepository.create(edificioData);
             const edificioGuardado = await this.edificioRepository.save(edificio);
 
-            return {
-                success: true,
-                message: 'Edificio creado exitosamente.',
-                data: edificioGuardado,
-            };
+            return BaseResponseDto.success(edificioGuardado, 'Edificio creado exitosamente.', HttpStatus.CREATED);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al crear el edificio',
-                data: null,
-                error: {
-                    message: 'Error al crear el edificio: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al crear el edificio: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async findAll(): Promise<BaseResponseDto<Edificio[]>> {
         try {
             const edificios = await this.edificioRepository.find({
-                relations: ['idAdministradorEdificio', 'idInmobiliaria', 'idAreasComunes'],
+                relations: ['idAdministradorEdificio', 'idInmobiliaria'],
             });
 
-            return {
-                success: true,
-                message:
-                    edificios.length > 0
-                        ? 'Edificios obtenidos exitosamente.'
-                        : 'No se encontraron edificios.',
-                data: edificios,
-            };
+            const message = edificios.length > 0
+                ? 'Edificios obtenidos exitosamente.'
+                : 'No se encontraron edificios.';
+
+            return BaseResponseDto.success(edificios, message, HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al obtener edificios',
-                data: [],
-                error: {
-                    message: 'Error al obtener edificios: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al obtener edificios: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async findOne(id: string): Promise<BaseResponseDto<Edificio>> {
         if (!id) {
-            return {
-                success: false,
-                message: 'ID no válido',
-                data: null,
-                error: {
-                    message: 'Ingrese un ID válido, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese un ID válido, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
             const edificio = await this.edificioRepository.findOne({
                 where: { idEdificio: id },
-                relations: ['idAdministradorEdificio', 'idInmobiliaria', 'idAreasComunes', 'propiedads'],
+                relations: ['idAdministradorEdificio', 'idInmobiliaria', 'propiedads'],
             });
 
             if (!edificio) {
-                return {
-                    success: false,
-                    message: 'Edificio no encontrado',
-                    data: null,
-                    error: {
-                        message: 'Edificio no encontrado.',
-                        statusCode: 404,
-                    },
-                };
+                return BaseResponseDto.error('Edificio no encontrado.', HttpStatus.NOT_FOUND);
             }
 
-            return {
-                success: true,
-                message: 'Edificio obtenido exitosamente.',
-                data: edificio,
-            };
+            return BaseResponseDto.success(edificio, 'Edificio obtenido exitosamente.', HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al obtener el edificio',
-                data: null,
-                error: {
-                    message: 'Error al obtener el edificio: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al obtener el edificio: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -148,15 +93,7 @@ export class EdificioService implements IEdificioService {
         updateEdificioDto: UpdateEdificioDto,
     ): Promise<BaseResponseDto<Edificio>> {
         if (!id || !updateEdificioDto) {
-            return {
-                success: false,
-                message: 'Datos no válidos',
-                data: null,
-                error: {
-                    message: 'Ingrese datos válidos, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese datos válidos, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -165,15 +102,15 @@ export class EdificioService implements IEdificioService {
             });
 
             if (!edificio) {
-                return {
-                    success: false,
-                    message: 'Edificio no encontrado',
-                    data: null,
-                    error: {
-                        message: 'Edificio no encontrado.',
-                        statusCode: 404,
-                    },
-                };
+                return BaseResponseDto.error('Edificio no encontrado.', HttpStatus.NOT_FOUND);
+            }
+
+            // Validar inmobiliaria si se está actualizando
+            if (updateEdificioDto.idInmobiliaria) {
+                const inmobiliariaFound = await this.inmobiliariaService.findOne(updateEdificioDto.idInmobiliaria);
+                if (!inmobiliariaFound.data) {
+                    return BaseResponseDto.error('Inmobiliaria no encontrada', HttpStatus.NOT_FOUND);
+                }
             }
 
             // Preparar datos de actualización
@@ -187,44 +124,22 @@ export class EdificioService implements IEdificioService {
                 updateData.idAdministradorEdificio = { idTrabajador: updateEdificioDto.idAdministradorEdificio };
             }
             if (updateEdificioDto.idInmobiliaria) {
-                updateData.idInmobiliaria = { idInmobiliaria: updateEdificioDto.idInmobiliaria };
-            }
-            if (updateEdificioDto.idAreasComunes) {
-                updateData.idAreasComunes = { idAreaComun: updateEdificioDto.idAreasComunes };
+                const inmobiliariaFound = await this.inmobiliariaService.findOne(updateEdificioDto.idInmobiliaria);
+                updateData.idInmobiliaria = inmobiliariaFound.data;
             }
 
             this.edificioRepository.merge(edificio, updateData);
             const edificioActualizado = await this.edificioRepository.save(edificio);
 
-            return {
-                success: true,
-                message: 'Edificio actualizado exitosamente.',
-                data: edificioActualizado,
-            };
+            return BaseResponseDto.success(edificioActualizado, 'Edificio actualizado exitosamente.', HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al actualizar el edificio',
-                data: null,
-                error: {
-                    message: 'Error al actualizar el edificio: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al actualizar el edificio: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async remove(id: string): Promise<BaseResponseDto<void>> {
         if (!id) {
-            return {
-                success: false,
-                message: 'ID no válido',
-                data: undefined,
-                error: {
-                    message: 'Ingrese un ID válido, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese un ID válido, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -233,15 +148,7 @@ export class EdificioService implements IEdificioService {
             });
 
             if (!edificio) {
-                return {
-                    success: false,
-                    message: 'Edificio no encontrado',
-                    data: undefined,
-                    error: {
-                        message: 'Edificio no encontrado.',
-                        statusCode: 404,
-                    },
-                };
+                return BaseResponseDto.error('Edificio no encontrado.', HttpStatus.NOT_FOUND);
             }
 
             // Eliminación lógica: cambiar estaActivo a false
@@ -249,84 +156,36 @@ export class EdificioService implements IEdificioService {
             edificio.fechaActualizacion = new Date();
             await this.edificioRepository.save(edificio);
 
-            return {
-                success: true,
-                message: 'Edificio eliminado exitosamente.',
-                data: undefined,
-            };
+            return BaseResponseDto.success(undefined, 'Edificio eliminado exitosamente.', HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al eliminar el edificio',
-                data: undefined,
-                error: {
-                    message: 'Error al eliminar el edificio: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al eliminar el edificio: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async findByNombre(nombre: string): Promise<BaseResponseDto<Edificio>> {
         if (!nombre) {
-            return {
-                success: false,
-                message: 'Nombre no válido',
-                data: null,
-                error: {
-                    message: 'Ingrese un nombre válido, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese un nombre válido, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
             const edificio = await this.edificioRepository.findOne({
                 where: { nombreEdificio: nombre },
-                relations: ['idAdministradorEdificio', 'idInmobiliaria', 'idAreasComunes'],
+                relations: ['idAdministradorEdificio', 'idInmobiliaria'],
             });
 
             if (!edificio) {
-                return {
-                    success: false,
-                    message: 'Edificio no encontrado con ese nombre',
-                    data: null,
-                    error: {
-                        message: 'Edificio no encontrado con ese nombre.',
-                        statusCode: 404,
-                    },
-                };
+                return BaseResponseDto.error('Edificio no encontrado con ese nombre.', HttpStatus.NOT_FOUND);
             }
 
-            return {
-                success: true,
-                message: 'Edificio encontrado exitosamente.',
-                data: edificio,
-            };
+            return BaseResponseDto.success(edificio, 'Edificio encontrado exitosamente.', HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al buscar el edificio por nombre',
-                data: null,
-                error: {
-                    message: 'Error al buscar el edificio por nombre: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al buscar el edificio por nombre: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async findByDistrito(distrito: string): Promise<BaseResponseDto<Edificio[]>> {
         if (!distrito) {
-            return {
-                success: false,
-                message: 'Distrito no válido',
-                data: [],
-                error: {
-                    message: 'Ingrese un distrito válido, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese un distrito válido, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -335,38 +194,19 @@ export class EdificioService implements IEdificioService {
                 relations: ['idAdministradorEdificio', 'idInmobiliaria'],
             });
 
-            return {
-                success: true,
-                message:
-                    edificios.length > 0
-                        ? 'Edificios encontrados exitosamente.'
-                        : 'No se encontraron edificios en ese distrito.',
-                data: edificios,
-            };
+            const message = edificios.length > 0
+                ? 'Edificios encontrados exitosamente.'
+                : 'No se encontraron edificios en ese distrito.';
+
+            return BaseResponseDto.success(edificios, message, HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al buscar edificios por distrito',
-                data: [],
-                error: {
-                    message: 'Error al buscar edificios por distrito: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al buscar edificios por distrito: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     async findByInmobiliaria(idInmobiliaria: string): Promise<BaseResponseDto<Edificio[]>> {
         if (!idInmobiliaria) {
-            return {
-                success: false,
-                message: 'ID de inmobiliaria no válido',
-                data: [],
-                error: {
-                    message: 'Ingrese un ID de inmobiliaria válido, Intente de Nuevo.',
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Ingrese un ID de inmobiliaria válido, Intente de Nuevo.', HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -375,24 +215,13 @@ export class EdificioService implements IEdificioService {
                 relations: ['idAdministradorEdificio', 'idInmobiliaria'],
             });
 
-            return {
-                success: true,
-                message:
-                    edificios.length > 0
-                        ? 'Edificios de la inmobiliaria obtenidos exitosamente.'
-                        : 'No se encontraron edificios para esa inmobiliaria.',
-                data: edificios,
-            };
+            const message = edificios.length > 0
+                ? 'Edificios de la inmobiliaria obtenidos exitosamente.'
+                : 'No se encontraron edificios para esa inmobiliaria.';
+
+            return BaseResponseDto.success(edificios, message, HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al buscar edificios por inmobiliaria',
-                data: [],
-                error: {
-                    message: 'Error al buscar edificios por inmobiliaria: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al buscar edificios por inmobiliaria: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -403,24 +232,13 @@ export class EdificioService implements IEdificioService {
                 relations: ['idAdministradorEdificio', 'idInmobiliaria'],
             });
 
-            return {
-                success: true,
-                message:
-                    edificios.length > 0
-                        ? 'Edificios activos obtenidos exitosamente.'
-                        : 'No se encontraron edificios activos.',
-                data: edificios,
-            };
+            const message = edificios.length > 0
+                ? 'Edificios activos obtenidos exitosamente.'
+                : 'No se encontraron edificios activos.';
+
+            return BaseResponseDto.success(edificios, message, HttpStatus.OK);
         } catch (error) {
-            return {
-                success: false,
-                message: 'Error al obtener edificios activos',
-                data: [],
-                error: {
-                    message: 'Error al obtener edificios activos: ' + error.message,
-                    statusCode: 400,
-                },
-            };
+            return BaseResponseDto.error('Error al obtener edificios activos: ' + error.message, HttpStatus.BAD_REQUEST);
         }
     }
 }

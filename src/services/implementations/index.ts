@@ -64,3 +64,6 @@ export { ResidenciaService } from './residencia/residencia.service';
 // Servicios de edificios e inmobiliarias
 export { EdificioService } from './edificio/edificio.service';
 export { InmobiliariaService } from './inmobiliaria/inmobiliaria.service';
+
+// Servicios de asignaciones
+export { AsignacionAreaEdificioService } from '../asignacion-area-edificio/asignacion-area-edificio.service';

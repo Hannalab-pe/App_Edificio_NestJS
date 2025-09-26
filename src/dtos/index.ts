@@ -120,3 +120,8 @@ export { UpdateEdificioDto } from './edificio/update-edificio.dto';
 // Inmobiliaria DTOs
 export { CreateInmobiliariaDto } from './inmobiliaria/create-inmobiliaria.dto';
 export { UpdateInmobiliariaDto } from './inmobiliaria/update-inmobiliaria.dto';
+
+// Asignación Área Edificio DTOs
+export { CreateAsignacionAreaEdificioDto } from './asignacion-area-edificio/create-asignacion-area-edificio.dto';
+export { UpdateAsignacionAreaEdificioDto } from './asignacion-area-edificio/update-asignacion-area-edificio.dto';
+export { AsignacionAreaEdificioResponseDto } from './asignacion-area-edificio/asignacion-area-edificio-response.dto';

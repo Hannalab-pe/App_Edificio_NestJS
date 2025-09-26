@@ -45,6 +45,7 @@ import { Voto } from './Voto';
 import { Arrendatario } from './Arrendatario';
 import { Edificio } from './Edificio';
 import { Inmobiliaria } from './Inmobiliaria';
+import { AsignacionAreaEdificio } from './AsignacionAreaEdificio';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { Inmobiliaria } from './Inmobiliaria';
       Arrendatario,
       Edificio,
       Inmobiliaria,
+      AsignacionAreaEdificio,
       Contacto,
       Contrato,
       Cronograma,

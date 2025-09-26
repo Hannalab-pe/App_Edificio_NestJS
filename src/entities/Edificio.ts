@@ -10,6 +10,7 @@ import { Trabajador } from "./Trabajador";
 import { AreaComun } from "./AreaComun";
 import { Inmobiliaria } from "./Inmobiliaria";
 import { Propiedad } from "./Propiedad";
+import { AsignacionAreaEdificio } from "./AsignacionAreaEdificio";
 
 @Index("edificio_pkey", ["idEdificio"], { unique: true })
 @Entity("edificio", { schema: "public" })
@@ -69,11 +70,6 @@ export class Edificio {
   ])
   idAdministradorEdificio: Trabajador;
 
-  @ManyToOne(() => AreaComun, (areaComun) => areaComun.edificios)
-  @JoinColumn([
-    { name: "id_areas_comunes", referencedColumnName: "idAreaComun" },
-  ])
-  idAreasComunes: AreaComun;
 
   @ManyToOne(() => Inmobiliaria, (inmobiliaria) => inmobiliaria.edificios)
   @JoinColumn([
@@ -83,4 +79,7 @@ export class Edificio {
 
   @OneToMany(() => Propiedad, (propiedad) => propiedad.idEdificio)
   propiedads: Propiedad[];
+
+  @OneToMany(() => AsignacionAreaEdificio, (asignacion) => asignacion.idEdificio)
+  asignacionesArea: AsignacionAreaEdificio[];
 }

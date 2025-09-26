@@ -44,6 +44,7 @@ import { PropiedadPropietarioController } from './propiedad-propietario/propieda
 import { ResidenciaController } from './residencia/residencia.controller';
 import { EdificioController } from './edificio/edificio.controller';
 import { InmobiliariaController } from './inmobiliaria/inmobiliaria.controller';
+import { AsignacionAreaEdificioController } from './asignacion-area-edificio/asignacion-area-edificio.controller';
 
 @Module({
   imports: [ServicesModule],
@@ -92,6 +93,7 @@ import { InmobiliariaController } from './inmobiliaria/inmobiliaria.controller';
     ResidenciaController,
     EdificioController,
     InmobiliariaController,
+    AsignacionAreaEdificioController,
   ],
 })
 export class ControllersModule { }

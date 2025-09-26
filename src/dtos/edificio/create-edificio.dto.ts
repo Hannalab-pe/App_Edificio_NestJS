@@ -127,15 +127,6 @@ export class CreateEdificioDto {
     idAdministradorEdificio: string;
 
     @ApiProperty({
-        description: 'ID de las áreas comunes',
-        example: 'uuid-area-comun',
-        required: false,
-    })
-    @IsOptional()
-    @IsUUID('4', { message: 'El ID de áreas comunes debe ser un UUID válido' })
-    idAreasComunes?: string;
-
-    @ApiProperty({
         description: 'ID de la inmobiliaria',
         example: 'uuid-inmobiliaria',
     })
