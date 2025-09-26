@@ -128,6 +128,19 @@ export { UpdateAsignacionAreaEdificioDto } from './asignacion-area-edificio/upda
 export { AsignacionAreaEdificioResponseDto } from './asignacion-area-edificio/asignacion-area-edificio-response.dto';
 export { CreateMultipleAsignacionAreaEdificioDto, AsignacionAreaDto } from './asignacion-area-edificio/create-multiple-asignacion-area-edificio.dto';
 
+// Caja DTOs
+export { CreateCajaDto } from './caja/create-caja.dto';
+export { UpdateCajaDto } from './caja/update-caja.dto';
+export { CajaResponseDto } from './caja/caja-response.dto';
+export { AperturaCajaDto } from './caja/apertura-caja.dto';
+export { CierreCajaDto } from './caja/cierre-caja.dto';
+
+// Movimiento Caja DTOs
+export { CreateMovimientoCajaDto } from './movimiento-caja/create-movimiento-caja.dto';
+export { UpdateMovimientoCajaDto } from './movimiento-caja/update-movimiento-caja.dto';
+export { MovimientoCajaResponseDto } from './movimiento-caja/movimiento-caja-response.dto';
+export { TipoMovimiento } from './movimiento-caja/create-movimiento-caja.dto';
+
 // Opción Voto DTOs
 export { CreateOpcionVotoDto } from './opcion-voto/create-opcion-voto.dto';
 export { UpdateOpcionVotoDto } from './opcion-voto/update-opcion-voto.dto';
