@@ -40,7 +40,7 @@ export class Propiedad {
     precision: 8,
     scale: 2,
   })
-  areaM2: string | null;
+  areaM2: number | null;
 
   @Column("integer", { name: "cuartos", nullable: true, default: () => "0" })
   cuartos: number | null;
@@ -67,7 +67,7 @@ export class Propiedad {
     precision: 12,
     scale: 2,
   })
-  valorComercial: string | null;
+  valorComercial: number | null;
 
   @Column("text", { name: "descripcion", nullable: true })
   descripcion: string | null;

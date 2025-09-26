@@ -5,7 +5,6 @@ import {
   IsNumber,
   IsOptional,
   IsBoolean,
-  IsDecimal,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
@@ -46,11 +45,11 @@ export class CreatePropiedadDto {
     type: Number,
   })
   @IsOptional()
-  @IsDecimal(
-    { decimal_digits: '0,2' },
-    { message: 'El área debe ser un número decimal válido' },
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'El área debe ser un número decimal válido con máximo 2 decimales' },
   )
-  areaM2?: string;
+  areaM2?: number;
 
   @ApiPropertyOptional({
     description: 'Número de cuartos',
@@ -108,11 +107,11 @@ export class CreatePropiedadDto {
     type: Number,
   })
   @IsOptional()
-  @IsDecimal(
-    { decimal_digits: '0,2' },
-    { message: 'El valor comercial debe ser un número decimal válido' },
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'El valor comercial debe ser un número decimal válido con máximo 2 decimales' },
   )
-  valorComercial?: string;
+  valorComercial?: number;
 
   @ApiPropertyOptional({
     description: 'Descripción adicional de la propiedad',

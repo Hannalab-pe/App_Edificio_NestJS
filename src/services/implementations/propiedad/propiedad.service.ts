@@ -11,7 +11,7 @@ export class PropiedadService implements IPropiedadService {
   constructor(
     @InjectRepository(Propiedad)
     private readonly propiedadRepository: Repository<Propiedad>,
-  ) {}
+  ) { }
 
   async create(
     createPropiedadDto: CreatePropiedadDto,
@@ -36,12 +36,6 @@ export class PropiedadService implements IPropiedadService {
 
       const nuevaPropiedad = this.propiedadRepository.create({
         ...createPropiedadDto,
-        areaM2: createPropiedadDto.areaM2
-          ? createPropiedadDto.areaM2.toString()
-          : null,
-        valorComercial: createPropiedadDto.valorComercial
-          ? createPropiedadDto.valorComercial.toString()
-          : null,
         estaActivo: createPropiedadDto.estaActivo ?? true,
       });
 
@@ -167,18 +161,6 @@ export class PropiedadService implements IPropiedadService {
 
       const datosActualizacion = {
         ...updatePropiedadDto,
-        areaM2:
-          updatePropiedadDto.areaM2 !== undefined
-            ? updatePropiedadDto.areaM2
-              ? updatePropiedadDto.areaM2.toString()
-              : null
-            : propiedad.areaM2,
-        valorComercial:
-          updatePropiedadDto.valorComercial !== undefined
-            ? updatePropiedadDto.valorComercial
-              ? updatePropiedadDto.valorComercial.toString()
-              : null
-            : propiedad.valorComercial,
       };
 
       const propiedadActualizada = await this.propiedadRepository.save({

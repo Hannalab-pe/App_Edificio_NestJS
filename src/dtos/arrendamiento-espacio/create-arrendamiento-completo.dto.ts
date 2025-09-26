@@ -7,6 +7,8 @@ import {
   IsDateString,
   ValidateNested,
   IsEmail,
+  IsNumber,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateArrendatarioDto } from '../arrendatario/create-arrendatario.dto';
@@ -264,19 +266,29 @@ export class CreateArrendamientoCompletoDto {
 
   @ApiProperty({
     description: 'Monto mensual del arrendamiento',
-    example: '2500.00',
+    example: 2500.00,
+    type: Number,
   })
-  @IsString({ message: 'El monto mensual debe ser una cadena de texto' })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'El monto mensual debe ser un número válido con máximo 2 decimales' }
+  )
+  @Min(0, { message: 'El monto mensual debe ser mayor o igual a 0' })
   @IsNotEmpty({ message: 'El monto mensual es obligatorio' })
-  montoMensual: string;
+  montoMensual: number;
 
   @ApiPropertyOptional({
     description: 'Depósito del arrendamiento',
-    example: '5000.00',
+    example: 5000.00,
+    type: Number,
   })
-  @IsString({ message: 'El depósito debe ser una cadena de texto' })
   @IsOptional()
-  deposito?: string;
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'El depósito debe ser un número válido con máximo 2 decimales' }
+  )
+  @Min(0, { message: 'El depósito debe ser mayor o igual a 0' })
+  deposito?: number;
 
   @ApiPropertyOptional({
     description: 'Observaciones del arrendamiento',

@@ -14,7 +14,7 @@ export class AreaComunService implements IAreaComunService {
   constructor(
     @InjectRepository(AreaComun)
     private readonly areaComunRepository: Repository<AreaComun>,
-  ) {}
+  ) { }
 
   async create(createAreaComunDto: CreateAreaComunDto): Promise<AreaComun> {
     // Validar que el horario de apertura sea anterior al de cierre

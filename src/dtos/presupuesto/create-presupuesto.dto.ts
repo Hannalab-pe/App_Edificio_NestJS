@@ -6,7 +6,6 @@ import {
   IsOptional,
   Min,
   Max,
-  IsDecimal,
   Length,
   IsBoolean,
 } from 'class-validator';
@@ -51,36 +50,36 @@ export class CreatePresupuestoDto {
 
   @ApiProperty({
     description: 'Monto presupuestado en formato decimal',
-    example: '15000.50',
-    type: 'string',
+    example: 15000.50,
+    type: 'number',
   })
-  @IsString({ message: 'El monto presupuestado debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'El monto presupuestado es obligatorio' })
-  @IsDecimal(
-    { decimal_digits: '0,2' },
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
     {
       message:
-        'El monto presupuestado debe ser un decimal válido con máximo 2 decimales',
+        'El monto presupuestado debe ser un número válido con máximo 2 decimales',
     },
   )
-  montoPresupuestado: string;
+  @IsNotEmpty({ message: 'El monto presupuestado es obligatorio' })
+  @Min(0, { message: 'El monto presupuestado debe ser mayor o igual a 0' })
+  montoPresupuestado: number;
 
   @ApiProperty({
     description: 'Monto ejecutado en formato decimal (opcional)',
-    example: '8500.75',
-    type: 'string',
+    example: 8500.75,
+    type: 'number',
     required: false,
   })
   @IsOptional()
-  @IsString({ message: 'El monto ejecutado debe ser una cadena de texto' })
-  @IsDecimal(
-    { decimal_digits: '0,2' },
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
     {
       message:
-        'El monto ejecutado debe ser un decimal válido con máximo 2 decimales',
+        'El monto ejecutado debe ser un número válido con máximo 2 decimales',
     },
   )
-  montoEjecutado?: string;
+  @Min(0, { message: 'El monto ejecutado debe ser mayor o igual a 0' })
+  montoEjecutado?: number;
 
   @ApiProperty({
     description: 'Estado activo del presupuesto (opcional, por defecto true)',

@@ -11,7 +11,7 @@ export class ConceptoPagoService implements IConceptoPagoService {
   constructor(
     @InjectRepository(ConceptoPago)
     private readonly conceptoPagoRepository: Repository<ConceptoPago>,
-  ) {}
+  ) { }
 
   async create(
     createConceptoPagoDto: CreateConceptoPagoDto,

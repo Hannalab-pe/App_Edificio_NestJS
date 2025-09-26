@@ -24,8 +24,7 @@ import { Rol } from 'src/entities/Rol';
 
 @Injectable()
 export class ArrendamientoEspacioService
-  implements IArrendamientoEspacioService
-{
+  implements IArrendamientoEspacioService {
   constructor(
     @InjectRepository(ArrendamientoEspacio)
     private readonly arrendamientoRepository: Repository<ArrendamientoEspacio>,
@@ -38,7 +37,7 @@ export class ArrendamientoEspacioService
     private readonly usuarioService: UsuarioService,
     private readonly rolService: RolService,
     private readonly espacioArrendableService: EspacioArrendableService,
-  ) {}
+  ) { }
 
   /**
    * TRANSACCIÓN PRINCIPAL - Crear arrendamiento completo
@@ -147,7 +146,7 @@ export class ArrendamientoEspacioService
         }
 
         // 4. CREAR EL ARRENDAMIENTO
-        const nuevoArrendamiento = manager.create(ArrendamientoEspacio, {
+        const nuevoArrendamiento = manager.getRepository(ArrendamientoEspacio).create({
           fechaInicio: dto.fechaInicio,
           fechaFin: dto.fechaFin,
           montoMensual: dto.montoMensual,
@@ -158,10 +157,7 @@ export class ArrendamientoEspacioService
           idEspacio: { idEspacio: dto.espacioId } as any,
         });
 
-        const arrendamientoGuardado = await manager.save(
-          ArrendamientoEspacio,
-          nuevoArrendamiento,
-        );
+        const arrendamientoGuardado = await manager.getRepository(ArrendamientoEspacio).save(nuevoArrendamiento);
 
         // 5. ACTUALIZAR ESTADO DEL ESPACIO A OCUPADO
         await manager.update(EspacioArrendable, dto.espacioId, {
@@ -252,8 +248,7 @@ export class ArrendamientoEspacioService
         idEspacio: { idEspacio: dto.idEspacio } as any,
       });
 
-      const arrendamientoGuardado =
-        await this.arrendamientoRepository.save(nuevoArrendamiento);
+      const arrendamientoGuardado = await this.arrendamientoRepository.save(nuevoArrendamiento);
 
       // Si el estado es ACTIVO, actualizar el estado del espacio
       if (dto.estado === 'ACTIVO') {

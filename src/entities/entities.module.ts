@@ -43,6 +43,8 @@ import { Visita } from './Visita';
 import { Votacion } from './Votacion';
 import { Voto } from './Voto';
 import { Arrendatario } from './Arrendatario';
+import { Edificio } from './Edificio';
+import { Inmobiliaria } from './Inmobiliaria';
 
 @Module({
   imports: [
@@ -53,6 +55,8 @@ import { Arrendatario } from './Arrendatario';
       ComentarioIncidencia,
       ConceptoPago,
       Arrendatario,
+      Edificio,
+      Inmobiliaria,
       Contacto,
       Contrato,
       Cronograma,
@@ -93,4 +97,4 @@ import { Arrendatario } from './Arrendatario';
   ],
   exports: [TypeOrmModule],
 })
-export class EntitiesModule {}
+export class EntitiesModule { }
