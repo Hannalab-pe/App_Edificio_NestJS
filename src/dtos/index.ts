@@ -125,3 +125,15 @@ export { UpdateInmobiliariaDto } from './inmobiliaria/update-inmobiliaria.dto';
 export { CreateAsignacionAreaEdificioDto } from './asignacion-area-edificio/create-asignacion-area-edificio.dto';
 export { UpdateAsignacionAreaEdificioDto } from './asignacion-area-edificio/update-asignacion-area-edificio.dto';
 export { AsignacionAreaEdificioResponseDto } from './asignacion-area-edificio/asignacion-area-edificio-response.dto';
+
+// Opción Voto DTOs
+export { CreateOpcionVotoDto } from './opcion-voto/create-opcion-voto.dto';
+export { UpdateOpcionVotoDto } from './opcion-voto/update-opcion-voto.dto';
+export {
+  OpcionVotoResponseDto,
+  CreateOpcionVotoResponseDto,
+  GetOpcionVotoResponseDto,
+  GetOpcionesVotoResponseDto,
+  UpdateOpcionVotoResponseDto,
+  DeleteOpcionVotoResponseDto,
+} from './opcion-voto/opcion-voto-response.dto';
