@@ -72,7 +72,7 @@ import {
   InmobiliariaService,
 
   // Servicios de asignaciones
-  AsignacionAreaEdificioService,
+  // AsignacionAreaEdificioService,
 } from './implementations';
 
 @Module({
@@ -298,10 +298,10 @@ import {
     },
 
     // Servicios de asignaciones
-    {
-      provide: 'IAsignacionAreaEdificioService',
-      useClass: AsignacionAreaEdificioService,
-    },
+    // {
+    //   provide: 'IAsignacionAreaEdificioService',
+    //   useClass: AsignacionAreaEdificioService,
+    // },
 
     // También exportar las clases directas para casos específicos
     UsuarioService,
@@ -349,7 +349,7 @@ import {
     ResidenciaService,
     EdificioService,
     InmobiliariaService,
-    AsignacionAreaEdificioService,
+    // AsignacionAreaEdificioService,
   ],
   exports: [
     // String tokens para interfaces
@@ -398,7 +398,7 @@ import {
     'IResidenciaService',
     'IEdificioService',
     'IInmobiliariaService',
-    'IAsignacionAreaEdificioService',
+    // 'IAsignacionAreaEdificioService',
 
     // Clases directas
     UsuarioService,
@@ -446,7 +446,7 @@ import {
     ResidenciaService,
     EdificioService,
     InmobiliariaService,
-    AsignacionAreaEdificioService,
+    // AsignacionAreaEdificioService,
   ],
 })
 export class ServicesModule { }

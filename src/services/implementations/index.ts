@@ -66,4 +66,4 @@ export { EdificioService } from './edificio/edificio.service';
 export { InmobiliariaService } from './inmobiliaria/inmobiliaria.service';
 
 // Servicios de asignaciones
-export { AsignacionAreaEdificioService } from '../asignacion-area-edificio/asignacion-area-edificio.service';
+// export { AsignacionAreaEdificioService } from './asignacion-area-edificio/asignacion-area-edificio.service';

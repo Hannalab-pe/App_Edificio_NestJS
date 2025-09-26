@@ -23,8 +23,16 @@ export { CreateNotificacionDto } from './notificacion/create-notificacion.dto';
 export { UpdateNotificacionDto } from './notificacion/update-notificacion.dto';
 
 // Pago DTOs
-export { CreatePagoDto } from './pago/create-pago.dto';
-export { UpdatePagoDto } from './pago/update-pago.dto';
+export {
+  CreatePagoDto,
+  UpdatePagoDto,
+  PagoResponseDto,
+  CreatePagoResponseDto,
+  GetPagoResponseDto,
+  GetPagosResponseDto,
+  UpdatePagoResponseDto,
+  DeletePagoResponseDto,
+} from './pago';
 
 // Documento DTOs
 export { CreateDocumentoDto } from './documento/create-documento.dto';

@@ -96,4 +96,4 @@ import { AsignacionAreaEdificioController } from './asignacion-area-edificio/asi
     AsignacionAreaEdificioController,
   ],
 })
-export class ControllersModule { }
+export class ControllersModule {}
