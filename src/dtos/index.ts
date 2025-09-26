@@ -112,3 +112,11 @@ export {
   CreateArrendamientoCompletoDto,
   ArrendatarioDataDto,
 } from './arrendamiento-espacio/create-arrendamiento-completo.dto';
+
+// Edificio DTOs
+export { CreateEdificioDto } from './edificio/create-edificio.dto';
+export { UpdateEdificioDto } from './edificio/update-edificio.dto';
+
+// Inmobiliaria DTOs
+export { CreateInmobiliariaDto } from './inmobiliaria/create-inmobiliaria.dto';
+export { UpdateInmobiliariaDto } from './inmobiliaria/update-inmobiliaria.dto';

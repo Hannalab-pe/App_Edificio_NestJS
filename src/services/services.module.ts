@@ -66,6 +66,10 @@ import {
   ContactoService,
   PropiedadPropietarioService,
   ResidenciaService,
+
+  // Servicios de edificios e inmobiliarias
+  EdificioService,
+  InmobiliariaService,
 } from './implementations';
 
 @Module({
@@ -280,6 +284,16 @@ import {
       useClass: ResidenciaService,
     },
 
+    // Servicios de edificios e inmobiliarias
+    {
+      provide: 'IEdificioService',
+      useClass: EdificioService,
+    },
+    {
+      provide: 'IInmobiliariaService',
+      useClass: InmobiliariaService,
+    },
+
     // También exportar las clases directas para casos específicos
     UsuarioService,
     AuthService,
@@ -324,6 +338,8 @@ import {
     ContactoService,
     PropiedadPropietarioService,
     ResidenciaService,
+    EdificioService,
+    InmobiliariaService,
   ],
   exports: [
     // String tokens para interfaces
@@ -370,6 +386,8 @@ import {
     'IContactoService',
     'IPropiedadPropietarioService',
     'IResidenciaService',
+    'IEdificioService',
+    'IInmobiliariaService',
 
     // Clases directas
     UsuarioService,
@@ -415,6 +433,8 @@ import {
     ContactoService,
     PropiedadPropietarioService,
     ResidenciaService,
+    EdificioService,
+    InmobiliariaService,
   ],
 })
-export class ServicesModule {}
+export class ServicesModule { }

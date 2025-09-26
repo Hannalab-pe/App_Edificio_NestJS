@@ -42,6 +42,8 @@ import { TipoContactoController } from './tipo-contacto/tipo-contacto.controller
 import { ContactoController } from './contacto/contacto.controller';
 import { PropiedadPropietarioController } from './propiedad-propietario/propiedad-propietario.controller';
 import { ResidenciaController } from './residencia/residencia.controller';
+import { EdificioController } from './edificio/edificio.controller';
+import { InmobiliariaController } from './inmobiliaria/inmobiliaria.controller';
 
 @Module({
   imports: [ServicesModule],
@@ -88,6 +90,8 @@ import { ResidenciaController } from './residencia/residencia.controller';
     ContactoController,
     PropiedadPropietarioController,
     ResidenciaController,
+    EdificioController,
+    InmobiliariaController,
   ],
 })
-export class ControllersModule {}
+export class ControllersModule { }

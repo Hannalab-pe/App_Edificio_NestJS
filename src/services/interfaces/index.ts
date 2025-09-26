@@ -58,3 +58,7 @@ export { IContactoService } from './contacto.interface';
 export { IPropiedadPropietarioService } from './propiedad-propietario.interface';
 export { IResidenciaService } from './residencia.interface';
 export { IEncomiendaService } from './encomienda.interface';
+
+// Interfaces de edificios e inmobiliarias
+export { IEdificioService } from './edificio.interface';
+export { IInmobiliariaService } from './inmobiliaria.interface';

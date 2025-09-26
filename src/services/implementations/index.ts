@@ -60,3 +60,7 @@ export { TipoContactoService } from './tipo-contacto/tipo-contacto.service';
 export { ContactoService } from './contacto/contacto.service';
 export { PropiedadPropietarioService } from './propiedad-propietario/propiedad-propietario.service';
 export { ResidenciaService } from './residencia/residencia.service';
+
+// Servicios de edificios e inmobiliarias
+export { EdificioService } from './edificio/edificio.service';
+export { InmobiliariaService } from './inmobiliaria/inmobiliaria.service';
