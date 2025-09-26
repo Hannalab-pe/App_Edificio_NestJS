@@ -1,10 +1,18 @@
-import { OpcionVoto } from '../../entities/OpcionVoto';
+import { 
+  CreateOpcionVotoDto, 
+  UpdateOpcionVotoDto,
+  CreateOpcionVotoResponseDto,
+  GetOpcionVotoResponseDto,
+  GetOpcionesVotoResponseDto,
+  UpdateOpcionVotoResponseDto,
+  DeleteOpcionVotoResponseDto,
+} from '../../dtos';
 
 export interface IOpcionVotoService {
-  create(createOpcionVotoDto: any): Promise<OpcionVoto>;
-  findAll(): Promise<OpcionVoto[]>;
-  findOne(id: string): Promise<OpcionVoto>;
-  update(id: string, updateOpcionVotoDto: any): Promise<OpcionVoto>;
-  remove(id: string): Promise<void>;
-  findByVotacion(votacionId: string): Promise<OpcionVoto[]>;
+  create(createOpcionVotoDto: CreateOpcionVotoDto): Promise<CreateOpcionVotoResponseDto>;
+  findAll(): Promise<GetOpcionesVotoResponseDto>;
+  findOne(id: string): Promise<GetOpcionVotoResponseDto>;
+  update(id: string, updateOpcionVotoDto: UpdateOpcionVotoDto): Promise<UpdateOpcionVotoResponseDto>;
+  remove(id: string): Promise<DeleteOpcionVotoResponseDto>;
+  findByVotacion(votacionId: string): Promise<GetOpcionesVotoResponseDto>;
 }

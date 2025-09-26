@@ -127,3 +127,15 @@ export { CreateAsignacionAreaEdificioDto } from './asignacion-area-edificio/crea
 export { UpdateAsignacionAreaEdificioDto } from './asignacion-area-edificio/update-asignacion-area-edificio.dto';
 export { AsignacionAreaEdificioResponseDto } from './asignacion-area-edificio/asignacion-area-edificio-response.dto';
 export { CreateMultipleAsignacionAreaEdificioDto, AsignacionAreaDto } from './asignacion-area-edificio/create-multiple-asignacion-area-edificio.dto';
+
+// Opción Voto DTOs
+export { CreateOpcionVotoDto } from './opcion-voto/create-opcion-voto.dto';
+export { UpdateOpcionVotoDto } from './opcion-voto/update-opcion-voto.dto';
+export {
+  OpcionVotoResponseDto,
+  CreateOpcionVotoResponseDto,
+  GetOpcionVotoResponseDto,
+  GetOpcionesVotoResponseDto,
+  UpdateOpcionVotoResponseDto,
+  DeleteOpcionVotoResponseDto,
+} from './opcion-voto/opcion-voto-response.dto';
