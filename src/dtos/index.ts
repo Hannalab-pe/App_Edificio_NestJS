@@ -188,3 +188,9 @@ export { MantenimientoResponseDto } from './mantenimiento/mantenimiento-response
 export { CreateMensajePrivadoDto } from './mensaje-privado/create-mensaje-privado.dto';
 export { UpdateMensajePrivadoDto } from './mensaje-privado/update-mensaje-privado.dto';
 export { MensajePrivadoResponseDto } from './mensaje-privado/mensaje-privado-response.dto';
+
+// Contrato DTOs
+export { CreateContratoDto } from './contrato/create-contrato.dto';
+export { UpdateContratoDto } from './contrato/update-contrato.dto';
+export { ContratoResponseDto } from './contrato/contrato-response.dto';
+export { RenovarContratoDto } from './contrato/renovar-contrato.dto';
