@@ -17,11 +17,7 @@ export class CreateCajaDto {
     })
     @IsNotEmpty({ message: 'El monto inicial es obligatorio' })
     @Transform(({ value }) => parseFloat(value))
-    @IsDecimal(
-        { decimal_digits: '1,2' },
-        { message: 'El monto inicial debe ser un número decimal válido' },
-    )
-    @Min(0, { message: 'El monto inicial debe ser mayor o igual a 0' })
+    @Min(0.01, { message: 'El monto inicial debe ser mayor a 0' })
     montoInicial: number;
 
     @ApiProperty({

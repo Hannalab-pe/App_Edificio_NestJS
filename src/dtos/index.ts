@@ -183,3 +183,8 @@ export { JuntaPropietariosResponseDto } from './junta-propietarios/junta-propiet
 export { CreateMantenimientoDto } from './mantenimiento/create-mantenimiento.dto';
 export { UpdateMantenimientoDto } from './mantenimiento/update-mantenimiento.dto';
 export { MantenimientoResponseDto } from './mantenimiento/mantenimiento-response.dto';
+
+// Mensaje Privado DTOs
+export { CreateMensajePrivadoDto } from './mensaje-privado/create-mensaje-privado.dto';
+export { UpdateMensajePrivadoDto } from './mensaje-privado/update-mensaje-privado.dto';
+export { MensajePrivadoResponseDto } from './mensaje-privado/mensaje-privado-response.dto';

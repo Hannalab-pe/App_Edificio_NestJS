@@ -66,11 +66,12 @@ export class CajaService implements ICajaService {
 
             // Crear la caja
             const cajaData = {
-                ...createCajaDto,
                 numeroCaja,
+                montoInicial: createCajaDto.montoInicial,
                 montoFinal: createCajaDto.montoInicial,
                 fechaInicio: new Date().toISOString().split('T')[0],
                 estado: true,
+                descripcion: createCajaDto.descripcion,
                 idTrabajador: trabajador,
             };
 
