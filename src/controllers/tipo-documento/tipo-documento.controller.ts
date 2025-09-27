@@ -45,7 +45,8 @@ export class TipoDocumentoController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Crear un nuevo tipo de documento',
-    description: 'Crea un nuevo tipo de documento en el sistema con validación de duplicados'
+    description:
+      'Crea un nuevo tipo de documento en el sistema con validación de duplicados',
   })
   @ApiBody({
     type: CreateTipoDocumentoDto,
@@ -56,10 +57,11 @@ export class TipoDocumentoController {
         description: 'Ejemplo de tipo de documento para contratos',
         value: {
           tipoDocumento: 'Contrato de Arrendamiento',
-          descripcion: 'Documentos relacionados con contratos de arrendamiento de espacios'
-        }
-      }
-    }
+          descripcion:
+            'Documentos relacionados con contratos de arrendamiento de espacios',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -82,30 +84,40 @@ export class TipoDocumentoController {
     @Body() createTipoDocumentoDto: CreateTipoDocumentoDto,
   ): Promise<TipoDocumentoSingleResponseDto> {
     try {
-      this.logger.log(`Creando tipo de documento: ${createTipoDocumentoDto.tipoDocumento}`);
-      
-      const result = await this.tipoDocumentoService.createWithBaseResponse(createTipoDocumentoDto);
-      
+      this.logger.log(
+        `Creando tipo de documento: ${createTipoDocumentoDto.tipoDocumento}`,
+      );
+
+      const result = await this.tipoDocumentoService.createWithBaseResponse(
+        createTipoDocumentoDto,
+      );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de documento creado exitosamente con ID: ${result.data?.idTipoDocumento}`);
+
+      this.logger.log(
+        `Tipo de documento creado exitosamente con ID: ${result.data?.idTipoDocumento}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al crear tipo de documento: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los tipos de documento',
-    description: 'Retorna la lista completa de tipos de documento ordenados alfabéticamente'
+    description:
+      'Retorna la lista completa de tipos de documento ordenados alfabéticamente',
   })
   @ApiResponse({
     status: 200,
@@ -119,28 +131,36 @@ export class TipoDocumentoController {
   async findAll(): Promise<TipoDocumentoArrayResponseDto> {
     try {
       this.logger.log('Obteniendo todos los tipos de documento');
-      
+
       const result = await this.tipoDocumentoService.findAllWithBaseResponse();
-      
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} tipos de documento`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} tipos de documento`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al obtener tipos de documento: ${error.message}`);
+      this.logger.error(
+        `Error al obtener tipos de documento: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un tipo de documento por ID',
-    description: 'Busca y retorna un tipo de documento específico usando su identificador único'
+    description:
+      'Busca y retorna un tipo de documento específico usando su identificador único',
   })
   @ApiParam({
     name: 'id',
@@ -167,33 +187,40 @@ export class TipoDocumentoController {
     description: 'Error interno del servidor',
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TipoDocumentoSingleResponseDto> {
     try {
       this.logger.log(`Buscando tipo de documento con ID: ${id}`);
-      
-      const result = await this.tipoDocumentoService.findOneWithBaseResponse(id);
-      
+
+      const result =
+        await this.tipoDocumentoService.findOneWithBaseResponse(id);
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de documento encontrado: ${result.data?.tipoDocumento}`);
+
+      this.logger.log(
+        `Tipo de documento encontrado: ${result.data?.tipoDocumento}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al buscar tipo de documento: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un tipo de documento',
-    description: 'Actualiza parcial o totalmente un tipo de documento existente'
+    description:
+      'Actualiza parcial o totalmente un tipo de documento existente',
   })
   @ApiParam({
     name: 'id',
@@ -210,18 +237,19 @@ export class TipoDocumentoController {
         summary: 'Actualización parcial',
         description: 'Ejemplo de actualización solo del nombre',
         value: {
-          tipoDocumento: 'Acta de Reunión'
-        }
+          tipoDocumento: 'Acta de Reunión',
+        },
       },
       actualizacion_completa: {
         summary: 'Actualización completa',
         description: 'Ejemplo de actualización de todos los campos',
         value: {
           tipoDocumento: 'Reglamento Interno',
-          descripcion: 'Documentos relacionados con reglamentos y normas internas del edificio'
-        }
-      }
-    }
+          descripcion:
+            'Documentos relacionados con reglamentos y normas internas del edificio',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -250,22 +278,32 @@ export class TipoDocumentoController {
   ): Promise<TipoDocumentoSingleResponseDto> {
     try {
       this.logger.log(`Actualizando tipo de documento con ID: ${id}`);
-      
-      const result = await this.tipoDocumentoService.updateWithBaseResponse(id, updateTipoDocumentoDto);
-      
+
+      const result = await this.tipoDocumentoService.updateWithBaseResponse(
+        id,
+        updateTipoDocumentoDto,
+      );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de documento actualizado exitosamente: ${result.data?.tipoDocumento}`);
+
+      this.logger.log(
+        `Tipo de documento actualizado exitosamente: ${result.data?.tipoDocumento}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al actualizar tipo de documento: ${error.message}`);
+      this.logger.error(
+        `Error al actualizar tipo de documento: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -273,7 +311,8 @@ export class TipoDocumentoController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Eliminar un tipo de documento',
-    description: 'Elimina físicamente un tipo de documento si no tiene documentos asociados'
+    description:
+      'Elimina físicamente un tipo de documento si no tiene documentos asociados',
   })
   @ApiParam({
     name: 'id',
@@ -290,11 +329,14 @@ export class TipoDocumentoController {
       properties: {
         success: { type: 'boolean', example: true },
         statusCode: { type: 'number', example: 200 },
-        message: { type: 'string', example: 'Tipo de documento eliminado exitosamente' },
+        message: {
+          type: 'string',
+          example: 'Tipo de documento eliminado exitosamente',
+        },
         data: { type: 'null', example: null },
-        error: { type: 'null', example: null }
-      }
-    }
+        error: { type: 'null', example: null },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -306,41 +348,52 @@ export class TipoDocumentoController {
   })
   @ApiResponse({
     status: 409,
-    description: 'No se puede eliminar el tipo de documento porque tiene documentos asociados',
+    description:
+      'No se puede eliminar el tipo de documento porque tiene documentos asociados',
   })
   @ApiResponse({
     status: 500,
     description: 'Error interno del servidor',
   })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<BaseResponseDto<undefined>> {
     try {
       this.logger.log(`Eliminando tipo de documento con ID: ${id}`);
-      
+
       const result = await this.tipoDocumentoService.removeWithBaseResponse(id);
-      
+
       if (!result.success) {
-        const statusCode = result.error?.message === 'Tipo de documento en uso' ? 409 :
-                         result.error?.message.includes('no encontrado') ? 404 : 500;
+        const statusCode =
+          result.error?.message === 'Tipo de documento en uso'
+            ? 409
+            : result.error?.message.includes('no encontrado')
+              ? 404
+              : 500;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Tipo de documento eliminado exitosamente con ID: ${id}`);
       return result;
     } catch (error) {
-      this.logger.error(`Error al eliminar tipo de documento: ${error.message}`);
+      this.logger.error(
+        `Error al eliminar tipo de documento: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('buscar/:nombre')
   @ApiOperation({
     summary: 'Buscar tipo de documento por nombre específico',
-    description: 'Busca un tipo de documento utilizando su nombre exacto como criterio de búsqueda'
+    description:
+      'Busca un tipo de documento utilizando su nombre exacto como criterio de búsqueda',
   })
   @ApiParam({
     name: 'nombre',
@@ -365,23 +418,35 @@ export class TipoDocumentoController {
     @Param('nombre') tipoDocumento: string,
   ): Promise<TipoDocumentoSingleResponseDto> {
     try {
-      this.logger.log(`Buscando tipo de documento por nombre: ${tipoDocumento}`);
-      
-      const result = await this.tipoDocumentoService.findByTipoWithBaseResponse(tipoDocumento);
-      
+      this.logger.log(
+        `Buscando tipo de documento por nombre: ${tipoDocumento}`,
+      );
+
+      const result =
+        await this.tipoDocumentoService.findByTipoWithBaseResponse(
+          tipoDocumento,
+        );
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de documento encontrado: ${result.data?.tipoDocumento}`);
+
+      this.logger.log(
+        `Tipo de documento encontrado: ${result.data?.tipoDocumento}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar tipo de documento por nombre: ${error.message}`);
+      this.logger.error(
+        `Error al buscar tipo de documento por nombre: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

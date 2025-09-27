@@ -10,7 +10,9 @@ export class PropietarioSingleResponseDto extends BaseResponseDto<PropietarioRes
   declare data: PropietarioResponseDto;
 }
 
-export class PropietarioArrayResponseDto extends BaseResponseDto<PropietarioResponseDto[]> {
+export class PropietarioArrayResponseDto extends BaseResponseDto<
+  PropietarioResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de propietarios',
     type: [PropietarioResponseDto],

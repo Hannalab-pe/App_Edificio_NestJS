@@ -45,7 +45,8 @@ export class TipoEspacioController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Crear un nuevo tipo de espacio',
-    description: 'Crea un nuevo tipo de espacio en el sistema con validación de duplicados'
+    description:
+      'Crea un nuevo tipo de espacio en el sistema con validación de duplicados',
   })
   @ApiBody({
     type: CreateTipoEspacioDto,
@@ -57,10 +58,10 @@ export class TipoEspacioController {
         value: {
           nombre: 'Salón de eventos',
           descripcion: 'Espacio amplio para reuniones y eventos sociales',
-          requiereContrato: true
-        }
-      }
-    }
+          requiereContrato: true,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -83,30 +84,41 @@ export class TipoEspacioController {
     @Body() createTipoEspacioDto: CreateTipoEspacioDto,
   ): Promise<TipoEspacioSingleResponseDto> {
     try {
-      this.logger.log(`Creando tipo de espacio: ${createTipoEspacioDto.nombre}`);
-      
-      const result = await this.tipoEspacioService.createWithBaseResponse(createTipoEspacioDto);
-      
+      this.logger.log(
+        `Creando tipo de espacio: ${createTipoEspacioDto.nombre}`,
+      );
+
+      const result =
+        await this.tipoEspacioService.createWithBaseResponse(
+          createTipoEspacioDto,
+        );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de espacio creado exitosamente con ID: ${result.data?.idTipoEspacio}`);
+
+      this.logger.log(
+        `Tipo de espacio creado exitosamente con ID: ${result.data?.idTipoEspacio}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al crear tipo de espacio: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los tipos de espacio',
-    description: 'Retorna la lista completa de tipos de espacio ordenados alfabéticamente'
+    description:
+      'Retorna la lista completa de tipos de espacio ordenados alfabéticamente',
   })
   @ApiResponse({
     status: 200,
@@ -120,28 +132,34 @@ export class TipoEspacioController {
   async findAll(): Promise<TipoEspacioArrayResponseDto> {
     try {
       this.logger.log('Obteniendo todos los tipos de espacio');
-      
+
       const result = await this.tipoEspacioService.findAllWithBaseResponse();
-      
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} tipos de espacio`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} tipos de espacio`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al obtener tipos de espacio: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un tipo de espacio por ID',
-    description: 'Busca y retorna un tipo de espacio específico usando su identificador único'
+    description:
+      'Busca y retorna un tipo de espacio específico usando su identificador único',
   })
   @ApiParam({
     name: 'id',
@@ -168,18 +186,18 @@ export class TipoEspacioController {
     description: 'Error interno del servidor',
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TipoEspacioSingleResponseDto> {
     try {
       this.logger.log(`Buscando tipo de espacio con ID: ${id}`);
-      
+
       const result = await this.tipoEspacioService.findOneWithBaseResponse(id);
-      
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Tipo de espacio encontrado: ${result.data?.nombre}`);
       return result;
     } catch (error) {
@@ -187,14 +205,17 @@ export class TipoEspacioController {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un tipo de espacio',
-    description: 'Actualiza parcial o totalmente un tipo de espacio existente'
+    description: 'Actualiza parcial o totalmente un tipo de espacio existente',
   })
   @ApiParam({
     name: 'id',
@@ -211,19 +232,20 @@ export class TipoEspacioController {
         summary: 'Actualización parcial',
         description: 'Ejemplo de actualización solo del nombre',
         value: {
-          nombre: 'Sala de conferencias'
-        }
+          nombre: 'Sala de conferencias',
+        },
       },
       actualizacion_completa: {
         summary: 'Actualización completa',
         description: 'Ejemplo de actualización de todos los campos',
         value: {
           nombre: 'Auditorio principal',
-          descripcion: 'Espacio amplio para presentaciones y conferencias con capacidad para 200 personas',
-          requiereContrato: true
-        }
-      }
-    }
+          descripcion:
+            'Espacio amplio para presentaciones y conferencias con capacidad para 200 personas',
+          requiereContrato: true,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -252,22 +274,32 @@ export class TipoEspacioController {
   ): Promise<TipoEspacioSingleResponseDto> {
     try {
       this.logger.log(`Actualizando tipo de espacio con ID: ${id}`);
-      
-      const result = await this.tipoEspacioService.updateWithBaseResponse(id, updateTipoEspacioDto);
-      
+
+      const result = await this.tipoEspacioService.updateWithBaseResponse(
+        id,
+        updateTipoEspacioDto,
+      );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de espacio actualizado exitosamente: ${result.data?.nombre}`);
+
+      this.logger.log(
+        `Tipo de espacio actualizado exitosamente: ${result.data?.nombre}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al actualizar tipo de espacio: ${error.message}`);
+      this.logger.error(
+        `Error al actualizar tipo de espacio: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -275,7 +307,8 @@ export class TipoEspacioController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Eliminar un tipo de espacio',
-    description: 'Elimina físicamente un tipo de espacio si no tiene espacios arrendables asociados'
+    description:
+      'Elimina físicamente un tipo de espacio si no tiene espacios arrendables asociados',
   })
   @ApiParam({
     name: 'id',
@@ -292,11 +325,14 @@ export class TipoEspacioController {
       properties: {
         success: { type: 'boolean', example: true },
         statusCode: { type: 'number', example: 200 },
-        message: { type: 'string', example: 'Tipo de espacio eliminado exitosamente' },
+        message: {
+          type: 'string',
+          example: 'Tipo de espacio eliminado exitosamente',
+        },
         data: { type: 'null', example: null },
-        error: { type: 'null', example: null }
-      }
-    }
+        error: { type: 'null', example: null },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -308,26 +344,31 @@ export class TipoEspacioController {
   })
   @ApiResponse({
     status: 409,
-    description: 'No se puede eliminar el tipo de espacio porque tiene espacios arrendables asociados',
+    description:
+      'No se puede eliminar el tipo de espacio porque tiene espacios arrendables asociados',
   })
   @ApiResponse({
     status: 500,
     description: 'Error interno del servidor',
   })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<BaseResponseDto<undefined>> {
     try {
       this.logger.log(`Eliminando tipo de espacio con ID: ${id}`);
-      
+
       const result = await this.tipoEspacioService.removeWithBaseResponse(id);
-      
+
       if (!result.success) {
-        const statusCode = result.error?.message === 'Tipo de espacio en uso' ? 409 :
-                         result.error?.message.includes('no encontrado') ? 404 : 500;
+        const statusCode =
+          result.error?.message === 'Tipo de espacio en uso'
+            ? 409
+            : result.error?.message.includes('no encontrado')
+              ? 404
+              : 500;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Tipo de espacio eliminado exitosamente con ID: ${id}`);
       return result;
     } catch (error) {
@@ -335,14 +376,18 @@ export class TipoEspacioController {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('buscar/:nombre')
   @ApiOperation({
     summary: 'Buscar tipo de espacio por nombre específico',
-    description: 'Busca un tipo de espacio utilizando su nombre exacto como criterio de búsqueda'
+    description:
+      'Busca un tipo de espacio utilizando su nombre exacto como criterio de búsqueda',
   })
   @ApiParam({
     name: 'nombre',
@@ -363,25 +408,33 @@ export class TipoEspacioController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByNombre(@Param('nombre') nombre: string): Promise<TipoEspacioSingleResponseDto> {
+  async findByNombre(
+    @Param('nombre') nombre: string,
+  ): Promise<TipoEspacioSingleResponseDto> {
     try {
       this.logger.log(`Buscando tipo de espacio por nombre: ${nombre}`);
-      
-      const result = await this.tipoEspacioService.findByNombreWithBaseResponse(nombre);
-      
+
+      const result =
+        await this.tipoEspacioService.findByNombreWithBaseResponse(nombre);
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Tipo de espacio encontrado: ${result.data?.nombre}`);
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar tipo de espacio por nombre: ${error.message}`);
+      this.logger.error(
+        `Error al buscar tipo de espacio por nombre: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

@@ -17,8 +17,8 @@ export class ResidenciaResponseDto {
       idPropiedad: '123e4567-e89b-12d3-a456-426614174000',
       numeroPiso: '5',
       numeroUnidad: 'A',
-      area: '85.50'
-    }
+      area: '85.50',
+    },
   })
   propiedad?: {
     idPropiedad: string;
@@ -32,8 +32,8 @@ export class ResidenciaResponseDto {
     example: {
       idPropietario: '123e4567-e89b-12d3-a456-426614174001',
       nombres: 'Juan Carlos',
-      apellidos: 'Pérez López'
-    }
+      apellidos: 'Pérez López',
+    },
   })
   propietario?: {
     idPropietario: string;
@@ -46,8 +46,8 @@ export class ResidenciaResponseDto {
     example: {
       idResidente: '123e4567-e89b-12d3-a456-426614174002',
       nombres: 'Ana María',
-      apellidos: 'González Ruiz'
-    }
+      apellidos: 'González Ruiz',
+    },
   })
   residente?: {
     idResidente: string;

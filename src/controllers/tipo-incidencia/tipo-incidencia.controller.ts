@@ -50,7 +50,8 @@ export class TipoIncidenciaController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Crear un nuevo tipo de incidencia',
-    description: 'Crea un nuevo tipo de incidencia en el sistema con validación de duplicados y configuración de prioridad'
+    description:
+      'Crea un nuevo tipo de incidencia en el sistema con validación de duplicados y configuración de prioridad',
   })
   @ApiBody({
     type: CreateTipoIncidenciaDto,
@@ -61,21 +62,22 @@ export class TipoIncidenciaController {
         description: 'Ejemplo con todos los campos opcionales incluidos',
         value: {
           nombre: 'Problema Eléctrico',
-          descripcion: 'Problemas relacionados con el sistema eléctrico del edificio como cortes de luz, fallas en tomas de corriente, etc.',
+          descripcion:
+            'Problemas relacionados con el sistema eléctrico del edificio como cortes de luz, fallas en tomas de corriente, etc.',
           prioridad: PrioridadIncidencia.ALTA,
           colorHex: '#FF5722',
-          estaActivo: true
-        }
+          estaActivo: true,
+        },
       },
       ejemplo_minimo: {
         summary: 'Tipo de incidencia mínimo',
         description: 'Ejemplo con solo los campos requeridos',
         value: {
           nombre: 'Plomería',
-          prioridad: PrioridadIncidencia.MEDIA
-        }
-      }
-    }
+          prioridad: PrioridadIncidencia.MEDIA,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -98,30 +100,40 @@ export class TipoIncidenciaController {
     @Body() createTipoIncidenciaDto: CreateTipoIncidenciaDto,
   ): Promise<TipoIncidenciaSingleResponseDto> {
     try {
-      this.logger.log(`Creando tipo de incidencia: ${createTipoIncidenciaDto.nombre}`);
-      
-      const result = await this.tipoIncidenciaService.createWithBaseResponse(createTipoIncidenciaDto);
-      
+      this.logger.log(
+        `Creando tipo de incidencia: ${createTipoIncidenciaDto.nombre}`,
+      );
+
+      const result = await this.tipoIncidenciaService.createWithBaseResponse(
+        createTipoIncidenciaDto,
+      );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de incidencia creado exitosamente con ID: ${result.data?.idTipoIncidencia}`);
+
+      this.logger.log(
+        `Tipo de incidencia creado exitosamente con ID: ${result.data?.idTipoIncidencia}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al crear tipo de incidencia: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los tipos de incidencia',
-    description: 'Retorna la lista completa de tipos de incidencia ordenados alfabéticamente con información de prioridad y estado'
+    description:
+      'Retorna la lista completa de tipos de incidencia ordenados alfabéticamente con información de prioridad y estado',
   })
   @ApiResponse({
     status: 200,
@@ -135,28 +147,36 @@ export class TipoIncidenciaController {
   async findAll(): Promise<TipoIncidenciaArrayResponseDto> {
     try {
       this.logger.log('Obteniendo todos los tipos de incidencia');
-      
+
       const result = await this.tipoIncidenciaService.findAllWithBaseResponse();
-      
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} tipos de incidencia`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} tipos de incidencia`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al obtener tipos de incidencia: ${error.message}`);
+      this.logger.error(
+        `Error al obtener tipos de incidencia: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un tipo de incidencia por ID',
-    description: 'Busca y retorna un tipo de incidencia específico usando su identificador único'
+    description:
+      'Busca y retorna un tipo de incidencia específico usando su identificador único',
   })
   @ApiParam({
     name: 'id',
@@ -183,18 +203,19 @@ export class TipoIncidenciaController {
     description: 'Error interno del servidor',
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TipoIncidenciaSingleResponseDto> {
     try {
       this.logger.log(`Buscando tipo de incidencia con ID: ${id}`);
-      
-      const result = await this.tipoIncidenciaService.findOneWithBaseResponse(id);
-      
+
+      const result =
+        await this.tipoIncidenciaService.findOneWithBaseResponse(id);
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Tipo de incidencia encontrado: ${result.data?.nombre}`);
       return result;
     } catch (error) {
@@ -202,14 +223,18 @@ export class TipoIncidenciaController {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un tipo de incidencia',
-    description: 'Actualiza parcial o totalmente un tipo de incidencia existente'
+    description:
+      'Actualiza parcial o totalmente un tipo de incidencia existente',
   })
   @ApiParam({
     name: 'id',
@@ -227,25 +252,26 @@ export class TipoIncidenciaController {
         description: 'Ejemplo de actualización solo del nombre y descripción',
         value: {
           nombre: 'Problema Eléctrico Avanzado',
-          descripcion: 'Problemas complejos con el sistema eléctrico que requieren atención especializada'
-        }
+          descripcion:
+            'Problemas complejos con el sistema eléctrico que requieren atención especializada',
+        },
       },
       cambio_prioridad: {
         summary: 'Cambio de prioridad',
         description: 'Ejemplo de actualización de prioridad y color',
         value: {
           prioridad: PrioridadIncidencia.CRITICA,
-          colorHex: '#D32F2F'
-        }
+          colorHex: '#D32F2F',
+        },
       },
       desactivacion: {
         summary: 'Desactivar tipo',
         description: 'Ejemplo para desactivar un tipo de incidencia',
         value: {
-          estaActivo: false
-        }
-      }
-    }
+          estaActivo: false,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -274,22 +300,32 @@ export class TipoIncidenciaController {
   ): Promise<TipoIncidenciaSingleResponseDto> {
     try {
       this.logger.log(`Actualizando tipo de incidencia con ID: ${id}`);
-      
-      const result = await this.tipoIncidenciaService.updateWithBaseResponse(id, updateTipoIncidenciaDto);
-      
+
+      const result = await this.tipoIncidenciaService.updateWithBaseResponse(
+        id,
+        updateTipoIncidenciaDto,
+      );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de incidencia actualizado exitosamente: ${result.data?.nombre}`);
+
+      this.logger.log(
+        `Tipo de incidencia actualizado exitosamente: ${result.data?.nombre}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al actualizar tipo de incidencia: ${error.message}`);
+      this.logger.error(
+        `Error al actualizar tipo de incidencia: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -297,7 +333,8 @@ export class TipoIncidenciaController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Eliminar un tipo de incidencia (eliminación lógica)',
-    description: 'Elimina lógicamente un tipo de incidencia marcándolo como inactivo si no tiene incidencias activas asociadas'
+    description:
+      'Elimina lógicamente un tipo de incidencia marcándolo como inactivo si no tiene incidencias activas asociadas',
   })
   @ApiParam({
     name: 'id',
@@ -314,11 +351,14 @@ export class TipoIncidenciaController {
       properties: {
         success: { type: 'boolean', example: true },
         statusCode: { type: 'number', example: 200 },
-        message: { type: 'string', example: 'Tipo de incidencia eliminado exitosamente' },
+        message: {
+          type: 'string',
+          example: 'Tipo de incidencia eliminado exitosamente',
+        },
         data: { type: 'null', example: null },
-        error: { type: 'null', example: null }
-      }
-    }
+        error: { type: 'null', example: null },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -330,41 +370,55 @@ export class TipoIncidenciaController {
   })
   @ApiResponse({
     status: 409,
-    description: 'No se puede eliminar el tipo de incidencia porque tiene incidencias activas asociadas',
+    description:
+      'No se puede eliminar el tipo de incidencia porque tiene incidencias activas asociadas',
   })
   @ApiResponse({
     status: 500,
     description: 'Error interno del servidor',
   })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<BaseResponseDto<undefined>> {
     try {
       this.logger.log(`Eliminando tipo de incidencia con ID: ${id}`);
-      
-      const result = await this.tipoIncidenciaService.removeWithBaseResponse(id);
-      
+
+      const result =
+        await this.tipoIncidenciaService.removeWithBaseResponse(id);
+
       if (!result.success) {
-        const statusCode = result.error?.message === 'Tipo de incidencia en uso' ? 409 :
-                         result.error?.message.includes('no encontrado') ? 404 : 500;
+        const statusCode =
+          result.error?.message === 'Tipo de incidencia en uso'
+            ? 409
+            : result.error?.message.includes('no encontrado')
+              ? 404
+              : 500;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Tipo de incidencia eliminado exitosamente con ID: ${id}`);
+
+      this.logger.log(
+        `Tipo de incidencia eliminado exitosamente con ID: ${id}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al eliminar tipo de incidencia: ${error.message}`);
+      this.logger.error(
+        `Error al eliminar tipo de incidencia: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('buscar/:nombre')
   @ApiOperation({
     summary: 'Buscar tipo de incidencia por nombre específico',
-    description: 'Busca un tipo de incidencia activo utilizando su nombre exacto como criterio de búsqueda'
+    description:
+      'Busca un tipo de incidencia activo utilizando su nombre exacto como criterio de búsqueda',
   })
   @ApiParam({
     name: 'nombre',
@@ -385,32 +439,41 @@ export class TipoIncidenciaController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByNombre(@Param('nombre') nombre: string): Promise<TipoIncidenciaSingleResponseDto> {
+  async findByNombre(
+    @Param('nombre') nombre: string,
+  ): Promise<TipoIncidenciaSingleResponseDto> {
     try {
       this.logger.log(`Buscando tipo de incidencia por nombre: ${nombre}`);
-      
-      const result = await this.tipoIncidenciaService.findByNombreWithBaseResponse(nombre);
-      
+
+      const result =
+        await this.tipoIncidenciaService.findByNombreWithBaseResponse(nombre);
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Tipo de incidencia encontrado: ${result.data?.nombre}`);
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar tipo de incidencia por nombre: ${error.message}`);
+      this.logger.error(
+        `Error al buscar tipo de incidencia por nombre: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('prioridad/:prioridad')
   @ApiOperation({
     summary: 'Obtener tipos de incidencia por nivel de prioridad',
-    description: 'Retorna todos los tipos de incidencia activos que tienen un nivel de prioridad específico'
+    description:
+      'Retorna todos los tipos de incidencia activos que tienen un nivel de prioridad específico',
   })
   @ApiParam({
     name: 'prioridad',
@@ -432,29 +495,42 @@ export class TipoIncidenciaController {
     @Param('prioridad') prioridad: string,
   ): Promise<TipoIncidenciaArrayResponseDto> {
     try {
-      this.logger.log(`Buscando tipos de incidencia con prioridad: ${prioridad}`);
-      
-      const result = await this.tipoIncidenciaService.findByPrioridadWithBaseResponse(prioridad);
-      
+      this.logger.log(
+        `Buscando tipos de incidencia con prioridad: ${prioridad}`,
+      );
+
+      const result =
+        await this.tipoIncidenciaService.findByPrioridadWithBaseResponse(
+          prioridad,
+        );
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} tipos de incidencia con prioridad ${prioridad}`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} tipos de incidencia con prioridad ${prioridad}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar tipos de incidencia por prioridad: ${error.message}`);
+      this.logger.error(
+        `Error al buscar tipos de incidencia por prioridad: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('activos/disponibles')
   @ApiOperation({
     summary: 'Obtener tipos de incidencia activos',
-    description: 'Retorna todos los tipos de incidencia que están marcados como activos en el sistema'
+    description:
+      'Retorna todos los tipos de incidencia que están marcados como activos en el sistema',
   })
   @ApiResponse({
     status: 200,
@@ -468,21 +544,29 @@ export class TipoIncidenciaController {
   async findActivos(): Promise<TipoIncidenciaArrayResponseDto> {
     try {
       this.logger.log('Obteniendo tipos de incidencia activos');
-      
-      const result = await this.tipoIncidenciaService.findActivosWithBaseResponse();
-      
+
+      const result =
+        await this.tipoIncidenciaService.findActivosWithBaseResponse();
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} tipos de incidencia activos`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} tipos de incidencia activos`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al obtener tipos de incidencia activos: ${error.message}`);
+      this.logger.error(
+        `Error al obtener tipos de incidencia activos: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Recibo } from '../../../entities/Recibo';
 import { Pago } from '../../../entities/Pago';
-import { CreateReciboDto, UpdateReciboDto, ReciboResponseDto } from '../../../dtos';
+import {
+  CreateReciboDto,
+  UpdateReciboDto,
+  ReciboResponseDto,
+} from '../../../dtos';
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 
 @Injectable()
@@ -16,7 +20,9 @@ export class ReciboService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createReciboDto: CreateReciboDto): Promise<BaseResponseDto<ReciboResponseDto>> {
+  async create(
+    createReciboDto: CreateReciboDto,
+  ): Promise<BaseResponseDto<ReciboResponseDto>> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -29,7 +35,10 @@ export class ReciboService {
 
       if (!pago) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('El pago especificado no existe', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'El pago especificado no existe',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       // Verificar que el número de recibo no existe
@@ -39,7 +48,10 @@ export class ReciboService {
 
       if (existingRecibo) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('Ya existe un recibo con este número', HttpStatus.CONFLICT);
+        return BaseResponseDto.error(
+          'Ya existe un recibo con este número',
+          HttpStatus.CONFLICT,
+        );
       }
 
       // Crear el recibo
@@ -64,10 +76,17 @@ export class ReciboService {
         },
       };
 
-      return BaseResponseDto.success(responseData, 'Recibo creado exitosamente', HttpStatus.CREATED);
+      return BaseResponseDto.success(
+        responseData,
+        'Recibo creado exitosamente',
+        HttpStatus.CREATED,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return BaseResponseDto.error(`Error al crear el recibo: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al crear el recibo: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -79,21 +98,30 @@ export class ReciboService {
         relations: ['idPago'],
       });
 
-      const responseData: ReciboResponseDto[] = recibos.map(recibo => ({
+      const responseData: ReciboResponseDto[] = recibos.map((recibo) => ({
         idRecibo: recibo.idRecibo,
         numeroRecibo: recibo.numeroRecibo,
         archivoPdfUrl: recibo.archivoPdfUrl,
-        idPago: recibo.idPago ? {
-          idPago: recibo.idPago.idPago,
-          monto: recibo.idPago.monto,
-          fechaPago: recibo.idPago.fechaPago,
-          estado: recibo.idPago.estado,
-        } : undefined,
+        idPago: recibo.idPago
+          ? {
+              idPago: recibo.idPago.idPago,
+              monto: recibo.idPago.monto,
+              fechaPago: recibo.idPago.fechaPago,
+              estado: recibo.idPago.estado,
+            }
+          : undefined,
       }));
 
-      return BaseResponseDto.success(responseData, `Se encontraron ${recibos.length} recibos`, HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        `Se encontraron ${recibos.length} recibos`,
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al obtener los recibos: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al obtener los recibos: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -105,28 +133,43 @@ export class ReciboService {
       });
 
       if (!recibo) {
-        return BaseResponseDto.error('Recibo no encontrado', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Recibo no encontrado',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const responseData: ReciboResponseDto = {
         idRecibo: recibo.idRecibo,
         numeroRecibo: recibo.numeroRecibo,
         archivoPdfUrl: recibo.archivoPdfUrl,
-        idPago: recibo.idPago ? {
-          idPago: recibo.idPago.idPago,
-          monto: recibo.idPago.monto,
-          fechaPago: recibo.idPago.fechaPago,
-          estado: recibo.idPago.estado,
-        } : undefined,
+        idPago: recibo.idPago
+          ? {
+              idPago: recibo.idPago.idPago,
+              monto: recibo.idPago.monto,
+              fechaPago: recibo.idPago.fechaPago,
+              estado: recibo.idPago.estado,
+            }
+          : undefined,
       };
 
-      return BaseResponseDto.success(responseData, 'Recibo encontrado exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Recibo encontrado exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar el recibo: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar el recibo: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async update(id: string, updateReciboDto: UpdateReciboDto): Promise<BaseResponseDto<ReciboResponseDto>> {
+  async update(
+    id: string,
+    updateReciboDto: UpdateReciboDto,
+  ): Promise<BaseResponseDto<ReciboResponseDto>> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -139,18 +182,27 @@ export class ReciboService {
 
       if (!recibo) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('Recibo no encontrado', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Recibo no encontrado',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       // Verificar número único si se está actualizando
-      if (updateReciboDto.numeroRecibo && updateReciboDto.numeroRecibo !== recibo.numeroRecibo) {
+      if (
+        updateReciboDto.numeroRecibo &&
+        updateReciboDto.numeroRecibo !== recibo.numeroRecibo
+      ) {
         const existingRecibo = await queryRunner.manager.findOne(Recibo, {
           where: { numeroRecibo: updateReciboDto.numeroRecibo },
         });
 
         if (existingRecibo) {
           await queryRunner.rollbackTransaction();
-          return BaseResponseDto.error('Ya existe otro recibo con este número', HttpStatus.CONFLICT);
+          return BaseResponseDto.error(
+            'Ya existe otro recibo con este número',
+            HttpStatus.CONFLICT,
+          );
         }
       }
 
@@ -163,7 +215,10 @@ export class ReciboService {
 
         if (!foundPago) {
           await queryRunner.rollbackTransaction();
-          return BaseResponseDto.error('El pago especificado no existe', HttpStatus.NOT_FOUND);
+          return BaseResponseDto.error(
+            'El pago especificado no existe',
+            HttpStatus.NOT_FOUND,
+          );
         }
         pago = foundPago;
       }
@@ -186,18 +241,27 @@ export class ReciboService {
         idRecibo: updatedRecibo.idRecibo,
         numeroRecibo: updatedRecibo.numeroRecibo,
         archivoPdfUrl: updatedRecibo.archivoPdfUrl,
-        idPago: pago ? {
-          idPago: pago.idPago,
-          monto: pago.monto,
-          fechaPago: pago.fechaPago,
-          estado: pago.estado,
-        } : undefined,
+        idPago: pago
+          ? {
+              idPago: pago.idPago,
+              monto: pago.monto,
+              fechaPago: pago.fechaPago,
+              estado: pago.estado,
+            }
+          : undefined,
       };
 
-      return BaseResponseDto.success(responseData, 'Recibo actualizado exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Recibo actualizado exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return BaseResponseDto.error(`Error al actualizar el recibo: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al actualizar el recibo: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -216,34 +280,48 @@ export class ReciboService {
 
       if (!recibo) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('Recibo no encontrado', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Recibo no encontrado',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const responseData: ReciboResponseDto = {
         idRecibo: recibo.idRecibo,
         numeroRecibo: recibo.numeroRecibo,
         archivoPdfUrl: recibo.archivoPdfUrl,
-        idPago: recibo.idPago ? {
-          idPago: recibo.idPago.idPago,
-          monto: recibo.idPago.monto,
-          fechaPago: recibo.idPago.fechaPago,
-          estado: recibo.idPago.estado,
-        } : undefined,
+        idPago: recibo.idPago
+          ? {
+              idPago: recibo.idPago.idPago,
+              monto: recibo.idPago.monto,
+              fechaPago: recibo.idPago.fechaPago,
+              estado: recibo.idPago.estado,
+            }
+          : undefined,
       };
 
       await queryRunner.manager.remove(recibo);
       await queryRunner.commitTransaction();
 
-      return BaseResponseDto.success(responseData, 'Recibo eliminado exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Recibo eliminado exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return BaseResponseDto.error(`Error al eliminar el recibo: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al eliminar el recibo: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }
   }
 
-  async findByNumeroRecibo(numeroRecibo: string): Promise<BaseResponseDto<ReciboResponseDto>> {
+  async findByNumeroRecibo(
+    numeroRecibo: string,
+  ): Promise<BaseResponseDto<ReciboResponseDto>> {
     try {
       const recibo = await this.reciboRepository.findOne({
         where: { numeroRecibo },
@@ -251,28 +329,42 @@ export class ReciboService {
       });
 
       if (!recibo) {
-        return BaseResponseDto.error('Recibo no encontrado con ese número', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Recibo no encontrado con ese número',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const responseData: ReciboResponseDto = {
         idRecibo: recibo.idRecibo,
         numeroRecibo: recibo.numeroRecibo,
         archivoPdfUrl: recibo.archivoPdfUrl,
-        idPago: recibo.idPago ? {
-          idPago: recibo.idPago.idPago,
-          monto: recibo.idPago.monto,
-          fechaPago: recibo.idPago.fechaPago,
-          estado: recibo.idPago.estado,
-        } : undefined,
+        idPago: recibo.idPago
+          ? {
+              idPago: recibo.idPago.idPago,
+              monto: recibo.idPago.monto,
+              fechaPago: recibo.idPago.fechaPago,
+              estado: recibo.idPago.estado,
+            }
+          : undefined,
       };
 
-      return BaseResponseDto.success(responseData, 'Recibo encontrado por número exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Recibo encontrado por número exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar el recibo por número: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar el recibo por número: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async findByPago(pagoId: string): Promise<BaseResponseDto<ReciboResponseDto[]>> {
+  async findByPago(
+    pagoId: string,
+  ): Promise<BaseResponseDto<ReciboResponseDto[]>> {
     try {
       const recibos = await this.reciboRepository
         .createQueryBuilder('recibo')
@@ -280,21 +372,30 @@ export class ReciboService {
         .where('pago.idPago = :pagoId', { pagoId })
         .getMany();
 
-      const responseData: ReciboResponseDto[] = recibos.map(recibo => ({
+      const responseData: ReciboResponseDto[] = recibos.map((recibo) => ({
         idRecibo: recibo.idRecibo,
         numeroRecibo: recibo.numeroRecibo,
         archivoPdfUrl: recibo.archivoPdfUrl,
-        idPago: recibo.idPago ? {
-          idPago: recibo.idPago.idPago,
-          monto: recibo.idPago.monto,
-          fechaPago: recibo.idPago.fechaPago,
-          estado: recibo.idPago.estado,
-        } : undefined,
+        idPago: recibo.idPago
+          ? {
+              idPago: recibo.idPago.idPago,
+              monto: recibo.idPago.monto,
+              fechaPago: recibo.idPago.fechaPago,
+              estado: recibo.idPago.estado,
+            }
+          : undefined,
       }));
 
-      return BaseResponseDto.success(responseData, `Se encontraron ${recibos.length} recibos para el pago`, HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        `Se encontraron ${recibos.length} recibos para el pago`,
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar recibos por pago: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar recibos por pago: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

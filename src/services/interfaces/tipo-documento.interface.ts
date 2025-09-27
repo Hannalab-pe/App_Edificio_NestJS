@@ -23,7 +23,7 @@ export interface ITipoDocumentoService {
   ): Promise<BaseResponseDto<TipoDocumento>>;
 
   // =================== MÉTODOS CON BaseResponse DTOs ESPECÍFICOS ===================
-  
+
   /**
    * Crear tipo de documento con respuesta tipada específica
    */

@@ -1,8 +1,8 @@
-import { 
-  CreateTipoIncidenciaDto, 
+import {
+  CreateTipoIncidenciaDto,
   UpdateTipoIncidenciaDto,
   TipoIncidenciaSingleResponseDto,
-  TipoIncidenciaArrayResponseDto 
+  TipoIncidenciaArrayResponseDto,
 } from '../../dtos';
 import { TipoIncidencia } from '../../entities/TipoIncidencia';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
@@ -34,7 +34,11 @@ export interface ITipoIncidenciaService {
     updateTipoIncidenciaDto: UpdateTipoIncidenciaDto,
   ): Promise<TipoIncidenciaSingleResponseDto>;
   removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>>;
-  findByNombreWithBaseResponse(nombre: string): Promise<TipoIncidenciaSingleResponseDto>;
-  findByPrioridadWithBaseResponse(prioridad: string): Promise<TipoIncidenciaArrayResponseDto>;
+  findByNombreWithBaseResponse(
+    nombre: string,
+  ): Promise<TipoIncidenciaSingleResponseDto>;
+  findByPrioridadWithBaseResponse(
+    prioridad: string,
+  ): Promise<TipoIncidenciaArrayResponseDto>;
   findActivosWithBaseResponse(): Promise<TipoIncidenciaArrayResponseDto>;
 }

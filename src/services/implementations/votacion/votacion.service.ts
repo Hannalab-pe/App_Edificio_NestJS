@@ -7,8 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IVotacionService } from '../../interfaces/votacion.interface';
-import { 
-  CreateVotacionDto, 
+import {
+  CreateVotacionDto,
   UpdateVotacionDto,
   VotacionSingleResponseDto,
   VotacionArrayResponseDto,
@@ -16,7 +16,7 @@ import {
   UsuarioCreadorResponseDto,
   OpcionVotoVotacionResponseDto,
   VotoResponseDto,
-  EstadisticasVotacionDto
+  EstadisticasVotacionDto,
 } from '../../../dtos';
 import { Votacion } from '../../../entities/Votacion';
 import { JuntaPropietarios } from '../../../entities/JuntaPropietarios';
@@ -48,7 +48,10 @@ export class VotacionService implements IVotacionService {
   async create(createVotacionDto: CreateVotacionDto): Promise<Votacion> {
     // Validar que el usuario creador existe y cargar su rol
     const usuarioCreador = await this.usuarioRepository.findOne({
-      where: { idUsuario: createVotacionDto.creadoPorUsuario, estaActivo: true },
+      where: {
+        idUsuario: createVotacionDto.creadoPorUsuario,
+        estaActivo: true,
+      },
       relations: ['idRol'],
     });
 
@@ -59,7 +62,10 @@ export class VotacionService implements IVotacionService {
     }
 
     // Validar que el usuario tiene rol de administrador
-    if (!usuarioCreador.idRol || usuarioCreador.idRol.nombre !== 'Administrador') {
+    if (
+      !usuarioCreador.idRol ||
+      usuarioCreador.idRol.nombre !== 'Administrador'
+    ) {
       throw new BadRequestException(
         'Solo los usuarios con rol de Administrador pueden crear votaciones',
       );
@@ -184,7 +190,9 @@ export class VotacionService implements IVotacionService {
   /**
    * Helper para mapear entidad Votación a DTO de respuesta
    */
-  private async mapToResponseDto(votacion: Votacion): Promise<VotacionResponseDto> {
+  private async mapToResponseDto(
+    votacion: Votacion,
+  ): Promise<VotacionResponseDto> {
     // Cargar relaciones si no están cargadas
     if (!votacion.creadoPorUsuario) {
       const votacionCompleta = await this.votacionRepository.findOne({
@@ -226,18 +234,20 @@ export class VotacionService implements IVotacionService {
           descripcion: opcion.descripcion || undefined,
           ordenPresentacion: opcion.ordenPresentacion,
           totalVotos: votosOpcion,
-          porcentajeVotos: totalVotos > 0 ? (votosOpcion / totalVotos) * 100 : 0,
+          porcentajeVotos:
+            totalVotos > 0 ? (votosOpcion / totalVotos) * 100 : 0,
         };
-      })
+      }),
     );
 
     // Estadísticas de la votación
     const estadisticas: EstadisticasVotacionDto = {
       totalVotos,
       totalElegibles,
-      participacion: totalElegibles > 0 ? (totalVotos / totalElegibles) * 100 : 0,
-      quorumAlcanzado: votacion.requiereQuorum 
-        ? totalVotos >= (votacion.quorumMinimo || 0) 
+      participacion:
+        totalElegibles > 0 ? (totalVotos / totalElegibles) * 100 : 0,
+      quorumAlcanzado: votacion.requiereQuorum
+        ? totalVotos >= (votacion.quorumMinimo || 0)
         : true,
       quorumMinimo: votacion.quorumMinimo || undefined,
       estado: votacion.estado,
@@ -246,9 +256,10 @@ export class VotacionService implements IVotacionService {
 
     // Verificar si la votación acepta votos
     const ahora = new Date();
-    const aceptaVotos = votacion.estado === 'Activa' && 
-                      new Date(votacion.fechaInicio) <= ahora && 
-                      new Date(votacion.fechaFin) >= ahora;
+    const aceptaVotos =
+      votacion.estado === 'Activa' &&
+      new Date(votacion.fechaInicio) <= ahora &&
+      new Date(votacion.fechaFin) >= ahora;
 
     return {
       idVotacion: votacion.idVotacion,
@@ -260,7 +271,8 @@ export class VotacionService implements IVotacionService {
       tipo: votacion.tipo,
       requiereQuorum: votacion.requiereQuorum,
       quorumMinimo: votacion.quorumMinimo || undefined,
-      fechaCreacion: votacion.fechaCreacion?.toISOString() || new Date().toISOString(),
+      fechaCreacion:
+        votacion.fechaCreacion?.toISOString() || new Date().toISOString(),
       creadoPor,
       opciones,
       estadisticas,
@@ -275,20 +287,22 @@ export class VotacionService implements IVotacionService {
   private calcularTiempoRestante(fechaFin: Date): number | undefined {
     const ahora = new Date();
     const fin = new Date(fechaFin);
-    
+
     if (fin <= ahora) {
       return 0;
     }
-    
+
     return Math.floor((fin.getTime() - ahora.getTime()) / (1000 * 60));
   }
 
   /**
    * Crear votación con BaseResponseDto
    */
-  async createWithResponse(createVotacionDto: CreateVotacionDto): Promise<VotacionSingleResponseDto> {
+  async createWithResponse(
+    createVotacionDto: CreateVotacionDto,
+  ): Promise<VotacionSingleResponseDto> {
     this.logger.log(`Creando nueva votación: ${createVotacionDto.titulo}`);
-    
+
     try {
       const votacion = await this.create(createVotacionDto);
       const votacionResponse = await this.mapToResponseDto(votacion);
@@ -302,7 +316,10 @@ export class VotacionService implements IVotacionService {
         informacionEstado: `Votación creada en estado: ${votacion.estado}`,
       };
     } catch (error) {
-      this.logger.error(`Error al crear votación: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al crear votación: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -310,12 +327,17 @@ export class VotacionService implements IVotacionService {
   /**
    * Obtener todas las votaciones con paginación y BaseResponseDto
    */
-  async findAllWithResponse(page: number = 1, limit: number = 10): Promise<VotacionArrayResponseDto> {
-    this.logger.log(`Obteniendo votaciones - Página: ${page}, Límite: ${limit}`);
-    
+  async findAllWithResponse(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<VotacionArrayResponseDto> {
+    this.logger.log(
+      `Obteniendo votaciones - Página: ${page}, Límite: ${limit}`,
+    );
+
     try {
       const skip = (page - 1) * limit;
-      
+
       const [votaciones, total] = await this.votacionRepository.findAndCount({
         relations: ['creadoPorUsuario', 'opcionVotos'],
         order: { fechaCreacion: 'DESC' },
@@ -324,7 +346,7 @@ export class VotacionService implements IVotacionService {
       });
 
       const votacionesResponse = await Promise.all(
-        votaciones.map(votacion => this.mapToResponseDto(votacion))
+        votaciones.map((votacion) => this.mapToResponseDto(votacion)),
       );
 
       // Calcular estadísticas generales
@@ -337,9 +359,9 @@ export class VotacionService implements IVotacionService {
       inicioMes.setHours(0, 0, 0, 0);
 
       const votacionesFinalizadasMes = await this.votacionRepository.count({
-        where: { 
+        where: {
           estado: 'Finalizada',
-          fechaCreacion: { $gte: inicioMes } as any
+          fechaCreacion: { $gte: inicioMes } as any,
         },
       });
 
@@ -369,7 +391,10 @@ export class VotacionService implements IVotacionService {
         estadisticasGenerales,
       };
     } catch (error) {
-      this.logger.error(`Error al obtener votaciones: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al obtener votaciones: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -379,7 +404,7 @@ export class VotacionService implements IVotacionService {
    */
   async findOneWithResponse(id: string): Promise<VotacionSingleResponseDto> {
     this.logger.log(`Buscando votación por ID: ${id}`);
-    
+
     try {
       const votacion = await this.findOne(id);
       const votacionResponse = await this.mapToResponseDto(votacion);
@@ -401,7 +426,10 @@ export class VotacionService implements IVotacionService {
         informacionEstado: this.obtenerInformacionEstado(votacion),
       };
     } catch (error) {
-      this.logger.error(`Error al buscar votación: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al buscar votación: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -409,9 +437,12 @@ export class VotacionService implements IVotacionService {
   /**
    * Actualizar votación con BaseResponseDto
    */
-  async updateWithResponse(id: string, updateVotacionDto: UpdateVotacionDto): Promise<VotacionSingleResponseDto> {
+  async updateWithResponse(
+    id: string,
+    updateVotacionDto: UpdateVotacionDto,
+  ): Promise<VotacionSingleResponseDto> {
     this.logger.log(`Actualizando votación ID: ${id}`);
-    
+
     try {
       const votacion = await this.update(id, updateVotacionDto);
       const votacionResponse = await this.mapToResponseDto(votacion);
@@ -423,7 +454,10 @@ export class VotacionService implements IVotacionService {
         informacionEstado: `Votación actualizada - Estado: ${votacion.estado}`,
       };
     } catch (error) {
-      this.logger.error(`Error al actualizar votación: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al actualizar votación: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -433,11 +467,11 @@ export class VotacionService implements IVotacionService {
    */
   async removeWithResponse(id: string): Promise<VotacionSingleResponseDto> {
     this.logger.log(`Eliminando votación ID: ${id}`);
-    
+
     try {
       const votacion = await this.findOne(id);
       const votacionResponse = await this.mapToResponseDto(votacion);
-      
+
       await this.remove(id);
 
       return {
@@ -447,7 +481,10 @@ export class VotacionService implements IVotacionService {
         informacionEstado: 'La votación ha sido eliminada del sistema',
       };
     } catch (error) {
-      this.logger.error(`Error al eliminar votación: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al eliminar votación: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -455,12 +492,16 @@ export class VotacionService implements IVotacionService {
   /**
    * Buscar votaciones por estado con BaseResponseDto
    */
-  async findByEstadoWithResponse(estado: string, page: number = 1, limit: number = 10): Promise<VotacionArrayResponseDto> {
+  async findByEstadoWithResponse(
+    estado: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<VotacionArrayResponseDto> {
     this.logger.log(`Buscando votaciones por estado: ${estado}`);
-    
+
     try {
       const skip = (page - 1) * limit;
-      
+
       const [votaciones, total] = await this.votacionRepository.findAndCount({
         where: { estado },
         relations: ['creadoPorUsuario', 'opcionVotos'],
@@ -470,7 +511,7 @@ export class VotacionService implements IVotacionService {
       });
 
       const votacionesResponse = await Promise.all(
-        votaciones.map(votacion => this.mapToResponseDto(votacion))
+        votaciones.map((votacion) => this.mapToResponseDto(votacion)),
       );
 
       return {
@@ -488,7 +529,10 @@ export class VotacionService implements IVotacionService {
         filtrosAplicados: { estado },
       };
     } catch (error) {
-      this.logger.error(`Error al buscar votaciones por estado: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al buscar votaciones por estado: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -496,13 +540,16 @@ export class VotacionService implements IVotacionService {
   /**
    * Buscar votaciones activas con BaseResponseDto
    */
-  async findActiveWithResponse(page: number = 1, limit: number = 10): Promise<VotacionArrayResponseDto> {
+  async findActiveWithResponse(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<VotacionArrayResponseDto> {
     this.logger.log('Buscando votaciones activas');
-    
+
     try {
       const skip = (page - 1) * limit;
       const now = new Date();
-      
+
       const queryBuilder = this.votacionRepository
         .createQueryBuilder('votacion')
         .leftJoinAndSelect('votacion.creadoPorUsuario', 'usuario')
@@ -520,7 +567,7 @@ export class VotacionService implements IVotacionService {
       ]);
 
       const votacionesResponse = await Promise.all(
-        votaciones.map(votacion => this.mapToResponseDto(votacion))
+        votaciones.map((votacion) => this.mapToResponseDto(votacion)),
       );
 
       return {
@@ -538,18 +585,28 @@ export class VotacionService implements IVotacionService {
         filtrosAplicados: { estado: 'Activa' },
       };
     } catch (error) {
-      this.logger.error(`Error al buscar votaciones activas: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al buscar votaciones activas: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
 
   // Implementaciones básicas de los métodos faltantes
-  async findByJuntaPropietariosWithResponse(juntaId: string, page: number = 1, limit: number = 10): Promise<VotacionArrayResponseDto> {
+  async findByJuntaPropietariosWithResponse(
+    juntaId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<VotacionArrayResponseDto> {
     const votaciones = await this.findByJuntaPropietarios(juntaId);
-    const paginatedVotaciones = votaciones.slice((page - 1) * limit, page * limit);
-    
+    const paginatedVotaciones = votaciones.slice(
+      (page - 1) * limit,
+      page * limit,
+    );
+
     const votacionesResponse = await Promise.all(
-      paginatedVotaciones.map(votacion => this.mapToResponseDto(votacion))
+      paginatedVotaciones.map((votacion) => this.mapToResponseDto(votacion)),
     );
 
     return {
@@ -559,7 +616,12 @@ export class VotacionService implements IVotacionService {
     };
   }
 
-  async findByDateRangeWithResponse(fechaInicio: Date, fechaFin: Date, page: number = 1, limit: number = 10): Promise<VotacionArrayResponseDto> {
+  async findByDateRangeWithResponse(
+    fechaInicio: Date,
+    fechaFin: Date,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<VotacionArrayResponseDto> {
     // Implementación básica
     return {
       success: true,
@@ -568,7 +630,11 @@ export class VotacionService implements IVotacionService {
     };
   }
 
-  async findByCreadorWithResponse(creadorId: string, page: number = 1, limit: number = 10): Promise<VotacionArrayResponseDto> {
+  async findByCreadorWithResponse(
+    creadorId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<VotacionArrayResponseDto> {
     // Implementación básica
     return {
       success: true,
@@ -586,10 +652,12 @@ export class VotacionService implements IVotacionService {
     };
   }
 
-  async cerrarVotacionWithResponse(id: string): Promise<VotacionSingleResponseDto> {
+  async cerrarVotacionWithResponse(
+    id: string,
+  ): Promise<VotacionSingleResponseDto> {
     const votacion = await this.update(id, { estado: 'Finalizada' as any });
     const votacionResponse = await this.mapToResponseDto(votacion);
-    
+
     return {
       success: true,
       message: 'Votación cerrada exitosamente',
@@ -597,10 +665,12 @@ export class VotacionService implements IVotacionService {
     };
   }
 
-  async activarVotacionWithResponse(id: string): Promise<VotacionSingleResponseDto> {
+  async activarVotacionWithResponse(
+    id: string,
+  ): Promise<VotacionSingleResponseDto> {
     const votacion = await this.update(id, { estado: 'Activa' as any });
     const votacionResponse = await this.mapToResponseDto(votacion);
-    
+
     return {
       success: true,
       message: 'Votación activada exitosamente',
@@ -608,10 +678,12 @@ export class VotacionService implements IVotacionService {
     };
   }
 
-  async cancelarVotacionWithResponse(id: string): Promise<VotacionSingleResponseDto> {
+  async cancelarVotacionWithResponse(
+    id: string,
+  ): Promise<VotacionSingleResponseDto> {
     const votacion = await this.update(id, { estado: 'Cancelada' as any });
     const votacionResponse = await this.mapToResponseDto(votacion);
-    
+
     return {
       success: true,
       message: 'Votación cancelada exitosamente',

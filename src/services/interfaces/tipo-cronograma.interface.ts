@@ -1,9 +1,9 @@
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
-import { 
-  CreateTipoCronogramaDto, 
+import {
+  CreateTipoCronogramaDto,
   UpdateTipoCronogramaDto,
   TipoCronogramaSingleResponseDto,
-  TipoCronogramaArrayResponseDto
+  TipoCronogramaArrayResponseDto,
 } from 'src/dtos';
 import { TipoCronograma } from '../../entities/TipoCronograma';
 

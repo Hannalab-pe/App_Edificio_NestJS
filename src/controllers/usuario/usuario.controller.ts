@@ -20,12 +20,12 @@ import {
   ApiQuery,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { 
-  CreateUsuarioDto, 
-  UpdateUsuarioDto, 
+import {
+  CreateUsuarioDto,
+  UpdateUsuarioDto,
   UsuarioResponseDto,
   UsuarioSingleResponseDto,
-  UsuarioArrayResponseDto 
+  UsuarioArrayResponseDto,
 } from '../../dtos';
 import { IUsuarioService } from '../../services/interfaces/usuario.interface';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -36,7 +36,7 @@ export class UsuarioController {
   private readonly logger = new Logger(UsuarioController.name);
 
   constructor(
-    @Inject('IUsuarioService') private readonly usuarioService: IUsuarioService
+    @Inject('IUsuarioService') private readonly usuarioService: IUsuarioService,
   ) {}
   // ===============================================
   // ENDPOINT DE PRUEBA
@@ -45,11 +45,15 @@ export class UsuarioController {
   @Get('test')
   @ApiOperation({
     summary: 'Endpoint de prueba',
-    description: 'Endpoint simple para verificar que el controlador Usuario funciona',
+    description:
+      'Endpoint simple para verificar que el controlador Usuario funciona',
   })
   async test() {
     this.logger.log('Test del controlador Usuario');
-    return { message: 'Usuario Controller funcionando correctamente!', timestamp: new Date() };
+    return {
+      message: 'Usuario Controller funcionando correctamente!',
+      timestamp: new Date(),
+    };
   }
 
   // ===============================================
@@ -59,7 +63,8 @@ export class UsuarioController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los usuarios',
-    description: 'Retorna una lista completa de todos los usuarios registrados con sus perfiles y estadísticas',
+    description:
+      'Retorna una lista completa de todos los usuarios registrados con sus perfiles y estadísticas',
   })
   @ApiResponse({
     status: 200,
@@ -74,7 +79,8 @@ export class UsuarioController {
   @Get('activos')
   @ApiOperation({
     summary: 'Obtener usuarios activos',
-    description: 'Retorna únicamente los usuarios que están activos en el sistema',
+    description:
+      'Retorna únicamente los usuarios que están activos en el sistema',
   })
   @ApiResponse({
     status: 200,
@@ -101,7 +107,9 @@ export class UsuarioController {
     description: 'Lista de usuarios por rol obtenida exitosamente',
     type: UsuarioArrayResponseDto,
   })
-  async findByRole(@Param('roleId') roleId: string): Promise<UsuarioArrayResponseDto> {
+  async findByRole(
+    @Param('roleId') roleId: string,
+  ): Promise<UsuarioArrayResponseDto> {
     this.logger.log(`Solicitud para obtener usuarios con rol: ${roleId}`);
     return await this.usuarioService.findByRoleWithBaseResponse(roleId);
   }
@@ -109,7 +117,8 @@ export class UsuarioController {
   @Get('por-email/:email')
   @ApiOperation({
     summary: 'Buscar usuario por email',
-    description: 'Busca y retorna un usuario específico por su dirección de correo electrónico',
+    description:
+      'Busca y retorna un usuario específico por su dirección de correo electrónico',
   })
   @ApiParam({
     name: 'email',
@@ -125,7 +134,9 @@ export class UsuarioController {
     status: 404,
     description: 'Usuario no encontrado',
   })
-  async findByEmail(@Param('email') email: string): Promise<UsuarioSingleResponseDto> {
+  async findByEmail(
+    @Param('email') email: string,
+  ): Promise<UsuarioSingleResponseDto> {
     this.logger.log(`Solicitud para buscar usuario por email: ${email}`);
     return await this.usuarioService.findByEmailWithBaseResponse(email);
   }
@@ -133,7 +144,8 @@ export class UsuarioController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un usuario por ID',
-    description: 'Retorna un usuario específico con toda su información de perfiles, estadísticas y notificaciones',
+    description:
+      'Retorna un usuario específico con toda su información de perfiles, estadísticas y notificaciones',
   })
   @ApiParam({
     name: 'id',
@@ -157,7 +169,8 @@ export class UsuarioController {
   @Get(':id/perfil')
   @ApiOperation({
     summary: 'Obtener perfil completo del usuario',
-    description: 'Retorna el perfil completo del usuario con información detallada de todos sus roles y perfiles asociados',
+    description:
+      'Retorna el perfil completo del usuario con información detallada de todos sus roles y perfiles asociados',
   })
   @ApiParam({
     name: 'id',
@@ -173,15 +186,20 @@ export class UsuarioController {
     status: 404,
     description: 'Usuario no encontrado',
   })
-  async getUserProfile(@Param('id') id: string): Promise<UsuarioSingleResponseDto> {
-    this.logger.log(`Solicitud para obtener perfil completo del usuario: ${id}`);
+  async getUserProfile(
+    @Param('id') id: string,
+  ): Promise<UsuarioSingleResponseDto> {
+    this.logger.log(
+      `Solicitud para obtener perfil completo del usuario: ${id}`,
+    );
     return await this.usuarioService.getUserProfileWithBaseResponse(id);
   }
 
   @Get(':id/estadisticas')
   @ApiOperation({
     summary: 'Obtener estadísticas del usuario',
-    description: 'Retorna estadísticas detalladas de la actividad del usuario en el sistema',
+    description:
+      'Retorna estadísticas detalladas de la actividad del usuario en el sistema',
   })
   @ApiParam({
     name: 'id',
@@ -197,7 +215,9 @@ export class UsuarioController {
     status: 404,
     description: 'Usuario no encontrado',
   })
-  async getUserStatistics(@Param('id') id: string): Promise<UsuarioSingleResponseDto> {
+  async getUserStatistics(
+    @Param('id') id: string,
+  ): Promise<UsuarioSingleResponseDto> {
     this.logger.log(`Solicitud para obtener estadísticas del usuario: ${id}`);
     return await this.usuarioService.getUserStatisticsWithBaseResponse(id);
   }
@@ -205,7 +225,8 @@ export class UsuarioController {
   @Post()
   @ApiOperation({
     summary: 'Crear un nuevo usuario',
-    description: 'Crea un nuevo usuario en el sistema con validaciones de seguridad y integridad',
+    description:
+      'Crea un nuevo usuario en el sistema con validaciones de seguridad y integridad',
   })
   @ApiBody({
     type: CreateUsuarioDto,
@@ -224,7 +245,9 @@ export class UsuarioController {
     status: 409,
     description: 'Email ya existe en el sistema',
   })
-  async create(@Body() createUsuarioDto: CreateUsuarioDto): Promise<UsuarioSingleResponseDto> {
+  async create(
+    @Body() createUsuarioDto: CreateUsuarioDto,
+  ): Promise<UsuarioSingleResponseDto> {
     this.logger.log(`Solicitud para crear usuario: ${createUsuarioDto.correo}`);
     return await this.usuarioService.createWithBaseResponse(createUsuarioDto);
   }
@@ -232,7 +255,8 @@ export class UsuarioController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un usuario',
-    description: 'Actualiza parcialmente la información de un usuario existente',
+    description:
+      'Actualiza parcialmente la información de un usuario existente',
   })
   @ApiParam({
     name: 'id',
@@ -257,17 +281,21 @@ export class UsuarioController {
     description: 'Email ya existe en el sistema',
   })
   async update(
-    @Param('id') id: string, 
-    @Body() updateUsuarioDto: UpdateUsuarioDto
+    @Param('id') id: string,
+    @Body() updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<UsuarioSingleResponseDto> {
     this.logger.log(`Solicitud para actualizar usuario: ${id}`);
-    return await this.usuarioService.updateWithBaseResponse(id, updateUsuarioDto);
+    return await this.usuarioService.updateWithBaseResponse(
+      id,
+      updateUsuarioDto,
+    );
   }
 
   @Delete(':id')
   @ApiOperation({
     summary: 'Desactivar un usuario',
-    description: 'Desactiva un usuario del sistema (eliminación lógica). El usuario se mantiene en la base de datos pero se marca como inactivo',
+    description:
+      'Desactiva un usuario del sistema (eliminación lógica). El usuario se mantiene en la base de datos pero se marca como inactivo',
   })
   @ApiParam({
     name: 'id',
@@ -295,7 +323,8 @@ export class UsuarioController {
   @Get('legacy/all')
   @ApiOperation({
     summary: '[LEGACY] Obtener todos los usuarios (formato anterior)',
-    description: 'Endpoint de compatibilidad que retorna usuarios en formato anterior sin BaseResponseDto',
+    description:
+      'Endpoint de compatibilidad que retorna usuarios en formato anterior sin BaseResponseDto',
   })
   @ApiResponse({
     status: 200,
@@ -309,7 +338,8 @@ export class UsuarioController {
   @Get('legacy/:id')
   @ApiOperation({
     summary: '[LEGACY] Obtener usuario por ID (formato anterior)',
-    description: 'Endpoint de compatibilidad que retorna usuario en formato anterior sin BaseResponseDto',
+    description:
+      'Endpoint de compatibilidad que retorna usuario en formato anterior sin BaseResponseDto',
   })
   @ApiParam({
     name: 'id',

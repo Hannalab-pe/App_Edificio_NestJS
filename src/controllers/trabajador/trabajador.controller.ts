@@ -51,7 +51,8 @@ export class TrabajadorController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Registrar nuevo trabajador con usuario',
-    description: 'Crea un nuevo trabajador junto con su usuario y documento de identidad en una sola transacción. Ideal para registro completo de empleados.'
+    description:
+      'Crea un nuevo trabajador junto con su usuario y documento de identidad en una sola transacción. Ideal para registro completo de empleados.',
   })
   @ApiBody({
     type: CreateTrabajadorDto,
@@ -59,7 +60,8 @@ export class TrabajadorController {
     examples: {
       registro_completo: {
         summary: 'Registro completo de trabajador',
-        description: 'Ejemplo con todos los campos para crear trabajador, usuario y documento',
+        description:
+          'Ejemplo con todos los campos para crear trabajador, usuario y documento',
         value: {
           nombre: 'Juan Carlos',
           apellido: 'Pérez García',
@@ -72,10 +74,10 @@ export class TrabajadorController {
           salarioActual: '2500.00',
           tipoDocumento: TipoDocumentoIdentidad.DNI,
           numeroDocumento: 12345678,
-          idRol: '550e8400-e29b-41d4-a716-446655440000'
-        }
-      }
-    }
+          idRol: '550e8400-e29b-41d4-a716-446655440000',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -98,14 +100,19 @@ export class TrabajadorController {
     @Body() createTrabajadorDto: CreateTrabajadorDto,
   ): Promise<TrabajadorRegisterResponseDto> {
     try {
-      this.logger.log(`Registrando trabajador completo: ${createTrabajadorDto.correo}`);
+      this.logger.log(
+        `Registrando trabajador completo: ${createTrabajadorDto.correo}`,
+      );
       return await this.trabajadorService.register(createTrabajadorDto);
     } catch (error) {
       this.logger.error(`Error al registrar trabajador: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -113,7 +120,8 @@ export class TrabajadorController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Crear un nuevo trabajador',
-    description: 'Crea un nuevo trabajador en el sistema con validaciones completas'
+    description:
+      'Crea un nuevo trabajador en el sistema con validaciones completas',
   })
   @ApiBody({
     type: CreateTrabajadorDto,
@@ -129,10 +137,10 @@ export class TrabajadorController {
           contrasena: 'Password123!',
           confirmarContrasena: 'Password123!',
           tipoDocumento: TipoDocumentoIdentidad.DNI,
-          numeroDocumento: 87654321
-        }
-      }
-    }
+          numeroDocumento: 87654321,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -156,29 +164,38 @@ export class TrabajadorController {
   ): Promise<TrabajadorSingleResponseDto> {
     try {
       this.logger.log(`Creando trabajador: ${createTrabajadorDto.correo}`);
-      
-      const result = await this.trabajadorService.createWithBaseResponse(createTrabajadorDto);
-      
+
+      const result =
+        await this.trabajadorService.createWithBaseResponse(
+          createTrabajadorDto,
+        );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Trabajador creado exitosamente con ID: ${result.data?.idTrabajador}`);
+
+      this.logger.log(
+        `Trabajador creado exitosamente con ID: ${result.data?.idTrabajador}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al crear trabajador: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los trabajadores',
-    description: 'Retorna la lista completa de trabajadores con información de usuario y documento de identidad'
+    description:
+      'Retorna la lista completa de trabajadores con información de usuario y documento de identidad',
   })
   @ApiResponse({
     status: 200,
@@ -192,28 +209,34 @@ export class TrabajadorController {
   async findAll(): Promise<TrabajadorArrayResponseDto> {
     try {
       this.logger.log('Obteniendo todos los trabajadores');
-      
+
       const result = await this.trabajadorService.findAllWithBaseResponse();
-      
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} trabajadores`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} trabajadores`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al obtener trabajadores: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('activos')
   @ApiOperation({
     summary: 'Obtener trabajadores activos',
-    description: 'Retorna solo los trabajadores que están marcados como activos en el sistema'
+    description:
+      'Retorna solo los trabajadores que están marcados como activos en el sistema',
   })
   @ApiResponse({
     status: 200,
@@ -227,28 +250,36 @@ export class TrabajadorController {
   async findActivos(): Promise<TrabajadorArrayResponseDto> {
     try {
       this.logger.log('Obteniendo trabajadores activos');
-      
+
       const result = await this.trabajadorService.findActivosWithBaseResponse();
-      
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} trabajadores activos`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} trabajadores activos`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al obtener trabajadores activos: ${error.message}`);
+      this.logger.error(
+        `Error al obtener trabajadores activos: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un trabajador por ID',
-    description: 'Busca y retorna un trabajador específico usando su identificador único con información completa'
+    description:
+      'Busca y retorna un trabajador específico usando su identificador único con información completa',
   })
   @ApiParam({
     name: 'id',
@@ -275,33 +306,39 @@ export class TrabajadorController {
     description: 'Error interno del servidor',
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TrabajadorSingleResponseDto> {
     try {
       this.logger.log(`Buscando trabajador con ID: ${id}`);
-      
+
       const result = await this.trabajadorService.findOneWithBaseResponse(id);
-      
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Trabajador encontrado: ${result.data?.nombre} ${result.data?.apellido}`);
+
+      this.logger.log(
+        `Trabajador encontrado: ${result.data?.nombre} ${result.data?.apellido}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al buscar trabajador: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un trabajador',
-    description: 'Actualiza parcial o totalmente los datos de un trabajador existente'
+    description:
+      'Actualiza parcial o totalmente los datos de un trabajador existente',
   })
   @ApiParam({
     name: 'id',
@@ -319,17 +356,17 @@ export class TrabajadorController {
         description: 'Ejemplo de actualización de información personal',
         value: {
           telefono: '+51912345678',
-          salarioActual: '3000.00'
-        }
+          salarioActual: '3000.00',
+        },
       },
       cambio_estado: {
         summary: 'Activar/Desactivar trabajador',
         description: 'Ejemplo para cambiar estado de actividad',
         value: {
-          estaActivo: false
-        }
-      }
-    }
+          estaActivo: false,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -358,22 +395,30 @@ export class TrabajadorController {
   ): Promise<TrabajadorSingleResponseDto> {
     try {
       this.logger.log(`Actualizando trabajador con ID: ${id}`);
-      
-      const result = await this.trabajadorService.updateWithBaseResponse(id, updateTrabajadorDto);
-      
+
+      const result = await this.trabajadorService.updateWithBaseResponse(
+        id,
+        updateTrabajadorDto,
+      );
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Trabajador actualizado exitosamente: ${result.data?.nombre} ${result.data?.apellido}`);
+
+      this.logger.log(
+        `Trabajador actualizado exitosamente: ${result.data?.nombre} ${result.data?.apellido}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error al actualizar trabajador: ${error.message}`);
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -381,7 +426,8 @@ export class TrabajadorController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Eliminar un trabajador (desactivación lógica)',
-    description: 'Elimina lógicamente un trabajador marcándolo como inactivo en lugar de eliminación física'
+    description:
+      'Elimina lógicamente un trabajador marcándolo como inactivo en lugar de eliminación física',
   })
   @ApiParam({
     name: 'id',
@@ -398,15 +444,19 @@ export class TrabajadorController {
       properties: {
         success: { type: 'boolean', example: true },
         statusCode: { type: 'number', example: 200 },
-        message: { type: 'string', example: 'Trabajador desactivado exitosamente' },
+        message: {
+          type: 'string',
+          example: 'Trabajador desactivado exitosamente',
+        },
         data: { type: 'null', example: null },
-        error: { type: 'null', example: null }
-      }
-    }
+        error: { type: 'null', example: null },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
-    description: 'ID proporcionado no es un UUID válido o trabajador ya inactivo',
+    description:
+      'ID proporcionado no es un UUID válido o trabajador ya inactivo',
   })
   @ApiResponse({
     status: 404,
@@ -417,18 +467,18 @@ export class TrabajadorController {
     description: 'Error interno del servidor',
   })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<BaseResponseDto<undefined>> {
     try {
       this.logger.log(`Eliminando (desactivando) trabajador con ID: ${id}`);
-      
+
       const result = await this.trabajadorService.removeWithBaseResponse(id);
-      
+
       if (!result.success) {
         const statusCode = result.statusCode || 400;
         throw new HttpException(result.message, statusCode);
       }
-      
+
       this.logger.log(`Trabajador desactivado exitosamente con ID: ${id}`);
       return result;
     } catch (error) {
@@ -436,14 +486,18 @@ export class TrabajadorController {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('documento/:numeroDocumento')
   @ApiOperation({
     summary: 'Buscar trabajador por número de documento',
-    description: 'Encuentra un trabajador utilizando su número de documento de identidad'
+    description:
+      'Encuentra un trabajador utilizando su número de documento de identidad',
   })
   @ApiParam({
     name: 'numeroDocumento',
@@ -468,30 +522,43 @@ export class TrabajadorController {
     @Param('numeroDocumento') numeroDocumento: string,
   ): Promise<TrabajadorSingleResponseDto> {
     try {
-      this.logger.log(`Buscando trabajador por número de documento: ${numeroDocumento}`);
-      
-      const result = await this.trabajadorService.findByNumeroDocumentoWithBaseResponse(numeroDocumento);
-      
+      this.logger.log(
+        `Buscando trabajador por número de documento: ${numeroDocumento}`,
+      );
+
+      const result =
+        await this.trabajadorService.findByNumeroDocumentoWithBaseResponse(
+          numeroDocumento,
+        );
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Trabajador encontrado: ${result.data?.nombre} ${result.data?.apellido}`);
+
+      this.logger.log(
+        `Trabajador encontrado: ${result.data?.nombre} ${result.data?.apellido}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar trabajador por documento: ${error.message}`);
+      this.logger.error(
+        `Error al buscar trabajador por documento: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('correo/:correo')
   @ApiOperation({
     summary: 'Buscar trabajador por correo electrónico',
-    description: 'Encuentra un trabajador utilizando su correo electrónico registrado'
+    description:
+      'Encuentra un trabajador utilizando su correo electrónico registrado',
   })
   @ApiParam({
     name: 'correo',
@@ -517,29 +584,38 @@ export class TrabajadorController {
   ): Promise<TrabajadorSingleResponseDto> {
     try {
       this.logger.log(`Buscando trabajador por correo: ${correo}`);
-      
-      const result = await this.trabajadorService.findByCorreoWithBaseResponse(correo);
-      
+
+      const result =
+        await this.trabajadorService.findByCorreoWithBaseResponse(correo);
+
       if (!result.success) {
         const statusCode = result.statusCode || 404;
         throw new HttpException(result.message, statusCode);
       }
-      
-      this.logger.log(`Trabajador encontrado: ${result.data?.nombre} ${result.data?.apellido}`);
+
+      this.logger.log(
+        `Trabajador encontrado: ${result.data?.nombre} ${result.data?.apellido}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar trabajador por correo: ${error.message}`);
+      this.logger.error(
+        `Error al buscar trabajador por correo: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('cargo/:cargo')
   @ApiOperation({
     summary: 'Buscar trabajadores por cargo o rol',
-    description: 'Encuentra todos los trabajadores activos que tienen un cargo o rol específico'
+    description:
+      'Encuentra todos los trabajadores activos que tienen un cargo o rol específico',
   })
   @ApiParam({
     name: 'cargo',
@@ -556,24 +632,34 @@ export class TrabajadorController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByCargo(@Param('cargo') cargo: string): Promise<TrabajadorArrayResponseDto> {
+  async findByCargo(
+    @Param('cargo') cargo: string,
+  ): Promise<TrabajadorArrayResponseDto> {
     try {
       this.logger.log(`Buscando trabajadores por cargo: ${cargo}`);
-      
-      const result = await this.trabajadorService.findByCargoWithBaseResponse(cargo);
-      
+
+      const result =
+        await this.trabajadorService.findByCargoWithBaseResponse(cargo);
+
       if (!result.success) {
         throw new HttpException(result.message, result.statusCode || 500);
       }
-      
-      this.logger.log(`Se encontraron ${result.data?.length || 0} trabajadores con cargo ${cargo}`);
+
+      this.logger.log(
+        `Se encontraron ${result.data?.length || 0} trabajadores con cargo ${cargo}`,
+      );
       return result;
     } catch (error) {
-      this.logger.error(`Error al buscar trabajadores por cargo: ${error.message}`);
+      this.logger.error(
+        `Error al buscar trabajadores por cargo: ${error.message}`,
+      );
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error interno del servidor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

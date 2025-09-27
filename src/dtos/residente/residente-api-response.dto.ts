@@ -10,7 +10,9 @@ export class ResidenteSingleResponseDto extends BaseResponseDto<ResidenteRespons
   declare data: ResidenteResponseDto;
 }
 
-export class ResidenteArrayResponseDto extends BaseResponseDto<ResidenteResponseDto[]> {
+export class ResidenteArrayResponseDto extends BaseResponseDto<
+  ResidenteResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de residentes',
     type: [ResidenteResponseDto],
@@ -31,10 +33,10 @@ export class ResidenteRegisterCompleteResponseDto extends BaseResponseDto<{
         idResidente: '123e4567-e89b-12d3-a456-426614174000',
         nombre: 'María Elena',
         apellido: 'López Martínez',
-        correo: 'residente@viveconecta.com'
+        correo: 'residente@viveconecta.com',
       },
-      accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-    }
+      accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    },
   })
   declare data: {
     residente: ResidenteResponseDto;

@@ -16,8 +16,8 @@ export class ResidenteResponseDto {
     example: {
       idUsuario: '123e4567-e89b-12d3-a456-426614174000',
       correo: 'residente@viveconecta.com',
-      estaActivo: true
-    }
+      estaActivo: true,
+    },
   })
   usuario?: {
     idUsuario: string;
@@ -30,8 +30,8 @@ export class ResidenteResponseDto {
     example: {
       idDocumentoIdentidad: '123e4567-e89b-12d3-a456-426614174001',
       tipoDocumento: 'DNI',
-      numero: '87654321'
-    }
+      numero: '87654321',
+    },
   })
   documentoIdentidad?: {
     idDocumentoIdentidad: string;
@@ -41,13 +41,13 @@ export class ResidenteResponseDto {
 
   @ApiProperty({
     description: 'Cantidad de residencias activas del residente',
-    example: 2
+    example: 2,
   })
   cantidadResidencias?: number;
 
   @ApiProperty({
     description: 'Cantidad de cronogramas asignados al residente',
-    example: 5
+    example: 5,
   })
   cantidadCronogramas?: number;
 }

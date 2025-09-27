@@ -20,7 +20,12 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { CreateTipoContactoDto, UpdateTipoContactoDto, TipoContactoSingleResponseDto, TipoContactoArrayResponseDto } from '../../dtos';
+import {
+  CreateTipoContactoDto,
+  UpdateTipoContactoDto,
+  TipoContactoSingleResponseDto,
+  TipoContactoArrayResponseDto,
+} from '../../dtos';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ITipoContactoService } from '../../services/interfaces/tipo-contacto.interface';
@@ -44,7 +49,8 @@ export class TipoContactoController {
   @Post()
   @ApiOperation({
     summary: 'Crear un nuevo tipo de contacto',
-    description: 'Crea un nuevo tipo de contacto en el sistema con autenticación JWT requerida. Valida que el nombre no esté duplicado.',
+    description:
+      'Crea un nuevo tipo de contacto en el sistema con autenticación JWT requerida. Valida que el nombre no esté duplicado.',
   })
   @ApiBody({
     type: CreateTipoContactoDto,
@@ -55,10 +61,10 @@ export class TipoContactoController {
         description: 'Ejemplo de creación de tipo de contacto',
         value: {
           nombre: 'Email',
-          descripcion: 'Contacto por correo electrónico'
-        }
-      }
-    }
+          descripcion: 'Contacto por correo electrónico',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -72,15 +78,18 @@ export class TipoContactoController {
       type: 'object',
       properties: {
         success: { type: 'boolean', example: false },
-        message: { type: 'string', example: 'Ya existe un tipo de contacto con este nombre' },
+        message: {
+          type: 'string',
+          example: 'Ya existe un tipo de contacto con este nombre',
+        },
         data: { type: 'null' },
         errors: {
           type: 'array',
           items: { type: 'string' },
-          example: ['El nombre es requerido']
-        }
-      }
-    }
+          example: ['El nombre es requerido'],
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 401,
@@ -108,7 +117,8 @@ export class TipoContactoController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los tipos de contacto',
-    description: 'Retorna una lista de todos los tipos de contacto registrados en el sistema con autenticación JWT requerida.',
+    description:
+      'Retorna una lista de todos los tipos de contacto registrados en el sistema con autenticación JWT requerida.',
   })
   @ApiResponse({
     status: 200,
@@ -126,11 +136,14 @@ export class TipoContactoController {
       type: 'object',
       properties: {
         success: { type: 'boolean', example: false },
-        message: { type: 'string', example: 'No se encontraron tipos de contacto' },
+        message: {
+          type: 'string',
+          example: 'No se encontraron tipos de contacto',
+        },
         data: { type: 'array', items: {}, example: [] },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   async findAll(): Promise<TipoContactoArrayResponseDto> {
     try {
@@ -151,7 +164,8 @@ export class TipoContactoController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener un tipo de contacto por ID',
-    description: 'Retorna un tipo de contacto específico basado en su UUID con autenticación JWT requerida.',
+    description:
+      'Retorna un tipo de contacto específico basado en su UUID con autenticación JWT requerida.',
   })
   @ApiParam({
     name: 'id',
@@ -182,9 +196,9 @@ export class TipoContactoController {
         success: { type: 'boolean', example: false },
         message: { type: 'string', example: 'Tipo de contacto no encontrado' },
         data: { type: 'null' },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
@@ -208,7 +222,8 @@ export class TipoContactoController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un tipo de contacto',
-    description: 'Actualiza parcial o completamente los datos de un tipo de contacto existente con autenticación JWT requerida. Valida duplicados de nombre.',
+    description:
+      'Actualiza parcial o completamente los datos de un tipo de contacto existente con autenticación JWT requerida. Valida duplicados de nombre.',
   })
   @ApiParam({
     name: 'id',
@@ -219,24 +234,25 @@ export class TipoContactoController {
   })
   @ApiBody({
     type: UpdateTipoContactoDto,
-    description: 'Datos de actualización del tipo de contacto (campos opcionales)',
+    description:
+      'Datos de actualización del tipo de contacto (campos opcionales)',
     examples: {
       actualizar_parcial: {
         summary: 'Actualización parcial',
         description: 'Ejemplo de actualización de solo algunos campos',
         value: {
-          nombre: 'WhatsApp'
-        }
+          nombre: 'WhatsApp',
+        },
       },
       actualizar_completa: {
         summary: 'Actualización completa',
         description: 'Ejemplo de actualización de todos los campos',
         value: {
           nombre: 'Telegram',
-          descripcion: 'Mensajería por Telegram'
-        }
-      }
-    }
+          descripcion: 'Mensajería por Telegram',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -250,15 +266,18 @@ export class TipoContactoController {
       type: 'object',
       properties: {
         success: { type: 'boolean', example: false },
-        message: { type: 'string', example: 'Ya existe otro tipo de contacto con este nombre' },
+        message: {
+          type: 'string',
+          example: 'Ya existe otro tipo de contacto con este nombre',
+        },
         data: { type: 'null' },
         errors: {
           type: 'array',
           items: { type: 'string' },
-          example: ['El nombre debe tener al menos 2 caracteres']
-        }
-      }
-    }
+          example: ['El nombre debe tener al menos 2 caracteres'],
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 401,
@@ -273,9 +292,9 @@ export class TipoContactoController {
         success: { type: 'boolean', example: false },
         message: { type: 'string', example: 'Tipo de contacto no encontrado' },
         data: { type: 'null' },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -302,7 +321,8 @@ export class TipoContactoController {
   @Delete(':id')
   @ApiOperation({
     summary: 'Eliminar un tipo de contacto',
-    description: 'Elimina un tipo de contacto del sistema con autenticación JWT requerida. Verifica que no esté en uso por contactos existentes.',
+    description:
+      'Elimina un tipo de contacto del sistema con autenticación JWT requerida. Verifica que no esté en uso por contactos existentes.',
   })
   @ApiParam({
     name: 'id',
@@ -318,11 +338,14 @@ export class TipoContactoController {
       type: 'object',
       properties: {
         success: { type: 'boolean', example: true },
-        message: { type: 'string', example: 'Tipo de contacto eliminado exitosamente' },
+        message: {
+          type: 'string',
+          example: 'Tipo de contacto eliminado exitosamente',
+        },
         data: { type: 'null' },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -331,11 +354,15 @@ export class TipoContactoController {
       type: 'object',
       properties: {
         success: { type: 'boolean', example: false },
-        message: { type: 'string', example: 'No se puede eliminar el tipo de contacto porque está en uso por contactos existentes' },
+        message: {
+          type: 'string',
+          example:
+            'No se puede eliminar el tipo de contacto porque está en uso por contactos existentes',
+        },
         data: { type: 'null' },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   @ApiResponse({
     status: 401,
@@ -350,9 +377,9 @@ export class TipoContactoController {
         success: { type: 'boolean', example: false },
         message: { type: 'string', example: 'Tipo de contacto no encontrado' },
         data: { type: 'null' },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
@@ -375,7 +402,8 @@ export class TipoContactoController {
   @Get('nombre/:nombre')
   @ApiOperation({
     summary: 'Buscar tipos de contacto por nombre',
-    description: 'Busca tipos de contacto que contengan el nombre especificado (búsqueda parcial insensible a mayúsculas) con autenticación JWT requerida.',
+    description:
+      'Busca tipos de contacto que contengan el nombre especificado (búsqueda parcial insensible a mayúsculas) con autenticación JWT requerida.',
   })
   @ApiParam({
     name: 'nombre',
@@ -399,17 +427,23 @@ export class TipoContactoController {
       type: 'object',
       properties: {
         success: { type: 'boolean', example: false },
-        message: { type: 'string', example: 'No se encontraron tipos de contacto con el nombre especificado' },
+        message: {
+          type: 'string',
+          example:
+            'No se encontraron tipos de contacto con el nombre especificado',
+        },
         data: { type: 'array', items: {}, example: [] },
-        errors: { type: 'array', items: { type: 'string' }, example: [] }
-      }
-    }
+        errors: { type: 'array', items: { type: 'string' }, example: [] },
+      },
+    },
   })
   async findByNombre(
     @Param('nombre') nombre: string,
   ): Promise<TipoContactoArrayResponseDto> {
     try {
-      return await this.tipoContactoService.findByNombreWithBaseResponse(nombre);
+      return await this.tipoContactoService.findByNombreWithBaseResponse(
+        nombre,
+      );
     } catch (error) {
       throw new HttpException(
         error.message || 'Error interno del servidor',

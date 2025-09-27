@@ -6,7 +6,9 @@ import { TipoIncidenciaResponseDto } from './tipo-incidencia-response.dto';
  * DTO para respuestas que contienen una lista de tipos de incidencia
  * Utiliza BaseResponseDto como estructura base
  */
-export declare class TipoIncidenciaArrayResponseDto extends BaseResponseDto<TipoIncidenciaResponseDto[]> {
+export declare class TipoIncidenciaArrayResponseDto extends BaseResponseDto<
+  TipoIncidenciaResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de tipos de incidencia',
     type: [TipoIncidenciaResponseDto],
@@ -18,7 +20,7 @@ export declare class TipoIncidenciaArrayResponseDto extends BaseResponseDto<Tipo
         descripcion: 'Problemas relacionados con el sistema eléctrico',
         prioridad: 'ALTA',
         colorHex: '#FF5722',
-        estaActivo: true
+        estaActivo: true,
       },
       {
         idTipoIncidencia: 'b2c3d4e5-f6g7-8901-bcde-f23456789012',
@@ -26,9 +28,9 @@ export declare class TipoIncidenciaArrayResponseDto extends BaseResponseDto<Tipo
         descripcion: 'Problemas con tuberías y suministro de agua',
         prioridad: 'MEDIA',
         colorHex: '#2196F3',
-        estaActivo: true
-      }
-    ]
+        estaActivo: true,
+      },
+    ],
   })
   data: TipoIncidenciaResponseDto[] | null;
 }

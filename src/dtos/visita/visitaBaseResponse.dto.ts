@@ -13,9 +13,10 @@ export class VisitaSingleResponseDto extends BaseResponseDto<VisitaResponseDto> 
   @ApiProperty({
     description: 'Información adicional específica de visitas',
     example: {
-      codigoQrUrl: 'https://api.qrserver.com/v1/create-qr-code/?data=VV_20240315_143022_A1B2C3',
+      codigoQrUrl:
+        'https://api.qrserver.com/v1/create-qr-code/?data=VV_20240315_143022_A1B2C3',
       requiereAutorizacion: true,
-      notificacionesEnviadas: true
+      notificacionesEnviadas: true,
     },
     required: false,
   })
@@ -27,7 +28,9 @@ export class VisitaSingleResponseDto extends BaseResponseDto<VisitaResponseDto> 
 }
 
 // DTO para respuesta de array de visitas
-export class VisitaArrayResponseDto extends BaseResponseDto<VisitaResponseDto[]> {
+export class VisitaArrayResponseDto extends BaseResponseDto<
+  VisitaResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de visitas',
     type: [VisitaResponseDto],
@@ -47,8 +50,8 @@ export class VisitaArrayResponseDto extends BaseResponseDto<VisitaResponseDto[]>
         programadas: 45,
         enCurso: 12,
         finalizadas: 88,
-        canceladas: 5
-      }
+        canceladas: 5,
+      },
     },
     required: false,
   })

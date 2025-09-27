@@ -1,5 +1,3 @@
-
-
 /**
  * DTO de respuesta para TipoCronograma
  * Representa la estructura de datos de un tipo de cronograma en las respuestas de la API

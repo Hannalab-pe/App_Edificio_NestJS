@@ -1,10 +1,10 @@
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 import { TipoContacto } from '../../entities/TipoContacto';
-import { 
-  CreateTipoContactoDto, 
+import {
+  CreateTipoContactoDto,
   UpdateTipoContactoDto,
   TipoContactoSingleResponseDto,
-  TipoContactoArrayResponseDto 
+  TipoContactoArrayResponseDto,
 } from 'src/dtos';
 
 export interface ITipoContactoService {
@@ -32,5 +32,7 @@ export interface ITipoContactoService {
     updateTipoContactoDto: UpdateTipoContactoDto,
   ): Promise<TipoContactoSingleResponseDto>;
   removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>>;
-  findByNombreWithBaseResponse(nombre: string): Promise<TipoContactoArrayResponseDto>;
+  findByNombreWithBaseResponse(
+    nombre: string,
+  ): Promise<TipoContactoArrayResponseDto>;
 }

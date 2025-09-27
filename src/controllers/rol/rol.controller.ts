@@ -22,7 +22,12 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { IRolService } from '../../services/interfaces/rol.interface';
-import { CreateRolDto, UpdateRolDto, RolSingleResponseDto, RolArrayResponseDto } from '../../dtos';
+import {
+  CreateRolDto,
+  UpdateRolDto,
+  RolSingleResponseDto,
+  RolArrayResponseDto,
+} from '../../dtos';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 import { Rol } from '../../entities/Rol';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -42,7 +47,8 @@ export class RolController {
   @Post()
   @ApiOperation({
     summary: 'Crear nuevo rol',
-    description: 'Crea un nuevo rol en el sistema con validación de nombre único',
+    description:
+      'Crea un nuevo rol en el sistema con validación de nombre único',
   })
   @ApiBody({
     type: CreateRolDto,
@@ -77,7 +83,8 @@ export class RolController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los roles',
-    description: 'Retorna una lista de todos los roles del sistema con sus relaciones',
+    description:
+      'Retorna una lista de todos los roles del sistema con sus relaciones',
   })
   @ApiResponse({
     status: 200,
@@ -102,7 +109,8 @@ export class RolController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener rol por ID',
-    description: 'Retorna un rol específico identificado por su UUID con todas sus relaciones',
+    description:
+      'Retorna un rol específico identificado por su UUID con todas sus relaciones',
   })
   @ApiParam({
     name: 'id',
@@ -138,7 +146,8 @@ export class RolController {
   @Get('nombre/:nombre')
   @ApiOperation({
     summary: 'Obtener rol por nombre',
-    description: 'Busca un rol específico por su nombre con todas sus relaciones',
+    description:
+      'Busca un rol específico por su nombre con todas sus relaciones',
   })
   @ApiParam({
     name: 'nombre',
@@ -170,7 +179,8 @@ export class RolController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar rol',
-    description: 'Actualiza parcialmente un rol existente con validación de nombre único',
+    description:
+      'Actualiza parcialmente un rol existente con validación de nombre único',
   })
   @ApiParam({
     name: 'id',
@@ -203,7 +213,10 @@ export class RolController {
     @Body() updateRolDto: UpdateRolDto,
   ): Promise<BaseResponseDto<any>> {
     try {
-      return await this.rolServiceDirect.updateWithBaseResponse(id, updateRolDto);
+      return await this.rolServiceDirect.updateWithBaseResponse(
+        id,
+        updateRolDto,
+      );
     } catch (error) {
       throw new HttpException(
         `Error al actualizar el rol: ${error.message}`,
@@ -251,7 +264,8 @@ export class RolController {
   @Post('seed')
   @ApiOperation({
     summary: 'Inicializar roles del sistema',
-    description: 'Crea los roles por defecto del sistema si no existen (Administrador, Propietario, Residente, Portero, Conserje)',
+    description:
+      'Crea los roles por defecto del sistema si no existen (Administrador, Propietario, Residente, Portero, Conserje)',
   })
   @ApiResponse({
     status: 200,

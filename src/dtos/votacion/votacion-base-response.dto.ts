@@ -15,7 +15,8 @@ export declare class VotacionSingleResponseDto extends BaseResponseDto<VotacionR
   // Metadatos específicos para votación individual
   @ApiProperty({
     description: 'URL directa para acceder a la votación',
-    example: 'https://app.edificio.com/votacion/123e4567-e89b-12d3-a456-426614174000',
+    example:
+      'https://app.edificio.com/votacion/123e4567-e89b-12d3-a456-426614174000',
     required: false,
   })
   votacionUrl?: string;
@@ -65,13 +66,19 @@ export declare class EstadisticasGeneralesVotacionDto {
   @ApiProperty({ description: 'Total de votaciones activas', example: 3 })
   votacionesActivas: number;
 
-  @ApiProperty({ description: 'Total de votaciones finalizadas este mes', example: 12 })
+  @ApiProperty({
+    description: 'Total de votaciones finalizadas este mes',
+    example: 12,
+  })
   votacionesFinalizadasMes: number;
 
   @ApiProperty({ description: 'Promedio de participación', example: 68.5 })
   promedioParticipacion: number;
 
-  @ApiProperty({ description: 'Total de votos emitidos este mes', example: 156 })
+  @ApiProperty({
+    description: 'Total de votos emitidos este mes',
+    example: 156,
+  })
   votosEmitidosMes: number;
 
   @ApiProperty({ description: 'Votaciones pendientes de iniciar', example: 2 })
@@ -85,29 +92,55 @@ export declare class EstadisticasGeneralesVotacionDto {
  * Filtros aplicados en la consulta
  */
 export declare class FiltrosVotacionDto {
-  @ApiProperty({ description: 'Filtro por estado', example: 'ACTIVA', required: false })
+  @ApiProperty({
+    description: 'Filtro por estado',
+    example: 'ACTIVA',
+    required: false,
+  })
   estado?: string;
 
-  @ApiProperty({ description: 'Filtro por tipo', example: 'SIMPLE', required: false })
+  @ApiProperty({
+    description: 'Filtro por tipo',
+    example: 'SIMPLE',
+    required: false,
+  })
   tipo?: string;
 
-  @ApiProperty({ description: 'Filtro por fecha desde', example: '2025-09-01', required: false })
+  @ApiProperty({
+    description: 'Filtro por fecha desde',
+    example: '2025-09-01',
+    required: false,
+  })
   fechaDesde?: string;
 
-  @ApiProperty({ description: 'Filtro por fecha hasta', example: '2025-09-30', required: false })
+  @ApiProperty({
+    description: 'Filtro por fecha hasta',
+    example: '2025-09-30',
+    required: false,
+  })
   fechaHasta?: string;
 
-  @ApiProperty({ description: 'Filtro por creador', example: 'Juan Pérez', required: false })
+  @ApiProperty({
+    description: 'Filtro por creador',
+    example: 'Juan Pérez',
+    required: false,
+  })
   creador?: string;
 
-  @ApiProperty({ description: 'Búsqueda por título o descripción', example: 'presupuesto', required: false })
+  @ApiProperty({
+    description: 'Búsqueda por título o descripción',
+    example: 'presupuesto',
+    required: false,
+  })
   busqueda?: string;
 }
 
 /**
  * DTO de respuesta para arrays de Votación con BaseResponseDto
  */
-export declare class VotacionArrayResponseDto extends BaseResponseDto<VotacionResponseDto[]> {
+export declare class VotacionArrayResponseDto extends BaseResponseDto<
+  VotacionResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de votaciones',
     type: [VotacionResponseDto],
@@ -137,14 +170,14 @@ export declare class VotacionArrayResponseDto extends BaseResponseDto<VotacionRe
 
   @ApiProperty({
     description: 'Resumen de estados de votaciones en los resultados',
-    example: { 'ACTIVA': 3, 'FINALIZADA': 7, 'BORRADOR': 2 },
+    example: { ACTIVA: 3, FINALIZADA: 7, BORRADOR: 2 },
     required: false,
   })
   resumenEstados?: Record<string, number>;
 
   @ApiProperty({
     description: 'Total de votaciones por tipo en los resultados',
-    example: { 'SIMPLE': 8, 'MULTIPLE': 3, 'SECRETA': 1 },
+    example: { SIMPLE: 8, MULTIPLE: 3, SECRETA: 1 },
     required: false,
   })
   resumenTipos?: Record<string, number>;

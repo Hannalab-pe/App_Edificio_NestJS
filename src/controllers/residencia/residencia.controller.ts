@@ -11,17 +11,17 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
   ApiBearerAuth,
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ResidenciaService } from 'src/services/implementations/residencia/residencia.service';
-import { 
+import {
   CreateResidenciaDto,
   UpdateResidenciaDto,
   ResidenciaSingleResponseDto,
@@ -34,14 +34,13 @@ import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('residencia')
 export class ResidenciaController {
-  constructor(
-    private readonly residenciaService: ResidenciaService,
-  ) {}
+  constructor(private readonly residenciaService: ResidenciaService) {}
 
   @Post()
   @ApiOperation({
     summary: 'Crear nueva residencia',
-    description: 'Crea una nueva residencia asociando una propiedad con un propietario y residente, con validación de conflictos',
+    description:
+      'Crea una nueva residencia asociando una propiedad con un propietario y residente, con validación de conflictos',
   })
   @ApiResponse({
     status: 201,
@@ -60,7 +59,9 @@ export class ResidenciaController {
     status: 409,
     description: 'Ya existe una residencia activa para esta propiedad',
   })
-  async create(@Body() createResidenciaDto: CreateResidenciaDto): Promise<BaseResponseDto<any>> {
+  async create(
+    @Body() createResidenciaDto: CreateResidenciaDto,
+  ): Promise<BaseResponseDto<any>> {
     try {
       return await this.residenciaService.create(createResidenciaDto);
     } catch (error) {
@@ -74,7 +75,8 @@ export class ResidenciaController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todas las residencias',
-    description: 'Retorna una lista de todas las residencias registradas en el sistema con información de propiedades, propietarios y residentes',
+    description:
+      'Retorna una lista de todas las residencias registradas en el sistema con información de propiedades, propietarios y residentes',
   })
   @ApiResponse({
     status: 200,
@@ -99,7 +101,8 @@ export class ResidenciaController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener residencia por ID',
-    description: 'Retorna una residencia específica identificada por su UUID con toda la información relacionada',
+    description:
+      'Retorna una residencia específica identificada por su UUID con toda la información relacionada',
   })
   @ApiParam({
     name: 'id',
@@ -133,7 +136,8 @@ export class ResidenciaController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar residencia',
-    description: 'Actualiza parcialmente una residencia existente con validación de conflictos de propiedad activa',
+    description:
+      'Actualiza parcialmente una residencia existente con validación de conflictos de propiedad activa',
   })
   @ApiParam({
     name: 'id',
@@ -158,8 +162,8 @@ export class ResidenciaController {
     description: 'Conflicto con residencia activa existente',
   })
   async update(
-    @Param('id') id: string, 
-    @Body() updateResidenciaDto: UpdateResidenciaDto
+    @Param('id') id: string,
+    @Body() updateResidenciaDto: UpdateResidenciaDto,
   ): Promise<BaseResponseDto<any>> {
     try {
       return await this.residenciaService.update(id, updateResidenciaDto);
@@ -174,7 +178,8 @@ export class ResidenciaController {
   @Delete(':id')
   @ApiOperation({
     summary: 'Eliminar residencia',
-    description: 'Elimina una residencia específica del sistema identificada por su UUID',
+    description:
+      'Elimina una residencia específica del sistema identificada por su UUID',
   })
   @ApiParam({
     name: 'id',
@@ -208,7 +213,8 @@ export class ResidenciaController {
   @Get('propiedad/:propiedadId')
   @ApiOperation({
     summary: 'Obtener residencias por propiedad',
-    description: 'Retorna todas las residencias asociadas a una propiedad específica ordenadas por fecha de inicio',
+    description:
+      'Retorna todas las residencias asociadas a una propiedad específica ordenadas por fecha de inicio',
   })
   @ApiParam({
     name: 'propiedadId',
@@ -224,7 +230,9 @@ export class ResidenciaController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByPropiedad(@Param('propiedadId') propiedadId: string): Promise<BaseResponseDto<any[]>> {
+  async findByPropiedad(
+    @Param('propiedadId') propiedadId: string,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
       return await this.residenciaService.findByPropiedad(propiedadId);
     } catch (error) {
@@ -238,7 +246,8 @@ export class ResidenciaController {
   @Get('residente/:residenteId')
   @ApiOperation({
     summary: 'Obtener residencias por residente',
-    description: 'Retorna todas las residencias asociadas a un residente específico ordenadas por fecha de inicio',
+    description:
+      'Retorna todas las residencias asociadas a un residente específico ordenadas por fecha de inicio',
   })
   @ApiParam({
     name: 'residenteId',
@@ -254,7 +263,9 @@ export class ResidenciaController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByResidente(@Param('residenteId') residenteId: string): Promise<BaseResponseDto<any[]>> {
+  async findByResidente(
+    @Param('residenteId') residenteId: string,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
       return await this.residenciaService.findByResidente(residenteId);
     } catch (error) {
@@ -268,7 +279,8 @@ export class ResidenciaController {
   @Get('estado/:estado')
   @ApiOperation({
     summary: 'Obtener residencias por estado',
-    description: 'Retorna todas las residencias que tienen un estado específico ordenadas por fecha de inicio',
+    description:
+      'Retorna todas las residencias que tienen un estado específico ordenadas por fecha de inicio',
   })
   @ApiParam({
     name: 'estado',
@@ -285,7 +297,9 @@ export class ResidenciaController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByEstado(@Param('estado') estado: string): Promise<BaseResponseDto<any[]>> {
+  async findByEstado(
+    @Param('estado') estado: string,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
       return await this.residenciaService.findByEstado(estado);
     } catch (error) {

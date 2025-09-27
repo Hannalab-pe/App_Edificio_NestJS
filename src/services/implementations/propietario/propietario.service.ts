@@ -129,7 +129,11 @@ export class PropietarioService implements IPropietarioService {
     try {
       const propietario = await this.propietarioRepository.findOne({
         where: { idPropietario: id },
-        relations: ['idDocumentoIdentidad', 'idUsuario', 'propiedadPropietarios'],
+        relations: [
+          'idDocumentoIdentidad',
+          'idUsuario',
+          'propiedadPropietarios',
+        ],
       });
 
       if (!propietario) {
@@ -170,14 +174,20 @@ export class PropietarioService implements IPropietarioService {
       }
 
       // Verificar si el correo ya está en uso por otro propietario
-      if (updatePropietarioDto.correo && updatePropietarioDto.correo !== propietarioExistente.correo) {
+      if (
+        updatePropietarioDto.correo &&
+        updatePropietarioDto.correo !== propietarioExistente.correo
+      ) {
         const correoExistente = await queryRunner.manager.findOne(Propietario, {
           where: { correo: updatePropietarioDto.correo },
         });
-        
+
         if (correoExistente) {
           await queryRunner.rollbackTransaction();
-          return BaseResponseDto.error('El correo ya está registrado por otro propietario', 409);
+          return BaseResponseDto.error(
+            'El correo ya está registrado por otro propietario',
+            409,
+          );
         }
       }
 
@@ -222,7 +232,10 @@ export class PropietarioService implements IPropietarioService {
       }
 
       // Verificar si tiene propiedades asociadas
-      if (propietario.propiedadPropietarios && propietario.propiedadPropietarios.length > 0) {
+      if (
+        propietario.propiedadPropietarios &&
+        propietario.propiedadPropietarios.length > 0
+      ) {
         await queryRunner.rollbackTransaction();
         return BaseResponseDto.error(
           'No se puede eliminar el propietario porque tiene propiedades asociadas',
@@ -259,7 +272,10 @@ export class PropietarioService implements IPropietarioService {
         .getOne();
 
       if (!propietario) {
-        return BaseResponseDto.error('Propietario no encontrado con ese número de documento', 404);
+        return BaseResponseDto.error(
+          'Propietario no encontrado con ese número de documento',
+          404,
+        );
       }
 
       return BaseResponseDto.success(
@@ -278,10 +294,10 @@ export class PropietarioService implements IPropietarioService {
       const propietario = await this.propietarioRepository.findOne({
         where: { idPropietario: id },
         relations: [
-          'idDocumentoIdentidad', 
-          'idUsuario', 
+          'idDocumentoIdentidad',
+          'idUsuario',
           'propiedadPropietarios',
-          'propiedadPropietarios.idPropiedad'
+          'propiedadPropietarios.idPropiedad',
         ],
       });
 
@@ -300,30 +316,43 @@ export class PropietarioService implements IPropietarioService {
     }
   }
 
-  async create(createPropietarioDto: CreatePropietarioDto): Promise<BaseResponseDto<Propietario>> {
+  async create(
+    createPropietarioDto: CreatePropietarioDto,
+  ): Promise<BaseResponseDto<Propietario>> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       // Verificar si ya existe un propietario con el mismo correo
-      const propietarioExistente = await queryRunner.manager.findOne(Propietario, {
-        where: { correo: createPropietarioDto.correo },
-      });
+      const propietarioExistente = await queryRunner.manager.findOne(
+        Propietario,
+        {
+          where: { correo: createPropietarioDto.correo },
+        },
+      );
 
       if (propietarioExistente) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('Ya existe un propietario con este correo', 409);
+        return BaseResponseDto.error(
+          'Ya existe un propietario con este correo',
+          409,
+        );
       }
 
       const nuevoPropietario = queryRunner.manager.create(Propietario, {
         ...createPropietarioDto,
-        idDocumentoIdentidad: { idDocumentoIdentidad: createPropietarioDto.idDocumentoIdentidad } as any,
+        idDocumentoIdentidad: {
+          idDocumentoIdentidad: createPropietarioDto.idDocumentoIdentidad,
+        } as any,
         idUsuario: { idUsuario: createPropietarioDto.idUsuario } as any,
         estaActivo: true,
       });
 
-      const propietarioGuardado = await queryRunner.manager.save(Propietario, nuevoPropietario);
+      const propietarioGuardado = await queryRunner.manager.save(
+        Propietario,
+        nuevoPropietario,
+      );
       await queryRunner.commitTransaction();
 
       return BaseResponseDto.success(

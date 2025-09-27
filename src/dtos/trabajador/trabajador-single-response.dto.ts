@@ -24,17 +24,17 @@ export declare class TrabajadorSingleResponseDto extends BaseResponseDto<Trabaja
       documentoIdentidad: {
         idDocumentoIdentidad: 'doc-uuid-123',
         tipo: 'DNI',
-        numero: 12345678
+        numero: 12345678,
       },
       usuario: {
         idUsuario: 'user-uuid-123',
         nombreUsuario: 'jperez',
         rol: {
           idRol: 'rol-uuid-123',
-          nombre: 'Trabajador'
-        }
-      }
-    }
+          nombre: 'Trabajador',
+        },
+      },
+    },
   })
   data: TrabajadorResponseDto | null;
 }

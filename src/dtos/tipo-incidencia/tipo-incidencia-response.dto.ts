@@ -23,7 +23,8 @@ export class TipoIncidenciaResponseDto {
 
   @ApiPropertyOptional({
     description: 'Descripción detallada del tipo de incidencia',
-    example: 'Problemas relacionados con el sistema eléctrico del edificio como cortes de luz, fallas en tomas de corriente, etc.',
+    example:
+      'Problemas relacionados con el sistema eléctrico del edificio como cortes de luz, fallas en tomas de corriente, etc.',
     type: String,
     nullable: true,
   })
@@ -38,7 +39,8 @@ export class TipoIncidenciaResponseDto {
   prioridad: PrioridadIncidencia;
 
   @ApiPropertyOptional({
-    description: 'Color hexadecimal para identificar visualmente el tipo de incidencia en interfaces',
+    description:
+      'Color hexadecimal para identificar visualmente el tipo de incidencia en interfaces',
     example: '#FF5722',
     type: String,
     maxLength: 7,

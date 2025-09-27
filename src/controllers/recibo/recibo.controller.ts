@@ -11,17 +11,17 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
   ApiBearerAuth,
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ReciboService } from 'src/services/implementations/recibo/recibo.service';
-import { 
+import {
   CreateReciboDto,
   UpdateReciboDto,
   ReciboSingleResponseDto,
@@ -34,9 +34,7 @@ import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('recibo')
 export class ReciboController {
-  constructor(
-    private readonly reciboService: ReciboService,
-  ) {}
+  constructor(private readonly reciboService: ReciboService) {}
 
   @Post()
   @ApiOperation({
@@ -60,7 +58,9 @@ export class ReciboController {
     status: 409,
     description: 'Número de recibo ya existe',
   })
-  async create(@Body() createReciboDto: CreateReciboDto): Promise<BaseResponseDto<any>> {
+  async create(
+    @Body() createReciboDto: CreateReciboDto,
+  ): Promise<BaseResponseDto<any>> {
     try {
       return await this.reciboService.create(createReciboDto);
     } catch (error) {
@@ -74,7 +74,8 @@ export class ReciboController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los recibos',
-    description: 'Retorna una lista de todos los recibos registrados en el sistema',
+    description:
+      'Retorna una lista de todos los recibos registrados en el sistema',
   })
   @ApiResponse({
     status: 200,
@@ -133,7 +134,8 @@ export class ReciboController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar recibo',
-    description: 'Actualiza parcialmente un recibo existente identificado por su UUID',
+    description:
+      'Actualiza parcialmente un recibo existente identificado por su UUID',
   })
   @ApiParam({
     name: 'id',
@@ -158,8 +160,8 @@ export class ReciboController {
     description: 'Número de recibo ya existe',
   })
   async update(
-    @Param('id') id: string, 
-    @Body() updateReciboDto: UpdateReciboDto
+    @Param('id') id: string,
+    @Body() updateReciboDto: UpdateReciboDto,
   ): Promise<BaseResponseDto<any>> {
     try {
       return await this.reciboService.update(id, updateReciboDto);
@@ -174,7 +176,8 @@ export class ReciboController {
   @Delete(':id')
   @ApiOperation({
     summary: 'Eliminar recibo',
-    description: 'Elimina un recibo específico del sistema identificado por su UUID',
+    description:
+      'Elimina un recibo específico del sistema identificado por su UUID',
   })
   @ApiParam({
     name: 'id',
@@ -208,7 +211,8 @@ export class ReciboController {
   @Get('numero/:numeroRecibo')
   @ApiOperation({
     summary: 'Buscar recibo por número',
-    description: 'Encuentra un recibo específico usando su número único de recibo',
+    description:
+      'Encuentra un recibo específico usando su número único de recibo',
   })
   @ApiParam({
     name: 'numeroRecibo',
@@ -228,7 +232,9 @@ export class ReciboController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByNumeroRecibo(@Param('numeroRecibo') numeroRecibo: string): Promise<BaseResponseDto<any>> {
+  async findByNumeroRecibo(
+    @Param('numeroRecibo') numeroRecibo: string,
+  ): Promise<BaseResponseDto<any>> {
     try {
       return await this.reciboService.findByNumeroRecibo(numeroRecibo);
     } catch (error) {
@@ -258,7 +264,9 @@ export class ReciboController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findByPago(@Param('pagoId') pagoId: string): Promise<BaseResponseDto<any[]>> {
+  async findByPago(
+    @Param('pagoId') pagoId: string,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
       return await this.reciboService.findByPago(pagoId);
     } catch (error) {

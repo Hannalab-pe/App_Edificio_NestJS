@@ -11,17 +11,17 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
   ApiBearerAuth,
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PropiedadPropietarioService } from 'src/services/implementations/propiedad-propietario/propiedad-propietario.service';
-import { 
+import {
   CreatePropiedadPropietarioDto,
   UpdatePropiedadPropietarioDto,
 } from 'src/dtos';
@@ -39,7 +39,8 @@ export class PropiedadPropietarioController {
   @Post()
   @ApiOperation({
     summary: 'Crear nueva relación propiedad-propietario',
-    description: 'Crea una nueva relación entre una propiedad existente y un propietario (nuevo o existente)',
+    description:
+      'Crea una nueva relación entre una propiedad existente y un propietario (nuevo o existente)',
   })
   @ApiResponse({
     status: 201,
@@ -61,20 +62,20 @@ export class PropiedadPropietarioController {
     status: 409,
     description: 'Conflicto - Relación ya existe o propietario ya registrado',
   })
-  async create(
-    @Body() createDto: CreatePropiedadPropietarioDto,
-  ): Promise<any> {
+  async create(@Body() createDto: CreatePropiedadPropietarioDto): Promise<any> {
     return await this.propiedadPropietarioService.create(createDto);
   }
 
   @Get()
   @ApiOperation({
     summary: 'Obtener todas las relaciones propiedad-propietario',
-    description: 'Recupera una lista de todas las relaciones propiedad-propietario registradas',
+    description:
+      'Recupera una lista de todas las relaciones propiedad-propietario registradas',
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de relaciones propiedad-propietario recuperada exitosamente',
+    description:
+      'Lista de relaciones propiedad-propietario recuperada exitosamente',
   })
   @ApiResponse({
     status: 401,
@@ -99,7 +100,8 @@ export class PropiedadPropietarioController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener relación propiedad-propietario por ID',
-    description: 'Recupera una relación propiedad-propietario específica por su ID único',
+    description:
+      'Recupera una relación propiedad-propietario específica por su ID único',
   })
   @ApiParam({
     name: 'id',
@@ -147,7 +149,8 @@ export class PropiedadPropietarioController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar relación propiedad-propietario',
-    description: 'Actualiza los datos de una relación propiedad-propietario existente',
+    description:
+      'Actualiza los datos de una relación propiedad-propietario existente',
   })
   @ApiParam({
     name: 'id',
@@ -176,7 +179,10 @@ export class PropiedadPropietarioController {
     @Body() updateDto: UpdatePropiedadPropietarioDto,
   ): Promise<BaseResponseDto<any>> {
     try {
-      const result = await this.propiedadPropietarioService.update(id, updateDto);
+      const result = await this.propiedadPropietarioService.update(
+        id,
+        updateDto,
+      );
       if (!result) {
         throw new HttpException(
           'Relación propiedad-propietario no encontrada',
@@ -250,7 +256,8 @@ export class PropiedadPropietarioController {
   @Get('por-propiedad/:propiedadId')
   @ApiOperation({
     summary: 'Obtener propietarios por propiedad',
-    description: 'Recupera todas las relaciones de propietarios para una propiedad específica',
+    description:
+      'Recupera todas las relaciones de propietarios para una propiedad específica',
   })
   @ApiParam({
     name: 'propiedadId',
@@ -266,9 +273,12 @@ export class PropiedadPropietarioController {
     status: 401,
     description: 'No autorizado - Token inválido o expirado',
   })
-  async findByPropiedad(@Param('propiedadId') propiedadId: string): Promise<BaseResponseDto<any[]>> {
+  async findByPropiedad(
+    @Param('propiedadId') propiedadId: string,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
-      const result = await this.propiedadPropietarioService.findByPropiedad(propiedadId);
+      const result =
+        await this.propiedadPropietarioService.findByPropiedad(propiedadId);
       return BaseResponseDto.success(
         result,
         'Propietarios de la propiedad recuperados exitosamente',
@@ -285,7 +295,8 @@ export class PropiedadPropietarioController {
   @Get('por-propietario/:propietarioId')
   @ApiOperation({
     summary: 'Obtener propiedades por propietario',
-    description: 'Recupera todas las propiedades asociadas a un propietario específico',
+    description:
+      'Recupera todas las propiedades asociadas a un propietario específico',
   })
   @ApiParam({
     name: 'propietarioId',
@@ -301,9 +312,12 @@ export class PropiedadPropietarioController {
     status: 401,
     description: 'No autorizado - Token inválido o expirado',
   })
-  async findByPropietario(@Param('propietarioId') propietarioId: string): Promise<BaseResponseDto<any[]>> {
+  async findByPropietario(
+    @Param('propietarioId') propietarioId: string,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
-      const result = await this.propiedadPropietarioService.findByPropietario(propietarioId);
+      const result =
+        await this.propiedadPropietarioService.findByPropietario(propietarioId);
       return BaseResponseDto.success(
         result,
         'Propiedades del propietario recuperadas exitosamente',

@@ -5,7 +5,9 @@ import { TipoEspacioResponseDto } from './tipo-espacio-response.dto';
  * DTO de respuesta para múltiples TipoEspacio con BaseResponse
  * Extiende BaseResponseDto con array de datos específicos de TipoEspacio
  */
-export declare class TipoEspacioArrayResponseDto extends BaseResponseDto<TipoEspacioResponseDto[]> {
+export declare class TipoEspacioArrayResponseDto extends BaseResponseDto<
+  TipoEspacioResponseDto[]
+> {
   /**
    * Código de estado HTTP de la respuesta
    * @example 200

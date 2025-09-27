@@ -14,11 +14,12 @@ export declare class TipoIncidenciaSingleResponseDto extends BaseResponseDto<Tip
     example: {
       idTipoIncidencia: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
       nombre: 'Problema Eléctrico',
-      descripcion: 'Problemas relacionados con el sistema eléctrico del edificio',
+      descripcion:
+        'Problemas relacionados con el sistema eléctrico del edificio',
       prioridad: 'ALTA',
       colorHex: '#FF5722',
-      estaActivo: true
-    }
+      estaActivo: true,
+    },
   })
   data: TipoIncidenciaResponseDto | null;
 }

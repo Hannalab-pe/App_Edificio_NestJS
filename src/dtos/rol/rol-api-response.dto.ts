@@ -21,7 +21,11 @@ export class RolSingleResponseDto extends BaseResponseDto<BaseResponseDto.RolDat
     description: 'Datos del rol',
     type: 'object',
     properties: {
-      idRol: { type: 'string', format: 'uuid', description: 'ID único del rol' },
+      idRol: {
+        type: 'string',
+        format: 'uuid',
+        description: 'ID único del rol',
+      },
       nombre: { type: 'string', description: 'Nombre del rol' },
       descripcion: { type: 'string', description: 'Descripción del rol' },
       usuarios: {
@@ -76,14 +80,20 @@ export class RolSingleResponseDto extends BaseResponseDto<BaseResponseDto.RolDat
 /**
  * DTO de respuesta para múltiples roles usando BaseResponseDto
  */
-export class RolArrayResponseDto extends BaseResponseDto<BaseResponseDto.RolData[]> {
+export class RolArrayResponseDto extends BaseResponseDto<
+  BaseResponseDto.RolData[]
+> {
   @ApiProperty({
     description: 'Lista de roles',
     type: 'array',
     items: {
       type: 'object',
       properties: {
-        idRol: { type: 'string', format: 'uuid', description: 'ID único del rol' },
+        idRol: {
+          type: 'string',
+          format: 'uuid',
+          description: 'ID único del rol',
+        },
         nombre: { type: 'string', description: 'Nombre del rol' },
         descripcion: { type: 'string', description: 'Descripción del rol' },
         usuarios: {

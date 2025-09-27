@@ -207,19 +207,24 @@ export class PropiedadPropietarioService
 
       // Actualizar solo los campos que están presentes en el DTO
       if (updatePropiedadPropietarioDto.fechaInicio !== undefined) {
-        relacionExistente.fechaAdquisicion = updatePropiedadPropietarioDto.fechaInicio?.toString() || relacionExistente.fechaAdquisicion;
+        relacionExistente.fechaAdquisicion =
+          updatePropiedadPropietarioDto.fechaInicio?.toString() ||
+          relacionExistente.fechaAdquisicion;
       }
-      
+
       if (updatePropiedadPropietarioDto.fechaFin !== undefined) {
-        relacionExistente.fechaFin = updatePropiedadPropietarioDto.fechaFin?.toString() || null;
+        relacionExistente.fechaFin =
+          updatePropiedadPropietarioDto.fechaFin?.toString() || null;
       }
-      
+
       if (updatePropiedadPropietarioDto.porcentajePropiedad !== undefined) {
-        relacionExistente.porcentajePropiedad = updatePropiedadPropietarioDto.porcentajePropiedad.toString();
+        relacionExistente.porcentajePropiedad =
+          updatePropiedadPropietarioDto.porcentajePropiedad.toString();
       }
-      
+
       if (updatePropiedadPropietarioDto.estaActivo !== undefined) {
-        relacionExistente.esPropietarioActual = updatePropiedadPropietarioDto.estaActivo;
+        relacionExistente.esPropietarioActual =
+          updatePropiedadPropietarioDto.estaActivo;
       }
 
       // La entidad no tiene campo fechaActualizacion, se actualiza automáticamente en BD

@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
-import { 
-  CreateResidenciaDto, 
+import {
+  CreateResidenciaDto,
   UpdateResidenciaDto,
-  ResidenciaResponseDto 
+  ResidenciaResponseDto,
 } from 'src/dtos';
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 import { Residencia } from 'src/entities/Residencia';
@@ -28,17 +28,21 @@ export class ResidenciaService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createResidenciaDto: CreateResidenciaDto): Promise<BaseResponseDto<ResidenciaResponseDto>> {
+  async create(
+    createResidenciaDto: CreateResidenciaDto,
+  ): Promise<BaseResponseDto<ResidenciaResponseDto>> {
     const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      this.logger.log(`Creando nueva residencia para propiedad: ${createResidenciaDto.idPropiedad}`);
+      this.logger.log(
+        `Creando nueva residencia para propiedad: ${createResidenciaDto.idPropiedad}`,
+      );
 
       // Verificar que la propiedad existe
       const propiedad = await this.propiedadRepository.findOne({
-        where: { idPropiedad: createResidenciaDto.idPropiedad }
+        where: { idPropiedad: createResidenciaDto.idPropiedad },
       });
       if (!propiedad) {
         return BaseResponseDto.error('Propiedad no encontrada', 404);
@@ -46,7 +50,7 @@ export class ResidenciaService {
 
       // Verificar que el propietario existe
       const propietario = await this.propietarioRepository.findOne({
-        where: { idPropietario: createResidenciaDto.idPropietario }
+        where: { idPropietario: createResidenciaDto.idPropietario },
       });
       if (!propietario) {
         return BaseResponseDto.error('Propietario no encontrado', 404);
@@ -54,7 +58,7 @@ export class ResidenciaService {
 
       // Verificar que el residente existe
       const residente = await this.residenteRepository.findOne({
-        where: { idResidente: createResidenciaDto.idResidente }
+        where: { idResidente: createResidenciaDto.idResidente },
       });
       if (!residente) {
         return BaseResponseDto.error('Residente no encontrado', 404);
@@ -62,13 +66,16 @@ export class ResidenciaService {
 
       // Verificar si existe una residencia activa para la misma propiedad
       const residenciaExistente = await this.residenciaRepository.findOne({
-        where: { 
+        where: {
           idPropiedad: { idPropiedad: createResidenciaDto.idPropiedad },
-          estado: 'activa'
-        }
+          estado: 'activa',
+        },
       });
       if (residenciaExistente) {
-        return BaseResponseDto.error('Ya existe una residencia activa para esta propiedad', 409);
+        return BaseResponseDto.error(
+          'Ya existe una residencia activa para esta propiedad',
+          409,
+        );
       }
 
       // Crear nueva residencia
@@ -85,7 +92,8 @@ export class ResidenciaService {
         idResidente: residente,
       });
 
-      const residenciaGuardada = await queryRunner.manager.save(nuevaResidencia);
+      const residenciaGuardada =
+        await queryRunner.manager.save(nuevaResidencia);
       await queryRunner.commitTransaction();
 
       // Preparar respuesta
@@ -116,13 +124,23 @@ export class ResidenciaService {
         },
       };
 
-      this.logger.log(`Residencia creada exitosamente con ID: ${residenciaGuardada.idResidencia}`);
-      return BaseResponseDto.success(responseData, 'Residencia creada exitosamente');
-
+      this.logger.log(
+        `Residencia creada exitosamente con ID: ${residenciaGuardada.idResidencia}`,
+      );
+      return BaseResponseDto.success(
+        responseData,
+        'Residencia creada exitosamente',
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      this.logger.error(`Error al crear residencia: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al crear la residencia', 500);
+      this.logger.error(
+        `Error al crear residencia: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al crear la residencia',
+        500,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -137,39 +155,49 @@ export class ResidenciaService {
         order: { fechaInicio: 'DESC' },
       });
 
-      const responseData: ResidenciaResponseDto[] = residencias.map(residencia => ({
-        idResidencia: residencia.idResidencia,
-        fechaInicio: residencia.fechaInicio,
-        fechaFin: residencia.fechaFin,
-        montoAlquiler: residencia.montoAlquiler,
-        deposito: residencia.deposito,
-        tipoOcupacion: residencia.tipoOcupacion,
-        estado: residencia.estado,
-        contratoUrl: residencia.contratoUrl,
-        propiedad: {
-          idPropiedad: residencia.idPropiedad.idPropiedad,
-          numeroPiso: residencia.idPropiedad.piso.toString(),
-          numeroUnidad: residencia.idPropiedad.numeroDepartamento,
-          area: residencia.idPropiedad.areaM2?.toString() || '0',
-        },
-        propietario: {
-          idPropietario: residencia.idPropietario.idPropietario,
-          nombres: residencia.idPropietario.nombre,
-          apellidos: residencia.idPropietario.apellido,
-        },
-        residente: {
-          idResidente: residencia.idResidente.idResidente,
-          nombres: residencia.idResidente.nombre,
-          apellidos: residencia.idResidente.apellido,
-        },
-      }));
+      const responseData: ResidenciaResponseDto[] = residencias.map(
+        (residencia) => ({
+          idResidencia: residencia.idResidencia,
+          fechaInicio: residencia.fechaInicio,
+          fechaFin: residencia.fechaFin,
+          montoAlquiler: residencia.montoAlquiler,
+          deposito: residencia.deposito,
+          tipoOcupacion: residencia.tipoOcupacion,
+          estado: residencia.estado,
+          contratoUrl: residencia.contratoUrl,
+          propiedad: {
+            idPropiedad: residencia.idPropiedad.idPropiedad,
+            numeroPiso: residencia.idPropiedad.piso.toString(),
+            numeroUnidad: residencia.idPropiedad.numeroDepartamento,
+            area: residencia.idPropiedad.areaM2?.toString() || '0',
+          },
+          propietario: {
+            idPropietario: residencia.idPropietario.idPropietario,
+            nombres: residencia.idPropietario.nombre,
+            apellidos: residencia.idPropietario.apellido,
+          },
+          residente: {
+            idResidente: residencia.idResidente.idResidente,
+            nombres: residencia.idResidente.nombre,
+            apellidos: residencia.idResidente.apellido,
+          },
+        }),
+      );
 
       this.logger.log(`Se encontraron ${residencias.length} residencias`);
-      return BaseResponseDto.success(responseData, 'Residencias obtenidas exitosamente');
-
+      return BaseResponseDto.success(
+        responseData,
+        'Residencias obtenidas exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`Error al obtener residencias: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al obtener las residencias', 500);
+      this.logger.error(
+        `Error al obtener residencias: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al obtener las residencias',
+        500,
+      );
     }
   }
 
@@ -214,15 +242,26 @@ export class ResidenciaService {
       };
 
       this.logger.log(`Residencia encontrada: ${id}`);
-      return BaseResponseDto.success(responseData, 'Residencia encontrada exitosamente');
-
+      return BaseResponseDto.success(
+        responseData,
+        'Residencia encontrada exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`Error al buscar residencia ${id}: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al buscar la residencia', 500);
+      this.logger.error(
+        `Error al buscar residencia ${id}: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al buscar la residencia',
+        500,
+      );
     }
   }
 
-  async update(id: string, updateResidenciaDto: UpdateResidenciaDto): Promise<BaseResponseDto<ResidenciaResponseDto>> {
+  async update(
+    id: string,
+    updateResidenciaDto: UpdateResidenciaDto,
+  ): Promise<BaseResponseDto<ResidenciaResponseDto>> {
     const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -243,22 +282,28 @@ export class ResidenciaService {
       // Validar relaciones si se proporcionan nuevas
       if (updateResidenciaDto.idPropiedad) {
         const propiedad = await this.propiedadRepository.findOne({
-          where: { idPropiedad: updateResidenciaDto.idPropiedad }
+          where: { idPropiedad: updateResidenciaDto.idPropiedad },
         });
         if (!propiedad) {
           return BaseResponseDto.error('Propiedad no encontrada', 404);
         }
 
         // Verificar conflicto de propiedad activa (solo si se cambia la propiedad)
-        if (updateResidenciaDto.idPropiedad !== residenciaExistente.idPropiedad.idPropiedad) {
+        if (
+          updateResidenciaDto.idPropiedad !==
+          residenciaExistente.idPropiedad.idPropiedad
+        ) {
           const residenciaActiva = await this.residenciaRepository.findOne({
-            where: { 
+            where: {
               idPropiedad: { idPropiedad: updateResidenciaDto.idPropiedad },
-              estado: 'activa'
-            }
+              estado: 'activa',
+            },
           });
           if (residenciaActiva && residenciaActiva.idResidencia !== id) {
-            return BaseResponseDto.error('Ya existe una residencia activa para esta propiedad', 409);
+            return BaseResponseDto.error(
+              'Ya existe una residencia activa para esta propiedad',
+              409,
+            );
           }
         }
         residenciaExistente.idPropiedad = propiedad;
@@ -266,7 +311,7 @@ export class ResidenciaService {
 
       if (updateResidenciaDto.idPropietario) {
         const propietario = await this.propietarioRepository.findOne({
-          where: { idPropietario: updateResidenciaDto.idPropietario }
+          where: { idPropietario: updateResidenciaDto.idPropietario },
         });
         if (!propietario) {
           return BaseResponseDto.error('Propietario no encontrado', 404);
@@ -276,7 +321,7 @@ export class ResidenciaService {
 
       if (updateResidenciaDto.idResidente) {
         const residente = await this.residenteRepository.findOne({
-          where: { idResidente: updateResidenciaDto.idResidente }
+          where: { idResidente: updateResidenciaDto.idResidente },
         });
         if (!residente) {
           return BaseResponseDto.error('Residente no encontrado', 404);
@@ -292,10 +337,12 @@ export class ResidenciaService {
         residenciaExistente.fechaFin = updateResidenciaDto.fechaFin || null;
       }
       if (updateResidenciaDto.montoAlquiler !== undefined) {
-        residenciaExistente.montoAlquiler = updateResidenciaDto.montoAlquiler?.toString() || null;
+        residenciaExistente.montoAlquiler =
+          updateResidenciaDto.montoAlquiler?.toString() || null;
       }
       if (updateResidenciaDto.deposito !== undefined) {
-        residenciaExistente.deposito = updateResidenciaDto.deposito?.toString() || null;
+        residenciaExistente.deposito =
+          updateResidenciaDto.deposito?.toString() || null;
       }
       if (updateResidenciaDto.tipoOcupacion !== undefined) {
         residenciaExistente.tipoOcupacion = updateResidenciaDto.tipoOcupacion;
@@ -304,10 +351,12 @@ export class ResidenciaService {
         residenciaExistente.estado = updateResidenciaDto.estado;
       }
       if (updateResidenciaDto.contratoUrl !== undefined) {
-        residenciaExistente.contratoUrl = updateResidenciaDto.contratoUrl || null;
+        residenciaExistente.contratoUrl =
+          updateResidenciaDto.contratoUrl || null;
       }
 
-      const residenciaActualizada = await queryRunner.manager.save(residenciaExistente);
+      const residenciaActualizada =
+        await queryRunner.manager.save(residenciaExistente);
       await queryRunner.commitTransaction();
 
       // Preparar respuesta
@@ -339,12 +388,20 @@ export class ResidenciaService {
       };
 
       this.logger.log(`Residencia actualizada exitosamente: ${id}`);
-      return BaseResponseDto.success(responseData, 'Residencia actualizada exitosamente');
-
+      return BaseResponseDto.success(
+        responseData,
+        'Residencia actualizada exitosamente',
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      this.logger.error(`Error al actualizar residencia ${id}: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al actualizar la residencia', 500);
+      this.logger.error(
+        `Error al actualizar residencia ${id}: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al actualizar la residencia',
+        500,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -394,15 +451,25 @@ export class ResidenciaService {
       await this.residenciaRepository.remove(residencia);
 
       this.logger.log(`Residencia eliminada exitosamente: ${id}`);
-      return BaseResponseDto.success(responseData, 'Residencia eliminada exitosamente');
-
+      return BaseResponseDto.success(
+        responseData,
+        'Residencia eliminada exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`Error al eliminar residencia ${id}: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al eliminar la residencia', 500);
+      this.logger.error(
+        `Error al eliminar residencia ${id}: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al eliminar la residencia',
+        500,
+      );
     }
   }
 
-  async findByPropiedad(propiedadId: string): Promise<BaseResponseDto<ResidenciaResponseDto[]>> {
+  async findByPropiedad(
+    propiedadId: string,
+  ): Promise<BaseResponseDto<ResidenciaResponseDto[]>> {
     try {
       this.logger.log(`Buscando residencias para propiedad: ${propiedadId}`);
 
@@ -412,43 +479,57 @@ export class ResidenciaService {
         order: { fechaInicio: 'DESC' },
       });
 
-      const responseData: ResidenciaResponseDto[] = residencias.map(residencia => ({
-        idResidencia: residencia.idResidencia,
-        fechaInicio: residencia.fechaInicio,
-        fechaFin: residencia.fechaFin,
-        montoAlquiler: residencia.montoAlquiler,
-        deposito: residencia.deposito,
-        tipoOcupacion: residencia.tipoOcupacion,
-        estado: residencia.estado,
-        contratoUrl: residencia.contratoUrl,
-        propiedad: {
-          idPropiedad: residencia.idPropiedad.idPropiedad,
-          numeroPiso: residencia.idPropiedad.piso.toString(),
-          numeroUnidad: residencia.idPropiedad.numeroDepartamento,
-          area: residencia.idPropiedad.areaM2?.toString() || '0',
-        },
-        propietario: {
-          idPropietario: residencia.idPropietario.idPropietario,
-          nombres: residencia.idPropietario.nombre,
-          apellidos: residencia.idPropietario.apellido,
-        },
-        residente: {
-          idResidente: residencia.idResidente.idResidente,
-          nombres: residencia.idResidente.nombre,
-          apellidos: residencia.idResidente.apellido,
-        },
-      }));
+      const responseData: ResidenciaResponseDto[] = residencias.map(
+        (residencia) => ({
+          idResidencia: residencia.idResidencia,
+          fechaInicio: residencia.fechaInicio,
+          fechaFin: residencia.fechaFin,
+          montoAlquiler: residencia.montoAlquiler,
+          deposito: residencia.deposito,
+          tipoOcupacion: residencia.tipoOcupacion,
+          estado: residencia.estado,
+          contratoUrl: residencia.contratoUrl,
+          propiedad: {
+            idPropiedad: residencia.idPropiedad.idPropiedad,
+            numeroPiso: residencia.idPropiedad.piso.toString(),
+            numeroUnidad: residencia.idPropiedad.numeroDepartamento,
+            area: residencia.idPropiedad.areaM2?.toString() || '0',
+          },
+          propietario: {
+            idPropietario: residencia.idPropietario.idPropietario,
+            nombres: residencia.idPropietario.nombre,
+            apellidos: residencia.idPropietario.apellido,
+          },
+          residente: {
+            idResidente: residencia.idResidente.idResidente,
+            nombres: residencia.idResidente.nombre,
+            apellidos: residencia.idResidente.apellido,
+          },
+        }),
+      );
 
-      this.logger.log(`Se encontraron ${residencias.length} residencias para la propiedad: ${propiedadId}`);
-      return BaseResponseDto.success(responseData, 'Residencias encontradas exitosamente');
-
+      this.logger.log(
+        `Se encontraron ${residencias.length} residencias para la propiedad: ${propiedadId}`,
+      );
+      return BaseResponseDto.success(
+        responseData,
+        'Residencias encontradas exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`Error al buscar residencias por propiedad ${propiedadId}: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al buscar residencias por propiedad', 500);
+      this.logger.error(
+        `Error al buscar residencias por propiedad ${propiedadId}: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al buscar residencias por propiedad',
+        500,
+      );
     }
   }
 
-  async findByResidente(residenteId: string): Promise<BaseResponseDto<ResidenciaResponseDto[]>> {
+  async findByResidente(
+    residenteId: string,
+  ): Promise<BaseResponseDto<ResidenciaResponseDto[]>> {
     try {
       this.logger.log(`Buscando residencias para residente: ${residenteId}`);
 
@@ -458,43 +539,57 @@ export class ResidenciaService {
         order: { fechaInicio: 'DESC' },
       });
 
-      const responseData: ResidenciaResponseDto[] = residencias.map(residencia => ({
-        idResidencia: residencia.idResidencia,
-        fechaInicio: residencia.fechaInicio,
-        fechaFin: residencia.fechaFin,
-        montoAlquiler: residencia.montoAlquiler,
-        deposito: residencia.deposito,
-        tipoOcupacion: residencia.tipoOcupacion,
-        estado: residencia.estado,
-        contratoUrl: residencia.contratoUrl,
-        propiedad: {
-          idPropiedad: residencia.idPropiedad.idPropiedad,
-          numeroPiso: residencia.idPropiedad.piso.toString(),
-          numeroUnidad: residencia.idPropiedad.numeroDepartamento,
-          area: residencia.idPropiedad.areaM2?.toString() || '0',
-        },
-        propietario: {
-          idPropietario: residencia.idPropietario.idPropietario,
-          nombres: residencia.idPropietario.nombre,
-          apellidos: residencia.idPropietario.apellido,
-        },
-        residente: {
-          idResidente: residencia.idResidente.idResidente,
-          nombres: residencia.idResidente.nombre,
-          apellidos: residencia.idResidente.apellido,
-        },
-      }));
+      const responseData: ResidenciaResponseDto[] = residencias.map(
+        (residencia) => ({
+          idResidencia: residencia.idResidencia,
+          fechaInicio: residencia.fechaInicio,
+          fechaFin: residencia.fechaFin,
+          montoAlquiler: residencia.montoAlquiler,
+          deposito: residencia.deposito,
+          tipoOcupacion: residencia.tipoOcupacion,
+          estado: residencia.estado,
+          contratoUrl: residencia.contratoUrl,
+          propiedad: {
+            idPropiedad: residencia.idPropiedad.idPropiedad,
+            numeroPiso: residencia.idPropiedad.piso.toString(),
+            numeroUnidad: residencia.idPropiedad.numeroDepartamento,
+            area: residencia.idPropiedad.areaM2?.toString() || '0',
+          },
+          propietario: {
+            idPropietario: residencia.idPropietario.idPropietario,
+            nombres: residencia.idPropietario.nombre,
+            apellidos: residencia.idPropietario.apellido,
+          },
+          residente: {
+            idResidente: residencia.idResidente.idResidente,
+            nombres: residencia.idResidente.nombre,
+            apellidos: residencia.idResidente.apellido,
+          },
+        }),
+      );
 
-      this.logger.log(`Se encontraron ${residencias.length} residencias para el residente: ${residenteId}`);
-      return BaseResponseDto.success(responseData, 'Residencias encontradas exitosamente');
-
+      this.logger.log(
+        `Se encontraron ${residencias.length} residencias para el residente: ${residenteId}`,
+      );
+      return BaseResponseDto.success(
+        responseData,
+        'Residencias encontradas exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`Error al buscar residencias por residente ${residenteId}: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al buscar residencias por residente', 500);
+      this.logger.error(
+        `Error al buscar residencias por residente ${residenteId}: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al buscar residencias por residente',
+        500,
+      );
     }
   }
 
-  async findByEstado(estado: string): Promise<BaseResponseDto<ResidenciaResponseDto[]>> {
+  async findByEstado(
+    estado: string,
+  ): Promise<BaseResponseDto<ResidenciaResponseDto[]>> {
     try {
       this.logger.log(`Buscando residencias por estado: ${estado}`);
 
@@ -504,39 +599,51 @@ export class ResidenciaService {
         order: { fechaInicio: 'DESC' },
       });
 
-      const responseData: ResidenciaResponseDto[] = residencias.map(residencia => ({
-        idResidencia: residencia.idResidencia,
-        fechaInicio: residencia.fechaInicio,
-        fechaFin: residencia.fechaFin,
-        montoAlquiler: residencia.montoAlquiler,
-        deposito: residencia.deposito,
-        tipoOcupacion: residencia.tipoOcupacion,
-        estado: residencia.estado,
-        contratoUrl: residencia.contratoUrl,
-        propiedad: {
-          idPropiedad: residencia.idPropiedad.idPropiedad,
-          numeroPiso: residencia.idPropiedad.piso.toString(),
-          numeroUnidad: residencia.idPropiedad.numeroDepartamento,
-          area: residencia.idPropiedad.areaM2?.toString() || '0',
-        },
-        propietario: {
-          idPropietario: residencia.idPropietario.idPropietario,
-          nombres: residencia.idPropietario.nombre,
-          apellidos: residencia.idPropietario.apellido,
-        },
-        residente: {
-          idResidente: residencia.idResidente.idResidente,
-          nombres: residencia.idResidente.nombre,
-          apellidos: residencia.idResidente.apellido,
-        },
-      }));
+      const responseData: ResidenciaResponseDto[] = residencias.map(
+        (residencia) => ({
+          idResidencia: residencia.idResidencia,
+          fechaInicio: residencia.fechaInicio,
+          fechaFin: residencia.fechaFin,
+          montoAlquiler: residencia.montoAlquiler,
+          deposito: residencia.deposito,
+          tipoOcupacion: residencia.tipoOcupacion,
+          estado: residencia.estado,
+          contratoUrl: residencia.contratoUrl,
+          propiedad: {
+            idPropiedad: residencia.idPropiedad.idPropiedad,
+            numeroPiso: residencia.idPropiedad.piso.toString(),
+            numeroUnidad: residencia.idPropiedad.numeroDepartamento,
+            area: residencia.idPropiedad.areaM2?.toString() || '0',
+          },
+          propietario: {
+            idPropietario: residencia.idPropietario.idPropietario,
+            nombres: residencia.idPropietario.nombre,
+            apellidos: residencia.idPropietario.apellido,
+          },
+          residente: {
+            idResidente: residencia.idResidente.idResidente,
+            nombres: residencia.idResidente.nombre,
+            apellidos: residencia.idResidente.apellido,
+          },
+        }),
+      );
 
-      this.logger.log(`Se encontraron ${residencias.length} residencias con estado: ${estado}`);
-      return BaseResponseDto.success(responseData, 'Residencias encontradas exitosamente');
-
+      this.logger.log(
+        `Se encontraron ${residencias.length} residencias con estado: ${estado}`,
+      );
+      return BaseResponseDto.success(
+        responseData,
+        'Residencias encontradas exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`Error al buscar residencias por estado ${estado}: ${error.message}`, error.stack);
-      return BaseResponseDto.error('Error interno del servidor al buscar residencias por estado', 500);
+      this.logger.error(
+        `Error al buscar residencias por estado ${estado}: ${error.message}`,
+        error.stack,
+      );
+      return BaseResponseDto.error(
+        'Error interno del servidor al buscar residencias por estado',
+        500,
+      );
     }
   }
 }

@@ -418,11 +418,10 @@ export class TipoDocumentoService implements ITipoDocumentoService {
         }
       }
 
-      const tipoDocumentoActualizado =
-        await this.tipoDocumentoRepository.save({
-          ...tipoDocumento,
-          ...updateTipoDocumentoDto,
-        });
+      const tipoDocumentoActualizado = await this.tipoDocumentoRepository.save({
+        ...tipoDocumento,
+        ...updateTipoDocumentoDto,
+      });
 
       return {
         success: true,
@@ -445,7 +444,9 @@ export class TipoDocumentoService implements ITipoDocumentoService {
   /**
    * Eliminar tipo de documento con validación de relaciones
    */
-  async removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>> {
+  async removeWithBaseResponse(
+    id: string,
+  ): Promise<BaseResponseDto<undefined>> {
     try {
       const tipoDocumento = await this.tipoDocumentoRepository.findOne({
         where: { idTipoDocumento: id },

@@ -20,9 +20,16 @@ export class TipoContactoSingleResponseDto extends BaseResponseDto<BaseResponseD
     description: 'Datos del tipo de contacto',
     type: 'object',
     properties: {
-      idTipoContacto: { type: 'string', format: 'uuid', description: 'ID único del tipo de contacto' },
+      idTipoContacto: {
+        type: 'string',
+        format: 'uuid',
+        description: 'ID único del tipo de contacto',
+      },
       nombre: { type: 'string', description: 'Nombre del tipo de contacto' },
-      descripcion: { type: 'string', description: 'Descripción del tipo de contacto' },
+      descripcion: {
+        type: 'string',
+        description: 'Descripción del tipo de contacto',
+      },
       contactos: {
         type: 'array',
         description: 'Lista de contactos que usan este tipo',
@@ -62,16 +69,25 @@ export class TipoContactoSingleResponseDto extends BaseResponseDto<BaseResponseD
 /**
  * DTO de respuesta para múltiples tipos de contacto usando BaseResponseDto
  */
-export class TipoContactoArrayResponseDto extends BaseResponseDto<BaseResponseDto.TipoContactoData[]> {
+export class TipoContactoArrayResponseDto extends BaseResponseDto<
+  BaseResponseDto.TipoContactoData[]
+> {
   @ApiProperty({
     description: 'Lista de tipos de contacto',
     type: 'array',
     items: {
       type: 'object',
       properties: {
-        idTipoContacto: { type: 'string', format: 'uuid', description: 'ID único del tipo de contacto' },
+        idTipoContacto: {
+          type: 'string',
+          format: 'uuid',
+          description: 'ID único del tipo de contacto',
+        },
         nombre: { type: 'string', description: 'Nombre del tipo de contacto' },
-        descripcion: { type: 'string', description: 'Descripción del tipo de contacto' },
+        descripcion: {
+          type: 'string',
+          description: 'Descripción del tipo de contacto',
+        },
         contactos: {
           type: 'array',
           description: 'Lista de contactos que usan este tipo',

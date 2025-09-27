@@ -302,9 +302,8 @@ export class TipoEspacioService implements ITipoEspacioService {
         };
       }
 
-      const nuevoTipoEspacio = this.tipoEspacioRepository.create(
-        createTipoEspacioDto,
-      );
+      const nuevoTipoEspacio =
+        this.tipoEspacioRepository.create(createTipoEspacioDto);
       const tipoEspacioGuardado =
         await this.tipoEspacioRepository.save(nuevoTipoEspacio);
 
@@ -467,7 +466,9 @@ export class TipoEspacioService implements ITipoEspacioService {
   /**
    * Eliminar tipo de espacio con validación de relaciones
    */
-  async removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>> {
+  async removeWithBaseResponse(
+    id: string,
+  ): Promise<BaseResponseDto<undefined>> {
     try {
       const tipoEspacio = await this.tipoEspacioRepository.findOne({
         where: { idTipoEspacio: id },
@@ -486,7 +487,10 @@ export class TipoEspacioService implements ITipoEspacioService {
       }
 
       // Verificar si hay espacios arrendables asociados
-      if (tipoEspacio.espacioArrendables && tipoEspacio.espacioArrendables.length > 0) {
+      if (
+        tipoEspacio.espacioArrendables &&
+        tipoEspacio.espacioArrendables.length > 0
+      ) {
         return {
           success: false,
           message:

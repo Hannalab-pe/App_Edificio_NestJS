@@ -10,7 +10,9 @@ export class ReservaSingleResponseDto extends BaseResponseDto<ReservaResponseDto
   declare data: ReservaResponseDto;
 }
 
-export class ReservaArrayResponseDto extends BaseResponseDto<ReservaResponseDto[]> {
+export class ReservaArrayResponseDto extends BaseResponseDto<
+  ReservaResponseDto[]
+> {
   @ApiProperty({
     description: 'Array de reservas',
     type: [ReservaResponseDto],

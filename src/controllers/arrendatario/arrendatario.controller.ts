@@ -28,8 +28,6 @@ import { Arrendatario } from '../../entities/Arrendatario';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @ApiTags('Arrendatarios')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Controller('arrendatario')
 export class ArrendatarioController {
   constructor(

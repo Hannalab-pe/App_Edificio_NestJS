@@ -36,6 +36,8 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
  * Modernizado con BaseResponseDto pattern
  */
 @ApiTags('Votaciones')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller('votacion')
 export class VotacionController {
   constructor(

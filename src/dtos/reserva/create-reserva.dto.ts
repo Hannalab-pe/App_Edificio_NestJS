@@ -1,12 +1,26 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsUUID, IsBoolean, IsOptional, IsDateString, Matches } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsUUID,
+  IsBoolean,
+  IsOptional,
+  IsDateString,
+  Matches,
+} from 'class-validator';
 
 export class CreateReservaDto {
   @ApiProperty({
     description: 'Fecha de la reserva en formato YYYY-MM-DD',
     example: '2025-09-27',
   })
-  @IsDateString({}, { message: 'La fecha de reserva debe ser una fecha válida en formato YYYY-MM-DD' })
+  @IsDateString(
+    {},
+    {
+      message:
+        'La fecha de reserva debe ser una fecha válida en formato YYYY-MM-DD',
+    },
+  )
   @IsNotEmpty({ message: 'La fecha de reserva es obligatoria' })
   fechaReserva: string;
 
@@ -16,7 +30,7 @@ export class CreateReservaDto {
   })
   @IsString({ message: 'La hora de inicio debe ser una cadena de texto' })
   @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
-    message: 'La hora de inicio debe tener formato HH:MM válido'
+    message: 'La hora de inicio debe tener formato HH:MM válido',
   })
   @IsNotEmpty({ message: 'La hora de inicio es obligatoria' })
   horaInicio: string;
@@ -27,7 +41,7 @@ export class CreateReservaDto {
   })
   @IsString({ message: 'La hora de fin debe ser una cadena de texto' })
   @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
-    message: 'La hora de fin debe tener formato HH:MM válido'
+    message: 'La hora de fin debe tener formato HH:MM válido',
   })
   @IsNotEmpty({ message: 'La hora de fin es obligatoria' })
   horaFin: string;

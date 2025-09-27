@@ -175,7 +175,7 @@ export class VisitaResponseDto {
     example: {
       duracionProgramada: '3 horas 30 minutos',
       duracionReal: '3 horas 10 minutos',
-      tiempoRestante: '20 minutos'
+      tiempoRestante: '20 minutos',
     },
   })
   estadisticas: {
@@ -188,7 +188,7 @@ export class VisitaResponseDto {
     description: 'Información de fechas del sistema',
     example: {
       fechaCreacion: '2024-03-10T10:00:00.000Z',
-      fechaActualizacion: '2024-03-15T14:35:00.000Z'
+      fechaActualizacion: '2024-03-15T14:35:00.000Z',
     },
   })
   auditoria: {

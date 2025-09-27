@@ -86,7 +86,7 @@ export class TrabajadorResponseDto {
     example: {
       idDocumentoIdentidad: 'doc-uuid-123',
       tipo: 'DNI',
-      numero: 12345678
+      numero: 12345678,
     },
     nullable: true,
   })
@@ -104,8 +104,8 @@ export class TrabajadorResponseDto {
       nombreUsuario: 'jperez',
       rol: {
         idRol: 'rol-uuid-123',
-        nombre: 'Trabajador'
-      }
+        nombre: 'Trabajador',
+      },
     },
     nullable: true,
   })

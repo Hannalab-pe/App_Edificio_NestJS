@@ -55,6 +55,11 @@ export {
 // Documento DTOs
 export { CreateDocumentoDto } from './documento/create-documento.dto';
 export { UpdateDocumentoDto } from './documento/update-documento.dto';
+export {
+  DocumentoResponseDto,
+  TipoDocumentoInfoDto,
+  TrabajadorInfoDto,
+} from './documento/documento-response.dto';
 
 // Documento Identidad DTOs
 export { CreateDocumentoIdentidadDto } from './documento-identidad/create-documento-identidad.dto';
@@ -123,6 +128,11 @@ export {
 // Encomienda DTOs
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
+export {
+  EncomiendaResponseDto,
+  PropiedadInfoDto,
+} from './encomienda/encomienda-response.dto';
+export { TrabajadorInfoDto as TrabajadorEncomiendaInfoDto } from './encomienda/encomienda-response.dto';
 
 // Trabajador DTOs
 export { CreateTrabajadorDto } from './trabajador/create-trabajador.dto';
@@ -206,6 +216,28 @@ export {
   AsignacionAreaDto,
 } from './asignacion-area-edificio/create-multiple-asignacion-area-edificio.dto';
 
+// Caja DTOs
+export { CreateCajaDto } from './caja/create-caja.dto';
+export { UpdateCajaDto } from './caja/update-caja.dto';
+export { CajaResponseDto } from './caja/caja-response.dto';
+export { AperturaCajaDto } from './caja/apertura-caja.dto';
+export { CierreCajaDto } from './caja/cierre-caja.dto';
+
+// Movimiento Caja DTOs
+export { CreateMovimientoCajaDto } from './movimiento-caja/create-movimiento-caja.dto';
+export { UpdateMovimientoCajaDto } from './movimiento-caja/update-movimiento-caja.dto';
+export { MovimientoCajaResponseDto } from './movimiento-caja/movimiento-caja-response.dto';
+export { TipoMovimiento } from './movimiento-caja/create-movimiento-caja.dto';
+
+// Contacto DTOs
+export { CreateContactoDto } from './contacto/create-contacto.dto';
+export { UpdateContactoDto } from './contacto/update-contacto.dto';
+export {
+  ContactoResponseDto,
+  TipoContactoInfoDto,
+  TipoContratoInfoDto,
+} from './contacto/contacto-response.dto';
+
 // Opción Voto DTOs
 export { CreateOpcionVotoDto } from './opcion-voto/create-opcion-voto.dto';
 export { UpdateOpcionVotoDto } from './opcion-voto/update-opcion-voto.dto';
@@ -217,59 +249,3 @@ export {
   UpdateOpcionVotoResponseDto,
   DeleteOpcionVotoResponseDto,
 } from './opcion-voto/opcion-voto-response.dto';
-
-// PropiedadPropietario DTOs
-export { CreatePropiedadPropietarioDto } from './propiedad-propietario/create-propiedad-propietario.dto';
-export { UpdatePropiedadPropietarioDto } from './propiedad-propietario/update-propiedad-propietario.dto';
-export { PropiedadPropietarioResponseDto } from './propiedad-propietario/propiedad-propietario-response.dto';
-export {
-  PropiedadPropietarioSingleResponseDto,
-  PropiedadPropietarioArrayResponseDto,
-} from './propiedad-propietario/propiedad-propietario-api-response.dto';
-
-// Recibo DTOs
-export { CreateReciboDto } from './recibo/create-recibo.dto';
-export { UpdateReciboDto } from './recibo/update-recibo.dto';
-export { ReciboResponseDto } from './recibo/recibo-response.dto';
-export {
-  ReciboSingleResponseDto,
-  ReciboArrayResponseDto,
-} from './recibo/recibo-api-response.dto';
-
-// Reserva DTOs
-export { CreateReservaDto } from './reserva/create-reserva.dto';
-export { UpdateReservaDto } from './reserva/update-reserva.dto';
-export { ReservaResponseDto } from './reserva/reserva-response.dto';
-export {
-  ReservaSingleResponseDto,
-  ReservaArrayResponseDto,
-} from './reserva/reserva-api-response.dto';
-
-// Residencia DTOs
-export { CreateResidenciaDto } from './residencia/create-residencia.dto';
-export { UpdateResidenciaDto } from './residencia/update-residencia.dto';
-export { ResidenciaResponseDto } from './residencia/residencia-response.dto';
-export {
-  ResidenciaSingleResponseDto,
-  ResidenciaArrayResponseDto,
-} from './residencia/residencia-api-response.dto';
-
-// Visita DTOs
-export { CreateVisitaDto } from './visita/create-visita.dto';
-export { UpdateVisitaDto } from './visita/update-visita.dto';
-export {
-  VisitaDto,
-  VisitaResponseDto,
-  VisitaListResponseDto,
-  UsuarioAutorizadorDto,
-  PropiedadVisitaDto,
-} from './visita/visita-response.dto';
-export {
-  VisitaResponseDto as VisitaNewResponseDto,
-  UsuarioAutorizadorResponseDto,
-  PropiedadVisitaResponseDto,
-} from './visita/visitaResponse.dto';
-export {
-  VisitaSingleResponseDto,
-  VisitaArrayResponseDto,
-} from './visita/visitaBaseResponse.dto';

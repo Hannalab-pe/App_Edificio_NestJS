@@ -265,7 +265,7 @@ export class TipoCronogramaService implements ITipoCronogramaService {
   }
 
   // =================== MÉTODOS CON BaseResponse DTOs ESPECÍFICOS ===================
-  
+
   /**
    * Crear tipo de cronograma con respuesta tipada específica
    */
@@ -456,7 +456,9 @@ export class TipoCronogramaService implements ITipoCronogramaService {
   /**
    * Eliminar tipo de cronograma con validación de relaciones
    */
-  async removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>> {
+  async removeWithBaseResponse(
+    id: string,
+  ): Promise<BaseResponseDto<undefined>> {
     try {
       const tipoCronograma = await this.tipoCronogramaRepository.findOne({
         where: { idTipoCronograma: id },

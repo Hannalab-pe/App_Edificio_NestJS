@@ -4,21 +4,21 @@ export class UsuarioResponseDto {
   @ApiProperty({
     description: 'ID único del usuario',
     example: '550e8400-e29b-41d4-a716-446655440000',
-    type: String
+    type: String,
   })
   idUsuario: string;
 
   @ApiProperty({
     description: 'Correo electrónico del usuario',
     example: 'usuario@viveconecta.com',
-    type: String
+    type: String,
   })
   correo: string;
 
   @ApiProperty({
     description: 'Estado de activación del usuario',
     example: true,
-    type: Boolean
+    type: Boolean,
   })
   estaActivo: boolean;
 
@@ -27,9 +27,9 @@ export class UsuarioResponseDto {
     example: {
       idRol: '550e8400-e29b-41d4-a716-446655440001',
       nombreRol: 'Administrador',
-      descripcion: 'Usuario con acceso completo al sistema'
+      descripcion: 'Usuario con acceso completo al sistema',
     },
-    required: false
+    required: false,
   })
   rol?: {
     idRol: string;
@@ -44,9 +44,9 @@ export class UsuarioResponseDto {
       totalReservasActivas: 2,
       totalVotacionesCreadas: 1,
       totalMensajesEnviados: 15,
-      ultimaActividad: '2024-01-15T10:30:00.000Z'
+      ultimaActividad: '2024-01-15T10:30:00.000Z',
     },
-    required: false
+    required: false,
   })
   estadisticas?: {
     totalIncidenciasReportadas: number;
@@ -57,7 +57,8 @@ export class UsuarioResponseDto {
   };
 
   @ApiProperty({
-    description: 'Perfiles asociados al usuario (propietario, residente, trabajador)',
+    description:
+      'Perfiles asociados al usuario (propietario, residente, trabajador)',
     example: {
       esPropietario: true,
       esResidente: false,
@@ -66,10 +67,10 @@ export class UsuarioResponseDto {
       detallesPropietario: {
         nombre: 'Juan Carlos',
         apellido: 'Pérez García',
-        telefono: '+51987654321'
-      }
+        telefono: '+51987654321',
+      },
     },
-    required: false
+    required: false,
   })
   perfiles?: {
     esPropietario: boolean;
@@ -106,11 +107,11 @@ export class UsuarioResponseDto {
         {
           id: '550e8400-e29b-41d4-a716-446655440002',
           titulo: 'Nueva reunión programada',
-          fechaCreacion: '2024-01-15T09:00:00.000Z'
-        }
-      ]
+          fechaCreacion: '2024-01-15T09:00:00.000Z',
+        },
+      ],
     },
-    required: false
+    required: false,
   })
   notificaciones?: {
     totalPendientes: number;
@@ -125,7 +126,7 @@ export class UsuarioResponseDto {
     description: 'Fecha de creación del usuario',
     example: '2024-01-01T00:00:00.000Z',
     type: String,
-    required: false
+    required: false,
   })
   fechaCreacion?: string;
 
@@ -133,7 +134,7 @@ export class UsuarioResponseDto {
     description: 'Fecha de última actualización',
     example: '2024-01-15T10:30:00.000Z',
     type: String,
-    required: false
+    required: false,
   })
   fechaActualizacion?: string;
 }

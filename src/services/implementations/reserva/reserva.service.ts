@@ -4,7 +4,11 @@ import { Repository, DataSource } from 'typeorm';
 import { Reserva } from '../../../entities/Reserva';
 import { AreaComun } from '../../../entities/AreaComun';
 import { Usuario } from '../../../entities/Usuario';
-import { CreateReservaDto, UpdateReservaDto, ReservaResponseDto } from '../../../dtos';
+import {
+  CreateReservaDto,
+  UpdateReservaDto,
+  ReservaResponseDto,
+} from '../../../dtos';
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 
 @Injectable()
@@ -19,7 +23,9 @@ export class ReservaService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createReservaDto: CreateReservaDto): Promise<BaseResponseDto<ReservaResponseDto>> {
+  async create(
+    createReservaDto: CreateReservaDto,
+  ): Promise<BaseResponseDto<ReservaResponseDto>> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -32,12 +38,18 @@ export class ReservaService {
 
       if (!areaComun) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('El área común especificada no existe', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'El área común especificada no existe',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       if (!areaComun.estaActivo) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('El área común no está activa para reservas', HttpStatus.BAD_REQUEST);
+        return BaseResponseDto.error(
+          'El área común no está activa para reservas',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       // Verificar que el usuario existe
@@ -47,21 +59,30 @@ export class ReservaService {
 
       if (!usuario) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('El usuario especificado no existe', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'El usuario especificado no existe',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       // Verificar conflictos de horario en la misma área y fecha
       const conflictingReserva = await queryRunner.manager
         .createQueryBuilder(Reserva, 'reserva')
-        .where('reserva.idAreaComun = :idAreaComun', { idAreaComun: createReservaDto.idAreaComun })
-        .andWhere('reserva.fechaReserva = :fechaReserva', { fechaReserva: createReservaDto.fechaReserva })
-        .andWhere('reserva.estado NOT IN (:...excludeStates)', { excludeStates: ['cancelada'] })
+        .where('reserva.idAreaComun = :idAreaComun', {
+          idAreaComun: createReservaDto.idAreaComun,
+        })
+        .andWhere('reserva.fechaReserva = :fechaReserva', {
+          fechaReserva: createReservaDto.fechaReserva,
+        })
+        .andWhere('reserva.estado NOT IN (:...excludeStates)', {
+          excludeStates: ['cancelada'],
+        })
         .andWhere(
           '(reserva.horaInicio < :horaFin AND reserva.horaFin > :horaInicio)',
-          { 
-            horaInicio: createReservaDto.horaInicio, 
-            horaFin: createReservaDto.horaFin 
-          }
+          {
+            horaInicio: createReservaDto.horaInicio,
+            horaFin: createReservaDto.horaFin,
+          },
         )
         .getOne();
 
@@ -69,7 +90,7 @@ export class ReservaService {
         await queryRunner.rollbackTransaction();
         return BaseResponseDto.error(
           'Ya existe una reserva confirmada en el horario seleccionado para esta área',
-          HttpStatus.CONFLICT
+          HttpStatus.CONFLICT,
         );
       }
 
@@ -117,10 +138,17 @@ export class ReservaService {
         },
       };
 
-      return BaseResponseDto.success(responseData, 'Reserva creada exitosamente', HttpStatus.CREATED);
+      return BaseResponseDto.success(
+        responseData,
+        'Reserva creada exitosamente',
+        HttpStatus.CREATED,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return BaseResponseDto.error(`Error al crear la reserva: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al crear la reserva: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -133,7 +161,7 @@ export class ReservaService {
         order: { fechaCreacion: 'DESC' },
       });
 
-      const responseData: ReservaResponseDto[] = reservas.map(reserva => ({
+      const responseData: ReservaResponseDto[] = reservas.map((reserva) => ({
         idReserva: reserva.idReserva,
         fechaReserva: reserva.fechaReserva,
         horaInicio: reserva.horaInicio,
@@ -144,24 +172,35 @@ export class ReservaService {
         pagado: reserva.pagado,
         observaciones: reserva.observaciones,
         fechaCreacion: reserva.fechaCreacion,
-        idAreaComun: reserva.idAreaComun ? {
-          idAreaComun: reserva.idAreaComun.idAreaComun,
-          nombre: reserva.idAreaComun.nombre,
-          ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
-          capacidad: reserva.idAreaComun.capacidadMaxima,
-          estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
-        } : undefined,
-        idUsuario: reserva.idUsuario ? {
-          idUsuario: reserva.idUsuario.idUsuario,
-          nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
-          email: reserva.idUsuario.correo,
-          telefono: null,
-        } : undefined,
+        idAreaComun: reserva.idAreaComun
+          ? {
+              idAreaComun: reserva.idAreaComun.idAreaComun,
+              nombre: reserva.idAreaComun.nombre,
+              ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
+              capacidad: reserva.idAreaComun.capacidadMaxima,
+              estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
+            }
+          : undefined,
+        idUsuario: reserva.idUsuario
+          ? {
+              idUsuario: reserva.idUsuario.idUsuario,
+              nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
+              email: reserva.idUsuario.correo,
+              telefono: null,
+            }
+          : undefined,
       }));
 
-      return BaseResponseDto.success(responseData, `Se encontraron ${reservas.length} reservas`, HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        `Se encontraron ${reservas.length} reservas`,
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al obtener las reservas: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al obtener las reservas: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -173,7 +212,10 @@ export class ReservaService {
       });
 
       if (!reserva) {
-        return BaseResponseDto.error('Reserva no encontrada', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Reserva no encontrada',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const responseData: ReservaResponseDto = {
@@ -187,28 +229,42 @@ export class ReservaService {
         pagado: reserva.pagado,
         observaciones: reserva.observaciones,
         fechaCreacion: reserva.fechaCreacion,
-        idAreaComun: reserva.idAreaComun ? {
-          idAreaComun: reserva.idAreaComun.idAreaComun,
-          nombre: reserva.idAreaComun.nombre,
-          ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
-          capacidad: reserva.idAreaComun.capacidadMaxima,
-          estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
-        } : undefined,
-        idUsuario: reserva.idUsuario ? {
-          idUsuario: reserva.idUsuario.idUsuario,
-          nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
-          email: reserva.idUsuario.correo,
-          telefono: null,
-        } : undefined,
+        idAreaComun: reserva.idAreaComun
+          ? {
+              idAreaComun: reserva.idAreaComun.idAreaComun,
+              nombre: reserva.idAreaComun.nombre,
+              ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
+              capacidad: reserva.idAreaComun.capacidadMaxima,
+              estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
+            }
+          : undefined,
+        idUsuario: reserva.idUsuario
+          ? {
+              idUsuario: reserva.idUsuario.idUsuario,
+              nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
+              email: reserva.idUsuario.correo,
+              telefono: null,
+            }
+          : undefined,
       };
 
-      return BaseResponseDto.success(responseData, 'Reserva encontrada exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Reserva encontrada exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar la reserva: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar la reserva: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async update(id: string, updateReservaDto: UpdateReservaDto): Promise<BaseResponseDto<ReservaResponseDto>> {
+  async update(
+    id: string,
+    updateReservaDto: UpdateReservaDto,
+  ): Promise<BaseResponseDto<ReservaResponseDto>> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -221,7 +277,10 @@ export class ReservaService {
 
       if (!reserva) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('Reserva no encontrada', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Reserva no encontrada',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       // Verificar área común si se está actualizando
@@ -233,12 +292,18 @@ export class ReservaService {
 
         if (!foundAreaComun) {
           await queryRunner.rollbackTransaction();
-          return BaseResponseDto.error('El área común especificada no existe', HttpStatus.NOT_FOUND);
+          return BaseResponseDto.error(
+            'El área común especificada no existe',
+            HttpStatus.NOT_FOUND,
+          );
         }
 
         if (!foundAreaComun.estaActivo) {
           await queryRunner.rollbackTransaction();
-          return BaseResponseDto.error('El área común no está activa para reservas', HttpStatus.BAD_REQUEST);
+          return BaseResponseDto.error(
+            'El área común no está activa para reservas',
+            HttpStatus.BAD_REQUEST,
+          );
         }
         areaComun = foundAreaComun;
       }
@@ -252,35 +317,45 @@ export class ReservaService {
 
         if (!foundUsuario) {
           await queryRunner.rollbackTransaction();
-          return BaseResponseDto.error('El usuario especificado no existe', HttpStatus.NOT_FOUND);
+          return BaseResponseDto.error(
+            'El usuario especificado no existe',
+            HttpStatus.NOT_FOUND,
+          );
         }
         usuario = foundUsuario;
       }
 
       // Verificar conflictos de horario si se están actualizando fecha u horarios
-      const newFechaReserva = updateReservaDto.fechaReserva || reserva.fechaReserva;
+      const newFechaReserva =
+        updateReservaDto.fechaReserva || reserva.fechaReserva;
       const newHoraInicio = updateReservaDto.horaInicio || reserva.horaInicio;
       const newHoraFin = updateReservaDto.horaFin || reserva.horaFin;
       const newAreaComun = areaComun.idAreaComun;
 
       if (
-        updateReservaDto.fechaReserva || 
-        updateReservaDto.horaInicio || 
-        updateReservaDto.horaFin || 
+        updateReservaDto.fechaReserva ||
+        updateReservaDto.horaInicio ||
+        updateReservaDto.horaFin ||
         updateReservaDto.idAreaComun
       ) {
         const conflictingReserva = await queryRunner.manager
           .createQueryBuilder(Reserva, 'reserva')
           .where('reserva.idReserva != :currentId', { currentId: id })
-          .andWhere('reserva.idAreaComun = :idAreaComun', { idAreaComun: newAreaComun })
-          .andWhere('reserva.fechaReserva = :fechaReserva', { fechaReserva: newFechaReserva })
-          .andWhere('reserva.estado NOT IN (:...excludeStates)', { excludeStates: ['cancelada'] })
+          .andWhere('reserva.idAreaComun = :idAreaComun', {
+            idAreaComun: newAreaComun,
+          })
+          .andWhere('reserva.fechaReserva = :fechaReserva', {
+            fechaReserva: newFechaReserva,
+          })
+          .andWhere('reserva.estado NOT IN (:...excludeStates)', {
+            excludeStates: ['cancelada'],
+          })
           .andWhere(
             '(reserva.horaInicio < :horaFin AND reserva.horaFin > :horaInicio)',
-            { 
-              horaInicio: newHoraInicio, 
-              horaFin: newHoraFin 
-            }
+            {
+              horaInicio: newHoraInicio,
+              horaFin: newHoraFin,
+            },
           )
           .getOne();
 
@@ -288,7 +363,7 @@ export class ReservaService {
           await queryRunner.rollbackTransaction();
           return BaseResponseDto.error(
             'Ya existe una reserva confirmada en el horario seleccionado para esta área',
-            HttpStatus.CONFLICT
+            HttpStatus.CONFLICT,
           );
         }
       }
@@ -354,10 +429,17 @@ export class ReservaService {
         },
       };
 
-      return BaseResponseDto.success(responseData, 'Reserva actualizada exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Reserva actualizada exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return BaseResponseDto.error(`Error al actualizar la reserva: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al actualizar la reserva: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }
@@ -376,7 +458,10 @@ export class ReservaService {
 
       if (!reserva) {
         await queryRunner.rollbackTransaction();
-        return BaseResponseDto.error('Reserva no encontrada', HttpStatus.NOT_FOUND);
+        return BaseResponseDto.error(
+          'Reserva no encontrada',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const responseData: ReservaResponseDto = {
@@ -390,34 +475,47 @@ export class ReservaService {
         pagado: reserva.pagado,
         observaciones: reserva.observaciones,
         fechaCreacion: reserva.fechaCreacion,
-        idAreaComun: reserva.idAreaComun ? {
-          idAreaComun: reserva.idAreaComun.idAreaComun,
-          nombre: reserva.idAreaComun.nombre,
-          ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
-          capacidad: reserva.idAreaComun.capacidadMaxima,
-          estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
-        } : undefined,
-        idUsuario: reserva.idUsuario ? {
-          idUsuario: reserva.idUsuario.idUsuario,
-          nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
-          email: reserva.idUsuario.correo,
-          telefono: null,
-        } : undefined,
+        idAreaComun: reserva.idAreaComun
+          ? {
+              idAreaComun: reserva.idAreaComun.idAreaComun,
+              nombre: reserva.idAreaComun.nombre,
+              ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
+              capacidad: reserva.idAreaComun.capacidadMaxima,
+              estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
+            }
+          : undefined,
+        idUsuario: reserva.idUsuario
+          ? {
+              idUsuario: reserva.idUsuario.idUsuario,
+              nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
+              email: reserva.idUsuario.correo,
+              telefono: null,
+            }
+          : undefined,
       };
 
       await queryRunner.manager.remove(reserva);
       await queryRunner.commitTransaction();
 
-      return BaseResponseDto.success(responseData, 'Reserva eliminada exitosamente', HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        'Reserva eliminada exitosamente',
+        HttpStatus.OK,
+      );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      return BaseResponseDto.error(`Error al eliminar la reserva: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al eliminar la reserva: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }
   }
 
-  async findByUsuario(usuarioId: string): Promise<BaseResponseDto<ReservaResponseDto[]>> {
+  async findByUsuario(
+    usuarioId: string,
+  ): Promise<BaseResponseDto<ReservaResponseDto[]>> {
     try {
       const reservas = await this.reservaRepository
         .createQueryBuilder('reserva')
@@ -427,7 +525,7 @@ export class ReservaService {
         .orderBy('reserva.fechaCreacion', 'DESC')
         .getMany();
 
-      const responseData: ReservaResponseDto[] = reservas.map(reserva => ({
+      const responseData: ReservaResponseDto[] = reservas.map((reserva) => ({
         idReserva: reserva.idReserva,
         fechaReserva: reserva.fechaReserva,
         horaInicio: reserva.horaInicio,
@@ -438,28 +536,41 @@ export class ReservaService {
         pagado: reserva.pagado,
         observaciones: reserva.observaciones,
         fechaCreacion: reserva.fechaCreacion,
-        idAreaComun: reserva.idAreaComun ? {
-          idAreaComun: reserva.idAreaComun.idAreaComun,
-          nombre: reserva.idAreaComun.nombre,
-          ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
-          capacidad: reserva.idAreaComun.capacidadMaxima,
-          estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
-        } : undefined,
-        idUsuario: reserva.idUsuario ? {
-          idUsuario: reserva.idUsuario.idUsuario,
-          nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
-          email: reserva.idUsuario.correo,
-          telefono: null,
-        } : undefined,
+        idAreaComun: reserva.idAreaComun
+          ? {
+              idAreaComun: reserva.idAreaComun.idAreaComun,
+              nombre: reserva.idAreaComun.nombre,
+              ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
+              capacidad: reserva.idAreaComun.capacidadMaxima,
+              estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
+            }
+          : undefined,
+        idUsuario: reserva.idUsuario
+          ? {
+              idUsuario: reserva.idUsuario.idUsuario,
+              nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
+              email: reserva.idUsuario.correo,
+              telefono: null,
+            }
+          : undefined,
       }));
 
-      return BaseResponseDto.success(responseData, `Se encontraron ${reservas.length} reservas para el usuario`, HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        `Se encontraron ${reservas.length} reservas para el usuario`,
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar reservas por usuario: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar reservas por usuario: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async findByAreaComun(areaComunId: string): Promise<BaseResponseDto<ReservaResponseDto[]>> {
+  async findByAreaComun(
+    areaComunId: string,
+  ): Promise<BaseResponseDto<ReservaResponseDto[]>> {
     try {
       const reservas = await this.reservaRepository
         .createQueryBuilder('reserva')
@@ -470,7 +581,7 @@ export class ReservaService {
         .addOrderBy('reserva.horaInicio', 'ASC')
         .getMany();
 
-      const responseData: ReservaResponseDto[] = reservas.map(reserva => ({
+      const responseData: ReservaResponseDto[] = reservas.map((reserva) => ({
         idReserva: reserva.idReserva,
         fechaReserva: reserva.fechaReserva,
         horaInicio: reserva.horaInicio,
@@ -481,28 +592,41 @@ export class ReservaService {
         pagado: reserva.pagado,
         observaciones: reserva.observaciones,
         fechaCreacion: reserva.fechaCreacion,
-        idAreaComun: reserva.idAreaComun ? {
-          idAreaComun: reserva.idAreaComun.idAreaComun,
-          nombre: reserva.idAreaComun.nombre,
-          ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
-          capacidad: reserva.idAreaComun.capacidadMaxima,
-          estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
-        } : undefined,
-        idUsuario: reserva.idUsuario ? {
-          idUsuario: reserva.idUsuario.idUsuario,
-          nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
-          email: reserva.idUsuario.correo,
-          telefono: null,
-        } : undefined,
+        idAreaComun: reserva.idAreaComun
+          ? {
+              idAreaComun: reserva.idAreaComun.idAreaComun,
+              nombre: reserva.idAreaComun.nombre,
+              ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
+              capacidad: reserva.idAreaComun.capacidadMaxima,
+              estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
+            }
+          : undefined,
+        idUsuario: reserva.idUsuario
+          ? {
+              idUsuario: reserva.idUsuario.idUsuario,
+              nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
+              email: reserva.idUsuario.correo,
+              telefono: null,
+            }
+          : undefined,
       }));
 
-      return BaseResponseDto.success(responseData, `Se encontraron ${reservas.length} reservas para el área común`, HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        `Se encontraron ${reservas.length} reservas para el área común`,
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar reservas por área común: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar reservas por área común: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async findByEstado(estado: string): Promise<BaseResponseDto<ReservaResponseDto[]>> {
+  async findByEstado(
+    estado: string,
+  ): Promise<BaseResponseDto<ReservaResponseDto[]>> {
     try {
       const reservas = await this.reservaRepository.find({
         where: { estado },
@@ -510,7 +634,7 @@ export class ReservaService {
         order: { fechaCreacion: 'DESC' },
       });
 
-      const responseData: ReservaResponseDto[] = reservas.map(reserva => ({
+      const responseData: ReservaResponseDto[] = reservas.map((reserva) => ({
         idReserva: reserva.idReserva,
         fechaReserva: reserva.fechaReserva,
         horaInicio: reserva.horaInicio,
@@ -521,24 +645,35 @@ export class ReservaService {
         pagado: reserva.pagado,
         observaciones: reserva.observaciones,
         fechaCreacion: reserva.fechaCreacion,
-        idAreaComun: reserva.idAreaComun ? {
-          idAreaComun: reserva.idAreaComun.idAreaComun,
-          nombre: reserva.idAreaComun.nombre,
-          ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
-          capacidad: reserva.idAreaComun.capacidadMaxima,
-          estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
-        } : undefined,
-        idUsuario: reserva.idUsuario ? {
-          idUsuario: reserva.idUsuario.idUsuario,
-          nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
-          email: reserva.idUsuario.correo,
-          telefono: null,
-        } : undefined,
+        idAreaComun: reserva.idAreaComun
+          ? {
+              idAreaComun: reserva.idAreaComun.idAreaComun,
+              nombre: reserva.idAreaComun.nombre,
+              ubicacion: reserva.idAreaComun.descripcion || 'Sin descripción',
+              capacidad: reserva.idAreaComun.capacidadMaxima,
+              estado: reserva.idAreaComun.estaActivo ? 'activo' : 'inactivo',
+            }
+          : undefined,
+        idUsuario: reserva.idUsuario
+          ? {
+              idUsuario: reserva.idUsuario.idUsuario,
+              nombre: reserva.idUsuario.correo.split('@')[0] || 'Usuario',
+              email: reserva.idUsuario.correo,
+              telefono: null,
+            }
+          : undefined,
       }));
 
-      return BaseResponseDto.success(responseData, `Se encontraron ${reservas.length} reservas con estado ${estado}`, HttpStatus.OK);
+      return BaseResponseDto.success(
+        responseData,
+        `Se encontraron ${reservas.length} reservas con estado ${estado}`,
+        HttpStatus.OK,
+      );
     } catch (error) {
-      return BaseResponseDto.error(`Error al buscar reservas por estado: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      return BaseResponseDto.error(
+        `Error al buscar reservas por estado: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

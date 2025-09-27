@@ -1,9 +1,9 @@
 import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
-import { 
-  CreateTipoContratoDto, 
+import {
+  CreateTipoContratoDto,
   UpdateTipoContratoDto,
   TipoContratoSingleResponseDto,
-  TipoContratoArrayResponseDto
+  TipoContratoArrayResponseDto,
 } from 'src/dtos';
 import { TipoContrato } from '../../entities/TipoContrato';
 
@@ -32,5 +32,7 @@ export interface ITipoContratoService {
     updateTipoContratoDto: UpdateTipoContratoDto,
   ): Promise<TipoContratoSingleResponseDto>;
   removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>>;
-  findByNombreWithBaseResponse(nombre: string): Promise<TipoContratoSingleResponseDto>;
+  findByNombreWithBaseResponse(
+    nombre: string,
+  ): Promise<TipoContratoSingleResponseDto>;
 }

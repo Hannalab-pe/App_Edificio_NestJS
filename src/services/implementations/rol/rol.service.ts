@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, Logger, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Logger,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IRolService } from '../../interfaces/rol.interface';
@@ -141,7 +146,9 @@ export class RolService implements IRolService {
   /**
    * Crear rol con respuesta estandarizada
    */
-  async createWithBaseResponse(createRolDto: CreateRolDto): Promise<BaseResponseDto<any>> {
+  async createWithBaseResponse(
+    createRolDto: CreateRolDto,
+  ): Promise<BaseResponseDto<any>> {
     try {
       this.logger.log(`Intentando crear rol: ${createRolDto.nombre}`);
 
@@ -151,15 +158,17 @@ export class RolService implements IRolService {
       });
 
       if (existingRol) {
-        throw new ConflictException(`Ya existe un rol con el nombre '${createRolDto.nombre}'`);
+        throw new ConflictException(
+          `Ya existe un rol con el nombre '${createRolDto.nombre}'`,
+        );
       }
 
       const rol = this.rolRepository.create(createRolDto);
       const savedRol = await this.rolRepository.save(rol);
-      
+
       const responseData = this.mapToResponseDto(savedRol);
       this.logger.log(`✅ Rol creado exitosamente: ${savedRol.idRol}`);
-      
+
       return BaseResponseDto.success(responseData, 'Rol creado exitosamente');
     } catch (error) {
       this.logger.error(`❌ Error al crear rol: ${error.message}`, error.stack);
@@ -173,18 +182,24 @@ export class RolService implements IRolService {
   async findAllWithBaseResponse(): Promise<BaseResponseDto<any[]>> {
     try {
       this.logger.log('Obteniendo todos los roles');
-      
+
       const roles = await this.rolRepository.find({
         relations: ['usuarios', 'notificacions'],
         order: { nombre: 'ASC' },
       });
 
-      const responseData = roles.map(rol => this.mapToResponseDto(rol));
+      const responseData = roles.map((rol) => this.mapToResponseDto(rol));
       this.logger.log(`✅ ${roles.length} roles obtenidos exitosamente`);
-      
-      return BaseResponseDto.success(responseData, `${roles.length} roles obtenidos exitosamente`);
+
+      return BaseResponseDto.success(
+        responseData,
+        `${roles.length} roles obtenidos exitosamente`,
+      );
     } catch (error) {
-      this.logger.error(`❌ Error al obtener roles: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al obtener roles: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -195,7 +210,7 @@ export class RolService implements IRolService {
   async findOneWithBaseResponse(id: string): Promise<BaseResponseDto<any>> {
     try {
       this.logger.log(`Buscando rol por ID: ${id}`);
-      
+
       const rol = await this.rolRepository.findOne({
         where: { idRol: id },
         relations: ['usuarios', 'notificacions'],
@@ -207,10 +222,13 @@ export class RolService implements IRolService {
 
       const responseData = this.mapToResponseDto(rol);
       this.logger.log(`✅ Rol encontrado: ${rol.idRol}`);
-      
+
       return BaseResponseDto.success(responseData, 'Rol obtenido exitosamente');
     } catch (error) {
-      this.logger.error(`❌ Error al buscar rol: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al buscar rol: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -218,7 +236,10 @@ export class RolService implements IRolService {
   /**
    * Actualizar rol con respuesta estandarizada
    */
-  async updateWithBaseResponse(id: string, updateRolDto: UpdateRolDto): Promise<BaseResponseDto<any>> {
+  async updateWithBaseResponse(
+    id: string,
+    updateRolDto: UpdateRolDto,
+  ): Promise<BaseResponseDto<any>> {
     try {
       this.logger.log(`Actualizando rol: ${id}`);
 
@@ -239,13 +260,15 @@ export class RolService implements IRolService {
         });
 
         if (rolWithSameName) {
-          throw new ConflictException(`Ya existe un rol con el nombre '${updateRolDto.nombre}'`);
+          throw new ConflictException(
+            `Ya existe un rol con el nombre '${updateRolDto.nombre}'`,
+          );
         }
       }
 
       // Actualizar el rol
       await this.rolRepository.update(id, updateRolDto);
-      
+
       // Obtener el rol actualizado
       const updatedRol = await this.rolRepository.findOne({
         where: { idRol: id },
@@ -254,10 +277,16 @@ export class RolService implements IRolService {
 
       const responseData = this.mapToResponseDto(updatedRol);
       this.logger.log(`✅ Rol actualizado exitosamente: ${id}`);
-      
-      return BaseResponseDto.success(responseData, 'Rol actualizado exitosamente');
+
+      return BaseResponseDto.success(
+        responseData,
+        'Rol actualizado exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`❌ Error al actualizar rol: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al actualizar rol: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -281,16 +310,21 @@ export class RolService implements IRolService {
 
       // Verificar si hay usuarios asociados
       if (rol.usuarios && rol.usuarios.length > 0) {
-        throw new ConflictException(`No se puede eliminar el rol porque tiene ${rol.usuarios.length} usuario(s) asociado(s)`);
+        throw new ConflictException(
+          `No se puede eliminar el rol porque tiene ${rol.usuarios.length} usuario(s) asociado(s)`,
+        );
       }
 
       // Eliminar el rol
       await this.rolRepository.delete(id);
       this.logger.log(`✅ Rol eliminado exitosamente: ${id}`);
-      
+
       return BaseResponseDto.success(null, 'Rol eliminado exitosamente');
     } catch (error) {
-      this.logger.error(`❌ Error al eliminar rol: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al eliminar rol: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -298,10 +332,12 @@ export class RolService implements IRolService {
   /**
    * Buscar rol por nombre con respuesta estandarizada
    */
-  async findByNombreWithBaseResponse(nombre: string): Promise<BaseResponseDto<any>> {
+  async findByNombreWithBaseResponse(
+    nombre: string,
+  ): Promise<BaseResponseDto<any>> {
     try {
       this.logger.log(`Buscando rol por nombre: ${nombre}`);
-      
+
       const rol = await this.rolRepository.findOne({
         where: { nombre: nombre },
         relations: ['usuarios', 'notificacions'],
@@ -313,10 +349,16 @@ export class RolService implements IRolService {
 
       const responseData = this.mapToResponseDto(rol);
       this.logger.log(`✅ Rol encontrado por nombre: ${rol.idRol}`);
-      
-      return BaseResponseDto.success(responseData, 'Rol encontrado exitosamente');
+
+      return BaseResponseDto.success(
+        responseData,
+        'Rol encontrado exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`❌ Error al buscar rol por nombre: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al buscar rol por nombre: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -333,18 +375,20 @@ export class RolService implements IRolService {
       idRol: rol.idRol,
       nombre: rol.nombre,
       descripcion: rol.descripcion,
-      usuarios: rol.usuarios?.map(usuario => ({
-        idUsuario: usuario.idUsuario,
-        nombreUsuario: usuario.nombreUsuario,
-        correo: usuario.correo,
-        estaActivo: usuario.estaActivo,
-      })) || [],
-      notificaciones: rol.notificacions?.map(notificacion => ({
-        idNotificacion: notificacion.idNotificacion,
-        titulo: notificacion.titulo,
-        mensaje: notificacion.mensaje,
-        fechaEnvio: notificacion.fechaEnvio,
-      })) || [],
+      usuarios:
+        rol.usuarios?.map((usuario) => ({
+          idUsuario: usuario.idUsuario,
+          nombreUsuario: usuario.nombreUsuario,
+          correo: usuario.correo,
+          estaActivo: usuario.estaActivo,
+        })) || [],
+      notificaciones:
+        rol.notificacions?.map((notificacion) => ({
+          idNotificacion: notificacion.idNotificacion,
+          titulo: notificacion.titulo,
+          mensaje: notificacion.mensaje,
+          fechaEnvio: notificacion.fechaEnvio,
+        })) || [],
     };
   }
 }

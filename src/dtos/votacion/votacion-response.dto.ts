@@ -173,7 +173,8 @@ export declare class VotacionResponseDto {
 
   @ApiProperty({
     description: 'Descripción detallada de la votación',
-    example: 'Votación para decidir las mejoras prioritarias en las áreas comunes del edificio',
+    example:
+      'Votación para decidir las mejoras prioritarias en las áreas comunes del edificio',
   })
   descripcion: string;
 
@@ -239,7 +240,8 @@ export declare class VotacionResponseDto {
   estadisticas: EstadisticasVotacionDto;
 
   @ApiProperty({
-    description: 'Lista de todos los votos emitidos (solo para votaciones públicas)',
+    description:
+      'Lista de todos los votos emitidos (solo para votaciones públicas)',
     type: [VotoResponseDto],
     required: false,
   })
@@ -254,7 +256,8 @@ export declare class VotacionResponseDto {
   yaVoto?: boolean;
 
   @ApiProperty({
-    description: 'Indica si la votación puede ser modificada por el usuario actual',
+    description:
+      'Indica si la votación puede ser modificada por el usuario actual',
     example: true,
     required: false,
   })
@@ -268,7 +271,8 @@ export declare class VotacionResponseDto {
 
   @ApiProperty({
     description: 'URL para participar en la votación (si aplicable)',
-    example: 'https://app.edificio.com/votacion/123e4567-e89b-12d3-a456-426614174000',
+    example:
+      'https://app.edificio.com/votacion/123e4567-e89b-12d3-a456-426614174000',
     required: false,
   })
   urlVotacion?: string;

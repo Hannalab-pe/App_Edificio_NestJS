@@ -18,7 +18,7 @@ export class CronogramaService implements ICronogramaService {
   constructor(
     @InjectRepository(Cronograma)
     private readonly cronogramaRepository: Repository<Cronograma>,
-  ) {}
+  ) { }
 
   async create(
     createCronogramaDto: CreateCronogramaDto,
@@ -157,13 +157,13 @@ export class CronogramaService implements ICronogramaService {
   }
 
   async findByTrabajador(idTrabajador: string): Promise<Cronograma[]> {
-    return await this.cronogramaRepository.find({
-      where: { idTrabajador: { idTrabajador } as any },
-      relations: ['idResidente', 'idTipoCronograma'],
-      order: {
-        fechaInicio: 'ASC',
-      },
-    });
+    return await this.cronogramaRepository
+      .createQueryBuilder('cronograma')
+      .leftJoinAndSelect('cronograma.idResidente', 'residente')
+      .leftJoinAndSelect('cronograma.idTipoCronograma', 'tipoCronograma')
+      .where('cronograma.id_trabajador = :idTrabajador', { idTrabajador })
+      .orderBy('cronograma.fecha_inicio', 'ASC')
+      .getMany();
   }
 
   async findByFechaRange(

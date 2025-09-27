@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { 
-  IsString, 
-  IsNotEmpty, 
-  IsOptional, 
-  IsDateString, 
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsDateString,
   IsNumber,
   IsUUID,
-  Min 
+  Min,
 } from 'class-validator';
 
 export class CreateResidenciaDto {
@@ -33,7 +33,7 @@ export class CreateResidenciaDto {
 
   @ApiProperty({
     description: 'Monto de alquiler mensual',
-    example: 1500.00,
+    example: 1500.0,
     type: 'number',
     format: 'decimal',
     required: false,
@@ -45,7 +45,7 @@ export class CreateResidenciaDto {
 
   @ApiProperty({
     description: 'Depósito de garantía',
-    example: 3000.00,
+    example: 3000.0,
     type: 'number',
     format: 'decimal',
     required: false,

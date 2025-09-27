@@ -22,7 +22,8 @@ export class TipoContratoResponseDto {
 
   @ApiPropertyOptional({
     description: 'Descripción detallada del tipo de contrato',
-    example: 'Contrato utilizado para el arrendamiento de espacios comunes del edificio',
+    example:
+      'Contrato utilizado para el arrendamiento de espacios comunes del edificio',
     nullable: true,
   })
   descripcion?: string | null;

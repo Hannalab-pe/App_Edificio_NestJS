@@ -50,7 +50,8 @@ export class ResidenteController {
   @Post()
   @ApiOperation({
     summary: 'Crear nuevo residente básico',
-    description: 'Crea un nuevo residente básico sin usuario ni documento de identidad asociado',
+    description:
+      'Crea un nuevo residente básico sin usuario ni documento de identidad asociado',
   })
   @ApiResponse({
     status: 201,
@@ -65,9 +66,13 @@ export class ResidenteController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async create(@Body() createResidenteDto: CreateResidenteDto): Promise<BaseResponseDto<any>> {
+  async create(
+    @Body() createResidenteDto: CreateResidenteDto,
+  ): Promise<BaseResponseDto<any>> {
     try {
-      return await this.residenteServiceDirect.createWithBaseResponse(createResidenteDto);
+      return await this.residenteServiceDirect.createWithBaseResponse(
+        createResidenteDto,
+      );
     } catch (error) {
       throw new HttpException(
         `Error al crear el residente: ${error.message}`,
@@ -79,7 +84,8 @@ export class ResidenteController {
   @Post('register')
   @ApiOperation({
     summary: 'Registrar nuevo residente',
-    description: 'Registra un nuevo residente en el sistema con validaciones completas y creación de usuario asociado',
+    description:
+      'Registra un nuevo residente en el sistema con validaciones completas y creación de usuario asociado',
   })
   @ApiBody({
     type: CreateResidenteDto,
@@ -105,7 +111,7 @@ export class ResidenteController {
       const result = await this.residenteService.register(createResidenteDto);
       return BaseResponseDto.success(
         result,
-        'Residente registrado exitosamente en el sistema'
+        'Residente registrado exitosamente en el sistema',
       );
     } catch (error) {
       throw new HttpException(
@@ -118,7 +124,8 @@ export class ResidenteController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los residentes',
-    description: 'Retorna una lista de todos los residentes activos del sistema con información completa de relaciones',
+    description:
+      'Retorna una lista de todos los residentes activos del sistema con información completa de relaciones',
   })
   @ApiResponse({
     status: 200,
@@ -143,7 +150,8 @@ export class ResidenteController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener residente por ID',
-    description: 'Retorna un residente específico identificado por su UUID con toda la información relacionada',
+    description:
+      'Retorna un residente específico identificado por su UUID con toda la información relacionada',
   })
   @ApiParam({
     name: 'id',
@@ -177,7 +185,8 @@ export class ResidenteController {
   @Get('propiedad/:propiedadId')
   @ApiOperation({
     summary: 'Obtener residentes por propiedad',
-    description: 'Retorna todos los residentes asociados a una propiedad específica',
+    description:
+      'Retorna todos los residentes asociados a una propiedad específica',
   })
   @ApiParam({
     name: 'propiedadId',
@@ -197,7 +206,9 @@ export class ResidenteController {
     @Param('propiedadId') propiedadId: string,
   ): Promise<BaseResponseDto<any[]>> {
     try {
-      return await this.residenteServiceDirect.findByPropiedadWithBaseResponse(propiedadId);
+      return await this.residenteServiceDirect.findByPropiedadWithBaseResponse(
+        propiedadId,
+      );
     } catch (error) {
       throw new HttpException(
         `Error al buscar residentes por propiedad: ${error.message}`,
@@ -209,7 +220,8 @@ export class ResidenteController {
   @Get('documento/:numeroDocumento')
   @ApiOperation({
     summary: 'Obtener residente por número de documento',
-    description: 'Busca un residente específico por su número de documento de identidad',
+    description:
+      'Busca un residente específico por su número de documento de identidad',
   })
   @ApiParam({
     name: 'numeroDocumento',
@@ -223,19 +235,24 @@ export class ResidenteController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Residente no encontrado con el número de documento especificado',
+    description:
+      'Residente no encontrado con el número de documento especificado',
   })
   async findByNumeroDocumento(
     @Param('numeroDocumento') numeroDocumento: string,
   ): Promise<BaseResponseDto<any>> {
     try {
-      const residente = await this.residenteService.findByNumeroDocumento(numeroDocumento);
+      const residente =
+        await this.residenteService.findByNumeroDocumento(numeroDocumento);
       if (!residente) {
-        throw new HttpException('Residente no encontrado', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Residente no encontrado',
+          HttpStatus.NOT_FOUND,
+        );
       }
       return BaseResponseDto.success(
         this.mapToResponseDto(residente),
-        'Residente encontrado exitosamente'
+        'Residente encontrado exitosamente',
       );
     } catch (error) {
       if (error instanceof HttpException) {
@@ -251,7 +268,8 @@ export class ResidenteController {
   @Get('correo/:correo')
   @ApiOperation({
     summary: 'Obtener residente por correo',
-    description: 'Busca un residente específico por su dirección de correo electrónico',
+    description:
+      'Busca un residente específico por su dirección de correo electrónico',
   })
   @ApiParam({
     name: 'correo',
@@ -267,15 +285,20 @@ export class ResidenteController {
     status: 404,
     description: 'Residente no encontrado con el correo especificado',
   })
-  async findByCorreo(@Param('correo') correo: string): Promise<BaseResponseDto<any>> {
+  async findByCorreo(
+    @Param('correo') correo: string,
+  ): Promise<BaseResponseDto<any>> {
     try {
       const residente = await this.residenteService.findByCorreo(correo);
       if (!residente) {
-        throw new HttpException('Residente no encontrado', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Residente no encontrado',
+          HttpStatus.NOT_FOUND,
+        );
       }
       return BaseResponseDto.success(
         this.mapToResponseDto(residente),
-        'Residente encontrado exitosamente'
+        'Residente encontrado exitosamente',
       );
     } catch (error) {
       if (error instanceof HttpException) {
@@ -291,11 +314,13 @@ export class ResidenteController {
   @Get('estado/:estaActivo')
   @ApiOperation({
     summary: 'Obtener residentes por estado',
-    description: 'Retorna todos los residentes filtrados por su estado (activo/inactivo)',
+    description:
+      'Retorna todos los residentes filtrados por su estado (activo/inactivo)',
   })
   @ApiParam({
     name: 'estaActivo',
-    description: 'Estado del residente (true para activos, false para inactivos)',
+    description:
+      'Estado del residente (true para activos, false para inactivos)',
     example: true,
   })
   @ApiResponse({
@@ -303,9 +328,13 @@ export class ResidenteController {
     description: 'Residentes obtenidos exitosamente',
     type: ResidenteArrayResponseDto,
   })
-  async findByEstado(@Param('estaActivo') estaActivo: boolean): Promise<BaseResponseDto<any[]>> {
+  async findByEstado(
+    @Param('estaActivo') estaActivo: boolean,
+  ): Promise<BaseResponseDto<any[]>> {
     try {
-      return await this.residenteServiceDirect.findByEstadoWithBaseResponse(estaActivo);
+      return await this.residenteServiceDirect.findByEstadoWithBaseResponse(
+        estaActivo,
+      );
     } catch (error) {
       throw new HttpException(
         `Error al buscar residentes por estado: ${error.message}`,
@@ -328,51 +357,67 @@ export class ResidenteController {
       estaActivo: residente.estaActivo,
       fechaCreacion: residente.fechaCreacion,
       fechaModificacion: residente.fechaModificacion,
-      documentoIdentidad: residente.documentoIdentidad ? {
-        idDocumentoIdentidad: residente.documentoIdentidad.idDocumentoIdentidad,
-        numeroDocumento: residente.documentoIdentidad.numeroDocumento,
-        tipoDocumento: residente.documentoIdentidad.tipoDocumento ? {
-          idTipoDocumento: residente.documentoIdentidad.tipoDocumento.idTipoDocumento,
-          nombre: residente.documentoIdentidad.tipoDocumento.nombre,
-          descripcion: residente.documentoIdentidad.tipoDocumento.descripcion,
-        } : null,
-      } : null,
-      usuario: residente.usuario ? {
-        idUsuario: residente.usuario.idUsuario,
-        nombreUsuario: residente.usuario.nombreUsuario,
-        correo: residente.usuario.correo,
-        estaActivo: residente.usuario.estaActivo,
-        rol: residente.usuario.rol ? {
-          idRol: residente.usuario.rol.idRol,
-          nombre: residente.usuario.rol.nombre,
-          descripcion: residente.usuario.rol.descripcion,
-        } : null,
-      } : null,
-      cronogramas: residente.cronogramas?.map(cronograma => ({
-        idCronograma: cronograma.idCronograma,
-        fechaInicio: cronograma.fechaInicio,
-        fechaFin: cronograma.fechaFin,
-        descripcion: cronograma.descripcion,
-      })) || [],
-      residencias: residente.residencias?.map(residencia => ({
-        idResidencia: residencia.idResidencia,
-        fechaInicio: residencia.fechaInicio,
-        fechaFin: residencia.fechaFin,
-        estaActivo: residencia.estaActivo,
-        propiedad: residencia.propiedad ? {
-          idPropiedad: residencia.propiedad.idPropiedad,
-          numeroPropiedad: residencia.propiedad.numeroPropiedad,
-          piso: residencia.propiedad.piso,
-          torre: residencia.propiedad.torre,
-        } : null,
-      })) || [],
+      documentoIdentidad: residente.documentoIdentidad
+        ? {
+            idDocumentoIdentidad:
+              residente.documentoIdentidad.idDocumentoIdentidad,
+            numeroDocumento: residente.documentoIdentidad.numeroDocumento,
+            tipoDocumento: residente.documentoIdentidad.tipoDocumento
+              ? {
+                  idTipoDocumento:
+                    residente.documentoIdentidad.tipoDocumento.idTipoDocumento,
+                  nombre: residente.documentoIdentidad.tipoDocumento.nombre,
+                  descripcion:
+                    residente.documentoIdentidad.tipoDocumento.descripcion,
+                }
+              : null,
+          }
+        : null,
+      usuario: residente.usuario
+        ? {
+            idUsuario: residente.usuario.idUsuario,
+            nombreUsuario: residente.usuario.nombreUsuario,
+            correo: residente.usuario.correo,
+            estaActivo: residente.usuario.estaActivo,
+            rol: residente.usuario.rol
+              ? {
+                  idRol: residente.usuario.rol.idRol,
+                  nombre: residente.usuario.rol.nombre,
+                  descripcion: residente.usuario.rol.descripcion,
+                }
+              : null,
+          }
+        : null,
+      cronogramas:
+        residente.cronogramas?.map((cronograma) => ({
+          idCronograma: cronograma.idCronograma,
+          fechaInicio: cronograma.fechaInicio,
+          fechaFin: cronograma.fechaFin,
+          descripcion: cronograma.descripcion,
+        })) || [],
+      residencias:
+        residente.residencias?.map((residencia) => ({
+          idResidencia: residencia.idResidencia,
+          fechaInicio: residencia.fechaInicio,
+          fechaFin: residencia.fechaFin,
+          estaActivo: residencia.estaActivo,
+          propiedad: residencia.propiedad
+            ? {
+                idPropiedad: residencia.propiedad.idPropiedad,
+                numeroPropiedad: residencia.propiedad.numeroPropiedad,
+                piso: residencia.propiedad.piso,
+                torre: residencia.propiedad.torre,
+              }
+            : null,
+        })) || [],
     };
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar residente',
-    description: 'Actualiza parcialmente un residente existente con validación de conflictos de correo',
+    description:
+      'Actualiza parcialmente un residente existente con validación de conflictos de correo',
   })
   @ApiParam({
     name: 'id',
@@ -401,7 +446,10 @@ export class ResidenteController {
     @Body() updateResidenteDto: UpdateResidenteDto,
   ): Promise<BaseResponseDto<any>> {
     try {
-      return await this.residenteServiceDirect.updateWithBaseResponse(id, updateResidenteDto);
+      return await this.residenteServiceDirect.updateWithBaseResponse(
+        id,
+        updateResidenteDto,
+      );
     } catch (error) {
       throw new HttpException(
         `Error al actualizar el residente: ${error.message}`,

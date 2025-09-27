@@ -10,7 +10,9 @@ export class ResidenciaSingleResponseDto extends BaseResponseDto<ResidenciaRespo
   declare data: ResidenciaResponseDto;
 }
 
-export class ResidenciaArrayResponseDto extends BaseResponseDto<ResidenciaResponseDto[]> {
+export class ResidenciaArrayResponseDto extends BaseResponseDto<
+  ResidenciaResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de residencias',
     type: [ResidenciaResponseDto],

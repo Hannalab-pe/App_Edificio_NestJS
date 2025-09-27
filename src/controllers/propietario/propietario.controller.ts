@@ -11,17 +11,17 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
   ApiBearerAuth,
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { PropietarioService } from 'src/services/implementations/propietario/propietario.service';
-import { 
+import {
   CreatePropietarioDto,
   UpdatePropietarioDto,
   PropietarioSingleResponseDto,
@@ -33,14 +33,13 @@ import {
 @UseGuards(JwtAuthGuard)
 @Controller('propietario')
 export class PropietarioController {
-  constructor(
-    private readonly propietarioService: PropietarioService,
-  ) {}
+  constructor(private readonly propietarioService: PropietarioService) {}
 
   @Post()
   @ApiOperation({
     summary: 'Crear nuevo propietario',
-    description: 'Crea un nuevo propietario en el sistema con validación de datos únicos',
+    description:
+      'Crea un nuevo propietario en el sistema con validación de datos únicos',
   })
   @ApiResponse({
     status: 201,
@@ -63,7 +62,7 @@ export class PropietarioController {
     @Body() createDto: CreatePropietarioDto,
   ): Promise<PropietarioSingleResponseDto> {
     const result = await this.propietarioService.create(createDto);
-    
+
     if (!result.success) {
       const statusCode = result.statusCode || HttpStatus.BAD_REQUEST;
       throw new HttpException(result.message, statusCode);
@@ -80,7 +79,8 @@ export class PropietarioController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los propietarios',
-    description: 'Recupera una lista de todos los propietarios registrados en el sistema',
+    description:
+      'Recupera una lista de todos los propietarios registrados en el sistema',
   })
   @ApiResponse({
     status: 200,
@@ -93,7 +93,7 @@ export class PropietarioController {
   })
   async findAll(): Promise<PropietarioArrayResponseDto> {
     const result = await this.propietarioService.findAll();
-    
+
     if (!result.success) {
       throw new HttpException(result.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -130,9 +130,11 @@ export class PropietarioController {
     status: 404,
     description: 'Propietario no encontrado',
   })
-  async findOne(@Param('id') id: string): Promise<PropietarioSingleResponseDto> {
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<PropietarioSingleResponseDto> {
     const result = await this.propietarioService.findOne(id);
-    
+
     if (!result.success) {
       const statusCode = result.statusCode || HttpStatus.NOT_FOUND;
       throw new HttpException(result.message, statusCode);
@@ -176,14 +178,15 @@ export class PropietarioController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Conflicto - El correo ya está registrado por otro propietario',
+    description:
+      'Conflicto - El correo ya está registrado por otro propietario',
   })
   async update(
     @Param('id') id: string,
     @Body() updateDto: UpdatePropietarioDto,
   ): Promise<PropietarioSingleResponseDto> {
     const result = await this.propietarioService.update(id, updateDto);
-    
+
     if (!result.success) {
       const statusCode = result.statusCode || HttpStatus.BAD_REQUEST;
       throw new HttpException(result.message, statusCode);
@@ -200,7 +203,8 @@ export class PropietarioController {
   @Delete(':id')
   @ApiOperation({
     summary: 'Eliminar propietario',
-    description: 'Elimina un propietario del sistema (solo si no tiene propiedades asociadas)',
+    description:
+      'Elimina un propietario del sistema (solo si no tiene propiedades asociadas)',
   })
   @ApiParam({
     name: 'id',
@@ -223,11 +227,12 @@ export class PropietarioController {
   })
   @ApiResponse({
     status: 409,
-    description: 'No se puede eliminar - El propietario tiene propiedades asociadas',
+    description:
+      'No se puede eliminar - El propietario tiene propiedades asociadas',
   })
   async remove(@Param('id') id: string): Promise<PropietarioSingleResponseDto> {
     const result = await this.propietarioService.remove(id);
-    
+
     if (!result.success) {
       const statusCode = result.statusCode || HttpStatus.BAD_REQUEST;
       throw new HttpException(result.message, statusCode);
@@ -244,7 +249,8 @@ export class PropietarioController {
   @Get('documento/:numeroDocumento')
   @ApiOperation({
     summary: 'Buscar propietario por número de documento',
-    description: 'Busca un propietario utilizando su número de documento de identidad',
+    description:
+      'Busca un propietario utilizando su número de documento de identidad',
   })
   @ApiParam({
     name: 'numeroDocumento',
@@ -266,10 +272,11 @@ export class PropietarioController {
     description: 'Propietario no encontrado con ese documento',
   })
   async findByNumeroDocumento(
-    @Param('numeroDocumento') numeroDocumento: string
+    @Param('numeroDocumento') numeroDocumento: string,
   ): Promise<PropietarioSingleResponseDto> {
-    const result = await this.propietarioService.findByNumeroDocumento(numeroDocumento);
-    
+    const result =
+      await this.propietarioService.findByNumeroDocumento(numeroDocumento);
+
     if (!result.success) {
       const statusCode = result.statusCode || HttpStatus.NOT_FOUND;
       throw new HttpException(result.message, statusCode);
@@ -286,7 +293,8 @@ export class PropietarioController {
   @Get(':id/propiedades')
   @ApiOperation({
     summary: 'Obtener propietario con sus propiedades',
-    description: 'Recupera un propietario incluyendo todas sus propiedades asociadas',
+    description:
+      'Recupera un propietario incluyendo todas sus propiedades asociadas',
   })
   @ApiParam({
     name: 'id',
@@ -308,10 +316,10 @@ export class PropietarioController {
     description: 'Propietario no encontrado',
   })
   async findWithPropiedades(
-    @Param('id') id: string
+    @Param('id') id: string,
   ): Promise<PropietarioSingleResponseDto> {
     const result = await this.propietarioService.findWithPropiedades(id);
-    
+
     if (!result.success) {
       const statusCode = result.statusCode || HttpStatus.NOT_FOUND;
       throw new HttpException(result.message, statusCode);

@@ -6,7 +6,9 @@ import { TrabajadorResponseDto } from './trabajador-response.dto';
  * DTO para respuestas que contienen una lista de trabajadores
  * Utiliza BaseResponseDto como estructura base
  */
-export declare class TrabajadorArrayResponseDto extends BaseResponseDto<TrabajadorResponseDto[]> {
+export declare class TrabajadorArrayResponseDto extends BaseResponseDto<
+  TrabajadorResponseDto[]
+> {
   @ApiProperty({
     description: 'Lista de trabajadores',
     type: [TrabajadorResponseDto],
@@ -25,16 +27,16 @@ export declare class TrabajadorArrayResponseDto extends BaseResponseDto<Trabajad
         documentoIdentidad: {
           idDocumentoIdentidad: 'doc-uuid-123',
           tipo: 'DNI',
-          numero: 12345678
+          numero: 12345678,
         },
         usuario: {
           idUsuario: 'user-uuid-123',
           nombreUsuario: 'jperez',
           rol: {
             idRol: 'rol-uuid-123',
-            nombre: 'Trabajador'
-          }
-        }
+            nombre: 'Trabajador',
+          },
+        },
       },
       {
         idTrabajador: 'b2c3d4e5-f6g7-8901-bcde-f23456789012',
@@ -49,18 +51,18 @@ export declare class TrabajadorArrayResponseDto extends BaseResponseDto<Trabajad
         documentoIdentidad: {
           idDocumentoIdentidad: 'doc-uuid-456',
           tipo: 'DNI',
-          numero: 87654321
+          numero: 87654321,
         },
         usuario: {
           idUsuario: 'user-uuid-456',
           nombreUsuario: 'mgonzalez',
           rol: {
             idRol: 'rol-uuid-456',
-            nombre: 'Supervisor'
-          }
-        }
-      }
-    ]
+            nombre: 'Supervisor',
+          },
+        },
+      },
+    ],
   })
   data: TrabajadorResponseDto[] | null;
 }

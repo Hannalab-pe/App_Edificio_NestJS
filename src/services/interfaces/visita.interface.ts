@@ -21,15 +21,44 @@ export interface IVisitaService {
   registrarSalida(codigoQr: string): Promise<Visita>;
 
   // Nuevos métodos con BaseResponseDto
-  createWithResponse(createVisitaDto: CreateVisitaDto): Promise<VisitaSingleResponseDto>;
-  findAllWithResponse(page?: number, limit?: number): Promise<VisitaArrayResponseDto>;
+  createWithResponse(
+    createVisitaDto: CreateVisitaDto,
+  ): Promise<VisitaSingleResponseDto>;
+  findAllWithResponse(
+    page?: number,
+    limit?: number,
+  ): Promise<VisitaArrayResponseDto>;
   findOneWithResponse(id: string): Promise<VisitaSingleResponseDto>;
-  updateWithResponse(id: string, updateVisitaDto: UpdateVisitaDto): Promise<VisitaSingleResponseDto>;
+  updateWithResponse(
+    id: string,
+    updateVisitaDto: UpdateVisitaDto,
+  ): Promise<VisitaSingleResponseDto>;
   removeWithResponse(id: string): Promise<VisitaSingleResponseDto>;
-  findByEstadoWithResponse(estado: string, page?: number, limit?: number): Promise<VisitaArrayResponseDto>;
-  findByPropiedadWithResponse(propiedadId: string, page?: number, limit?: number): Promise<VisitaArrayResponseDto>;
-  findByFechaRangeWithResponse(fechaInicio: Date, fechaFin: Date, page?: number, limit?: number): Promise<VisitaArrayResponseDto>;
-  findByUsuarioAutorizadorWithResponse(usuarioId: string, page?: number, limit?: number): Promise<VisitaArrayResponseDto>;
-  registrarIngresoWithResponse(codigoQr: string): Promise<VisitaSingleResponseDto>;
-  registrarSalidaWithResponse(codigoQr: string): Promise<VisitaSingleResponseDto>;
+  findByEstadoWithResponse(
+    estado: string,
+    page?: number,
+    limit?: number,
+  ): Promise<VisitaArrayResponseDto>;
+  findByPropiedadWithResponse(
+    propiedadId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<VisitaArrayResponseDto>;
+  findByFechaRangeWithResponse(
+    fechaInicio: Date,
+    fechaFin: Date,
+    page?: number,
+    limit?: number,
+  ): Promise<VisitaArrayResponseDto>;
+  findByUsuarioAutorizadorWithResponse(
+    usuarioId: string,
+    page?: number,
+    limit?: number,
+  ): Promise<VisitaArrayResponseDto>;
+  registrarIngresoWithResponse(
+    codigoQr: string,
+  ): Promise<VisitaSingleResponseDto>;
+  registrarSalidaWithResponse(
+    codigoQr: string,
+  ): Promise<VisitaSingleResponseDto>;
 }

@@ -1,12 +1,17 @@
-import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { TipoContacto } from '../../../entities/TipoContacto';
-import { 
-  CreateTipoContactoDto, 
+import {
+  CreateTipoContactoDto,
   UpdateTipoContactoDto,
   TipoContactoSingleResponseDto,
-  TipoContactoArrayResponseDto
+  TipoContactoArrayResponseDto,
 } from '../../../dtos';
 import { BaseResponseDto } from '../../../dtos/baseResponse/baseResponse.dto';
 import { ITipoContactoService } from '../../interfaces/tipo-contacto.interface';
@@ -65,9 +70,13 @@ export class TipoContactoService implements ITipoContactoService {
   /**
    * Crear tipo de contacto con respuesta estandarizada
    */
-  async createWithBaseResponse(createTipoContactoDto: CreateTipoContactoDto): Promise<TipoContactoSingleResponseDto> {
+  async createWithBaseResponse(
+    createTipoContactoDto: CreateTipoContactoDto,
+  ): Promise<TipoContactoSingleResponseDto> {
     try {
-      this.logger.log(`Intentando crear tipo de contacto: ${createTipoContactoDto.nombre}`);
+      this.logger.log(
+        `Intentando crear tipo de contacto: ${createTipoContactoDto.nombre}`,
+      );
 
       // Verificar si ya existe un tipo de contacto con el mismo nombre
       const existingTipoContacto = await this.tipoContactoRepository.findOne({
@@ -75,18 +84,31 @@ export class TipoContactoService implements ITipoContactoService {
       });
 
       if (existingTipoContacto) {
-        throw new ConflictException(`Ya existe un tipo de contacto con el nombre '${createTipoContactoDto.nombre}'`);
+        throw new ConflictException(
+          `Ya existe un tipo de contacto con el nombre '${createTipoContactoDto.nombre}'`,
+        );
       }
 
-      const tipoContacto = this.tipoContactoRepository.create(createTipoContactoDto);
-      const savedTipoContacto = await this.tipoContactoRepository.save(tipoContacto);
-      
+      const tipoContacto = this.tipoContactoRepository.create(
+        createTipoContactoDto,
+      );
+      const savedTipoContacto =
+        await this.tipoContactoRepository.save(tipoContacto);
+
       const responseData = this.mapToResponseDto(savedTipoContacto);
-      this.logger.log(`✅ Tipo de contacto creado exitosamente: ${savedTipoContacto.idTipoContacto}`);
-      
-      return BaseResponseDto.success(responseData, 'Tipo de contacto creado exitosamente') as TipoContactoSingleResponseDto;
+      this.logger.log(
+        `✅ Tipo de contacto creado exitosamente: ${savedTipoContacto.idTipoContacto}`,
+      );
+
+      return BaseResponseDto.success(
+        responseData,
+        'Tipo de contacto creado exitosamente',
+      ) as TipoContactoSingleResponseDto;
     } catch (error) {
-      this.logger.error(`❌ Error al crear tipo de contacto: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al crear tipo de contacto: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -298,18 +320,28 @@ export class TipoContactoService implements ITipoContactoService {
   async findAllWithBaseResponse(): Promise<TipoContactoArrayResponseDto> {
     try {
       this.logger.log('Obteniendo todos los tipos de contacto');
-      
+
       const tiposContacto = await this.tipoContactoRepository.find({
         relations: ['contactos'],
         order: { nombre: 'ASC' },
       });
 
-      const responseData = tiposContacto.map(tipoContacto => this.mapToResponseDto(tipoContacto));
-      this.logger.log(`✅ ${tiposContacto.length} tipos de contacto obtenidos exitosamente`);
-      
-      return BaseResponseDto.success(responseData, `${tiposContacto.length} tipos de contacto obtenidos exitosamente`) as TipoContactoArrayResponseDto;
+      const responseData = tiposContacto.map((tipoContacto) =>
+        this.mapToResponseDto(tipoContacto),
+      );
+      this.logger.log(
+        `✅ ${tiposContacto.length} tipos de contacto obtenidos exitosamente`,
+      );
+
+      return BaseResponseDto.success(
+        responseData,
+        `${tiposContacto.length} tipos de contacto obtenidos exitosamente`,
+      ) as TipoContactoArrayResponseDto;
     } catch (error) {
-      this.logger.error(`❌ Error al obtener tipos de contacto: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al obtener tipos de contacto: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -317,25 +349,37 @@ export class TipoContactoService implements ITipoContactoService {
   /**
    * Obtener tipo de contacto por ID con respuesta estandarizada
    */
-  async findOneWithBaseResponse(id: string): Promise<TipoContactoSingleResponseDto> {
+  async findOneWithBaseResponse(
+    id: string,
+  ): Promise<TipoContactoSingleResponseDto> {
     try {
       this.logger.log(`Buscando tipo de contacto por ID: ${id}`);
-      
+
       const tipoContacto = await this.tipoContactoRepository.findOne({
         where: { idTipoContacto: id },
         relations: ['contactos'],
       });
 
       if (!tipoContacto) {
-        throw new NotFoundException(`Tipo de contacto con ID ${id} no encontrado`);
+        throw new NotFoundException(
+          `Tipo de contacto con ID ${id} no encontrado`,
+        );
       }
 
       const responseData = this.mapToResponseDto(tipoContacto);
-      this.logger.log(`✅ Tipo de contacto encontrado: ${tipoContacto.idTipoContacto}`);
-      
-      return BaseResponseDto.success(responseData, 'Tipo de contacto obtenido exitosamente') as TipoContactoSingleResponseDto;
+      this.logger.log(
+        `✅ Tipo de contacto encontrado: ${tipoContacto.idTipoContacto}`,
+      );
+
+      return BaseResponseDto.success(
+        responseData,
+        'Tipo de contacto obtenido exitosamente',
+      ) as TipoContactoSingleResponseDto;
     } catch (error) {
-      this.logger.error(`❌ Error al buscar tipo de contacto: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al buscar tipo de contacto: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -343,7 +387,10 @@ export class TipoContactoService implements ITipoContactoService {
   /**
    * Actualizar tipo de contacto con respuesta estandarizada
    */
-  async updateWithBaseResponse(id: string, updateTipoContactoDto: UpdateTipoContactoDto): Promise<TipoContactoSingleResponseDto> {
+  async updateWithBaseResponse(
+    id: string,
+    updateTipoContactoDto: UpdateTipoContactoDto,
+  ): Promise<TipoContactoSingleResponseDto> {
     try {
       this.logger.log(`Actualizando tipo de contacto: ${id}`);
 
@@ -354,23 +401,31 @@ export class TipoContactoService implements ITipoContactoService {
       });
 
       if (!existingTipoContacto) {
-        throw new NotFoundException(`Tipo de contacto con ID ${id} no encontrado`);
+        throw new NotFoundException(
+          `Tipo de contacto con ID ${id} no encontrado`,
+        );
       }
 
       // Verificar conflicto de nombre si se está actualizando
-      if (updateTipoContactoDto.nombre && updateTipoContactoDto.nombre !== existingTipoContacto.nombre) {
-        const tipoContactoWithSameName = await this.tipoContactoRepository.findOne({
-          where: { nombre: updateTipoContactoDto.nombre },
-        });
+      if (
+        updateTipoContactoDto.nombre &&
+        updateTipoContactoDto.nombre !== existingTipoContacto.nombre
+      ) {
+        const tipoContactoWithSameName =
+          await this.tipoContactoRepository.findOne({
+            where: { nombre: updateTipoContactoDto.nombre },
+          });
 
         if (tipoContactoWithSameName) {
-          throw new ConflictException(`Ya existe un tipo de contacto con el nombre '${updateTipoContactoDto.nombre}'`);
+          throw new ConflictException(
+            `Ya existe un tipo de contacto con el nombre '${updateTipoContactoDto.nombre}'`,
+          );
         }
       }
 
       // Actualizar el tipo de contacto
       await this.tipoContactoRepository.update(id, updateTipoContactoDto);
-      
+
       // Obtener el tipo de contacto actualizado
       const updatedTipoContacto = await this.tipoContactoRepository.findOne({
         where: { idTipoContacto: id },
@@ -379,10 +434,16 @@ export class TipoContactoService implements ITipoContactoService {
 
       const responseData = this.mapToResponseDto(updatedTipoContacto);
       this.logger.log(`✅ Tipo de contacto actualizado exitosamente: ${id}`);
-      
-      return BaseResponseDto.success(responseData, 'Tipo de contacto actualizado exitosamente') as TipoContactoSingleResponseDto;
+
+      return BaseResponseDto.success(
+        responseData,
+        'Tipo de contacto actualizado exitosamente',
+      ) as TipoContactoSingleResponseDto;
     } catch (error) {
-      this.logger.error(`❌ Error al actualizar tipo de contacto: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al actualizar tipo de contacto: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -401,21 +462,31 @@ export class TipoContactoService implements ITipoContactoService {
       });
 
       if (!tipoContacto) {
-        throw new NotFoundException(`Tipo de contacto con ID ${id} no encontrado`);
+        throw new NotFoundException(
+          `Tipo de contacto con ID ${id} no encontrado`,
+        );
       }
 
       // Verificar si hay contactos asociados
       if (tipoContacto.contactos && tipoContacto.contactos.length > 0) {
-        throw new ConflictException(`No se puede eliminar el tipo de contacto porque tiene ${tipoContacto.contactos.length} contacto(s) asociado(s)`);
+        throw new ConflictException(
+          `No se puede eliminar el tipo de contacto porque tiene ${tipoContacto.contactos.length} contacto(s) asociado(s)`,
+        );
       }
 
       // Eliminar el tipo de contacto
       await this.tipoContactoRepository.delete(id);
       this.logger.log(`✅ Tipo de contacto eliminado exitosamente: ${id}`);
-      
-      return BaseResponseDto.success(null, 'Tipo de contacto eliminado exitosamente');
+
+      return BaseResponseDto.success(
+        null,
+        'Tipo de contacto eliminado exitosamente',
+      );
     } catch (error) {
-      this.logger.error(`❌ Error al eliminar tipo de contacto: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al eliminar tipo de contacto: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -423,25 +494,37 @@ export class TipoContactoService implements ITipoContactoService {
   /**
    * Buscar tipo de contacto por nombre con respuesta estandarizada
    */
-  async findByNombreWithBaseResponse(nombre: string): Promise<TipoContactoArrayResponseDto> {
+  async findByNombreWithBaseResponse(
+    nombre: string,
+  ): Promise<TipoContactoArrayResponseDto> {
     try {
       this.logger.log(`Buscando tipo de contacto por nombre: ${nombre}`);
-      
+
       const tipoContacto = await this.tipoContactoRepository.findOne({
         where: { nombre: nombre },
         relations: ['contactos'],
       });
 
       if (!tipoContacto) {
-        throw new NotFoundException(`Tipo de contacto con nombre '${nombre}' no encontrado`);
+        throw new NotFoundException(
+          `Tipo de contacto con nombre '${nombre}' no encontrado`,
+        );
       }
 
       const responseData = this.mapToResponseDto(tipoContacto);
-      this.logger.log(`✅ Tipo de contacto encontrado por nombre: ${tipoContacto.idTipoContacto}`);
-      
-      return BaseResponseDto.success(responseData, 'Tipos de contacto encontrados exitosamente') as TipoContactoArrayResponseDto;
+      this.logger.log(
+        `✅ Tipo de contacto encontrado por nombre: ${tipoContacto.idTipoContacto}`,
+      );
+
+      return BaseResponseDto.success(
+        responseData,
+        'Tipos de contacto encontrados exitosamente',
+      ) as TipoContactoArrayResponseDto;
     } catch (error) {
-      this.logger.error(`❌ Error al buscar tipo de contacto por nombre: ${error.message}`, error.stack);
+      this.logger.error(
+        `❌ Error al buscar tipo de contacto por nombre: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -458,12 +541,13 @@ export class TipoContactoService implements ITipoContactoService {
       idTipoContacto: tipoContacto.idTipoContacto,
       nombre: tipoContacto.nombre,
       descripcion: tipoContacto.descripcion,
-      contactos: tipoContacto.contactos?.map(contacto => ({
-        idContacto: contacto.idContacto,
-        valor: contacto.valor,
-        esPrincipal: contacto.esPrincipal,
-        estaActivo: contacto.estaActivo,
-      })) || [],
+      contactos:
+        tipoContacto.contactos?.map((contacto) => ({
+          idContacto: contacto.idContacto,
+          valor: contacto.valor,
+          esPrincipal: contacto.esPrincipal,
+          estaActivo: contacto.estaActivo,
+        })) || [],
     };
   }
 }

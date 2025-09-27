@@ -10,12 +10,12 @@ import { Visita } from '../../../entities/Visita';
 import { Usuario } from '../../../entities/Usuario';
 import { Propiedad } from '../../../entities/Propiedad';
 import { IVisitaService } from '../../interfaces/visita.interface';
-import { 
-  CreateVisitaDto, 
-  UpdateVisitaDto, 
-  VisitaSingleResponseDto, 
+import {
+  CreateVisitaDto,
+  UpdateVisitaDto,
+  VisitaSingleResponseDto,
   VisitaArrayResponseDto,
-  VisitaNewResponseDto
+  VisitaNewResponseDto,
 } from '../../../dtos';
 
 /**
@@ -281,7 +281,7 @@ export class VisitaService implements IVisitaService {
       // Si hay cambios en relaciones, usar save() que maneja relaciones
       const visitaParaActualizar = await this.visitaRepository.findOne({
         where: { idVisita: id },
-        relations: ['autorizadorUsuario', 'idPropiedad']
+        relations: ['autorizadorUsuario', 'idPropiedad'],
       });
 
       if (visitaParaActualizar) {
@@ -291,14 +291,20 @@ export class VisitaService implements IVisitaService {
         // Actualizar relaciones si es necesario
         if (updateVisitaDto.autorizadorUsuario) {
           const usuarioAutorizador = await this.usuarioRepository.findOne({
-            where: { idUsuario: updateVisitaDto.autorizadorUsuario, estaActivo: true }
+            where: {
+              idUsuario: updateVisitaDto.autorizadorUsuario,
+              estaActivo: true,
+            },
           });
           visitaParaActualizar.autorizadorUsuario = usuarioAutorizador!;
         }
 
         if (updateVisitaDto.idPropiedad) {
           const propiedad = await this.propiedadRepository.findOne({
-            where: { idPropiedad: updateVisitaDto.idPropiedad, estaActivo: true }
+            where: {
+              idPropiedad: updateVisitaDto.idPropiedad,
+              estaActivo: true,
+            },
           });
           visitaParaActualizar.idPropiedad = propiedad!;
         }
@@ -355,11 +361,14 @@ export class VisitaService implements IVisitaService {
       });
     }
 
-    return await this.visitaRepository.find({
-      where: { idPropiedad: { idPropiedad: propiedadId } },
-      relations: ['autorizadorUsuario', 'idPropiedad'],
-      order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
-    });
+    return await this.visitaRepository
+      .createQueryBuilder('visita')
+      .leftJoinAndSelect('visita.autorizadorUsuario', 'autorizador')
+      .leftJoinAndSelect('visita.idPropiedad', 'propiedad')
+      .where('propiedad.id_propiedad = :propiedadId', { propiedadId })
+      .orderBy('visita.fecha_programada', 'DESC')
+      .addOrderBy('visita.hora_inicio', 'ASC')
+      .getMany();
   }
 
   /**
@@ -409,11 +418,14 @@ export class VisitaService implements IVisitaService {
       });
     }
 
-    return await this.visitaRepository.find({
-      where: { autorizadorUsuario: { idUsuario: usuarioId } },
-      relations: ['autorizadorUsuario', 'idPropiedad'],
-      order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
-    });
+    return await this.visitaRepository
+      .createQueryBuilder('visita')
+      .leftJoinAndSelect('visita.autorizadorUsuario', 'autorizador')
+      .leftJoinAndSelect('visita.idPropiedad', 'propiedad')
+      .where('autorizador.id_usuario = :usuarioId', { usuarioId })
+      .orderBy('visita.fecha_programada', 'DESC')
+      .addOrderBy('visita.hora_inicio', 'ASC')
+      .getMany();
   }
 
   /**
@@ -505,10 +517,14 @@ export class VisitaService implements IVisitaService {
   /**
    * Crea una nueva visita y retorna BaseResponseDto
    */
-  async createWithResponse(createVisitaDto: CreateVisitaDto): Promise<VisitaSingleResponseDto> {
+  async createWithResponse(
+    createVisitaDto: CreateVisitaDto,
+  ): Promise<VisitaSingleResponseDto> {
     try {
-      this.logger.log(`Creando nueva visita para ${createVisitaDto.nombreVisitante}`);
-      
+      this.logger.log(
+        `Creando nueva visita para ${createVisitaDto.nombreVisitante}`,
+      );
+
       const visita = await this.create(createVisitaDto);
       const visitaResponse = this.mapToResponseDto(visita);
 
@@ -519,8 +535,8 @@ export class VisitaService implements IVisitaService {
         metadata: {
           codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
           requiereAutorizacion: true,
-          notificacionesEnviadas: true
-        }
+          notificacionesEnviadas: true,
+        },
       };
     } catch (error) {
       this.logger.error(`Error al crear visita: ${error.message}`);
@@ -531,18 +547,28 @@ export class VisitaService implements IVisitaService {
   /**
    * Obtiene todas las visitas con paginación y BaseResponseDto
    */
-  async findAllWithResponse(page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+  async findAllWithResponse(
+    page = 1,
+    limit = 10,
+  ): Promise<VisitaArrayResponseDto> {
     try {
       const skip = (page - 1) * limit;
-      
+
       const [visitas, total] = await this.visitaRepository.findAndCount({
-        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        relations: [
+          'autorizadorUsuario',
+          'autorizadorUsuario.idRol',
+          'idPropiedad',
+          'idPropiedad.idEdificio',
+        ],
         order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
         skip,
         take: limit,
       });
 
-      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+      const visitasResponse = visitas.map((visita) =>
+        this.mapToResponseDto(visita),
+      );
 
       // Calcular estadísticas
       const estadisticas = await this.calcularEstadisticas();
@@ -558,8 +584,8 @@ export class VisitaService implements IVisitaService {
           totalPages: Math.ceil(total / limit),
           hasNextPage: page < Math.ceil(total / limit),
           hasPreviousPage: page > 1,
-          estadisticas
-        }
+          estadisticas,
+        },
       };
     } catch (error) {
       this.logger.error(`Error al obtener visitas: ${error.message}`);
@@ -574,7 +600,12 @@ export class VisitaService implements IVisitaService {
     try {
       const visita = await this.visitaRepository.findOne({
         where: { idVisita: id },
-        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        relations: [
+          'autorizadorUsuario',
+          'autorizadorUsuario.idRol',
+          'idPropiedad',
+          'idPropiedad.idEdificio',
+        ],
       });
 
       if (!visita) {
@@ -590,8 +621,8 @@ export class VisitaService implements IVisitaService {
         metadata: {
           codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
           requiereAutorizacion: visita.estado === 'PROGRAMADA',
-          notificacionesEnviadas: true
-        }
+          notificacionesEnviadas: true,
+        },
       };
     } catch (error) {
       this.logger.error(`Error al obtener visita ${id}: ${error.message}`);
@@ -602,10 +633,13 @@ export class VisitaService implements IVisitaService {
   /**
    * Actualiza una visita con BaseResponseDto
    */
-  async updateWithResponse(id: string, updateVisitaDto: UpdateVisitaDto): Promise<VisitaSingleResponseDto> {
+  async updateWithResponse(
+    id: string,
+    updateVisitaDto: UpdateVisitaDto,
+  ): Promise<VisitaSingleResponseDto> {
     try {
       this.logger.log(`Actualizando visita ${id}`);
-      
+
       const visita = await this.update(id, updateVisitaDto);
       const visitaResponse = this.mapToResponseDto(visita);
 
@@ -627,7 +661,7 @@ export class VisitaService implements IVisitaService {
     try {
       const visita = await this.findOne(id);
       await this.remove(id);
-      
+
       const visitaResponse = this.mapToResponseDto(visita);
 
       return {
@@ -644,19 +678,30 @@ export class VisitaService implements IVisitaService {
   /**
    * Busca visitas por estado con BaseResponseDto
    */
-  async findByEstadoWithResponse(estado: string, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+  async findByEstadoWithResponse(
+    estado: string,
+    page = 1,
+    limit = 10,
+  ): Promise<VisitaArrayResponseDto> {
     try {
       const skip = (page - 1) * limit;
-      
+
       const [visitas, total] = await this.visitaRepository.findAndCount({
         where: { estado },
-        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        relations: [
+          'autorizadorUsuario',
+          'autorizadorUsuario.idRol',
+          'idPropiedad',
+          'idPropiedad.idEdificio',
+        ],
         order: { fechaProgramada: 'ASC', horaInicio: 'ASC' },
         skip,
         take: limit,
       });
 
-      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+      const visitasResponse = visitas.map((visita) =>
+        this.mapToResponseDto(visita),
+      );
 
       return {
         success: true,
@@ -669,7 +714,7 @@ export class VisitaService implements IVisitaService {
           totalPages: Math.ceil(total / limit),
           hasNextPage: page < Math.ceil(total / limit),
           hasPreviousPage: page > 1,
-        }
+        },
       };
     } catch (error) {
       this.logger.error(`Error al buscar visitas por estado: ${error.message}`);
@@ -680,19 +725,30 @@ export class VisitaService implements IVisitaService {
   /**
    * Busca visitas por propiedad con BaseResponseDto
    */
-  async findByPropiedadWithResponse(propiedadId: string, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+  async findByPropiedadWithResponse(
+    propiedadId: string,
+    page = 1,
+    limit = 10,
+  ): Promise<VisitaArrayResponseDto> {
     try {
       const skip = (page - 1) * limit;
-      
+
       const [visitas, total] = await this.visitaRepository.findAndCount({
         where: { idPropiedad: { idPropiedad: propiedadId } },
-        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        relations: [
+          'autorizadorUsuario',
+          'autorizadorUsuario.idRol',
+          'idPropiedad',
+          'idPropiedad.idEdificio',
+        ],
         order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
         skip,
         take: limit,
       });
 
-      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+      const visitasResponse = visitas.map((visita) =>
+        this.mapToResponseDto(visita),
+      );
 
       return {
         success: true,
@@ -705,10 +761,12 @@ export class VisitaService implements IVisitaService {
           totalPages: Math.ceil(total / limit),
           hasNextPage: page < Math.ceil(total / limit),
           hasPreviousPage: page > 1,
-        }
+        },
       };
     } catch (error) {
-      this.logger.error(`Error al buscar visitas por propiedad: ${error.message}`);
+      this.logger.error(
+        `Error al buscar visitas por propiedad: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -716,10 +774,15 @@ export class VisitaService implements IVisitaService {
   /**
    * Busca visitas en rango de fechas con BaseResponseDto
    */
-  async findByFechaRangeWithResponse(fechaInicio: Date, fechaFin: Date, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+  async findByFechaRangeWithResponse(
+    fechaInicio: Date,
+    fechaFin: Date,
+    page = 1,
+    limit = 10,
+  ): Promise<VisitaArrayResponseDto> {
     try {
       const skip = (page - 1) * limit;
-      
+
       const [visitas, total] = await this.visitaRepository.findAndCount({
         where: {
           fechaProgramada: Between(
@@ -727,13 +790,20 @@ export class VisitaService implements IVisitaService {
             fechaFin.toISOString().split('T')[0],
           ),
         },
-        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        relations: [
+          'autorizadorUsuario',
+          'autorizadorUsuario.idRol',
+          'idPropiedad',
+          'idPropiedad.idEdificio',
+        ],
         order: { fechaProgramada: 'ASC', horaInicio: 'ASC' },
         skip,
         take: limit,
       });
 
-      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+      const visitasResponse = visitas.map((visita) =>
+        this.mapToResponseDto(visita),
+      );
 
       return {
         success: true,
@@ -746,10 +816,12 @@ export class VisitaService implements IVisitaService {
           totalPages: Math.ceil(total / limit),
           hasNextPage: page < Math.ceil(total / limit),
           hasPreviousPage: page > 1,
-        }
+        },
       };
     } catch (error) {
-      this.logger.error(`Error al buscar visitas por rango de fechas: ${error.message}`);
+      this.logger.error(
+        `Error al buscar visitas por rango de fechas: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -757,19 +829,30 @@ export class VisitaService implements IVisitaService {
   /**
    * Busca visitas por usuario autorizador con BaseResponseDto
    */
-  async findByUsuarioAutorizadorWithResponse(usuarioId: string, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+  async findByUsuarioAutorizadorWithResponse(
+    usuarioId: string,
+    page = 1,
+    limit = 10,
+  ): Promise<VisitaArrayResponseDto> {
     try {
       const skip = (page - 1) * limit;
-      
+
       const [visitas, total] = await this.visitaRepository.findAndCount({
         where: { autorizadorUsuario: { idUsuario: usuarioId } },
-        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        relations: [
+          'autorizadorUsuario',
+          'autorizadorUsuario.idRol',
+          'idPropiedad',
+          'idPropiedad.idEdificio',
+        ],
         order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
         skip,
         take: limit,
       });
 
-      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+      const visitasResponse = visitas.map((visita) =>
+        this.mapToResponseDto(visita),
+      );
 
       return {
         success: true,
@@ -782,10 +865,12 @@ export class VisitaService implements IVisitaService {
           totalPages: Math.ceil(total / limit),
           hasNextPage: page < Math.ceil(total / limit),
           hasPreviousPage: page > 1,
-        }
+        },
       };
     } catch (error) {
-      this.logger.error(`Error al buscar visitas por usuario autorizador: ${error.message}`);
+      this.logger.error(
+        `Error al buscar visitas por usuario autorizador: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -793,10 +878,12 @@ export class VisitaService implements IVisitaService {
   /**
    * Registra ingreso con BaseResponseDto
    */
-  async registrarIngresoWithResponse(codigoQr: string): Promise<VisitaSingleResponseDto> {
+  async registrarIngresoWithResponse(
+    codigoQr: string,
+  ): Promise<VisitaSingleResponseDto> {
     try {
       this.logger.log(`Registrando ingreso con código QR: ${codigoQr}`);
-      
+
       const visita = await this.registrarIngreso(codigoQr);
       const visitaResponse = this.mapToResponseDto(visita);
 
@@ -807,8 +894,8 @@ export class VisitaService implements IVisitaService {
         metadata: {
           codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
           requiereAutorizacion: false,
-          notificacionesEnviadas: true
-        }
+          notificacionesEnviadas: true,
+        },
       };
     } catch (error) {
       this.logger.error(`Error al registrar ingreso: ${error.message}`);
@@ -819,10 +906,12 @@ export class VisitaService implements IVisitaService {
   /**
    * Registra salida con BaseResponseDto
    */
-  async registrarSalidaWithResponse(codigoQr: string): Promise<VisitaSingleResponseDto> {
+  async registrarSalidaWithResponse(
+    codigoQr: string,
+  ): Promise<VisitaSingleResponseDto> {
     try {
       this.logger.log(`Registrando salida con código QR: ${codigoQr}`);
-      
+
       const visita = await this.registrarSalida(codigoQr);
       const visitaResponse = this.mapToResponseDto(visita);
 
@@ -833,8 +922,8 @@ export class VisitaService implements IVisitaService {
         metadata: {
           codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
           requiereAutorizacion: false,
-          notificacionesEnviadas: true
-        }
+          notificacionesEnviadas: true,
+        },
       };
     } catch (error) {
       this.logger.error(`Error al registrar salida: ${error.message}`);
@@ -850,13 +939,18 @@ export class VisitaService implements IVisitaService {
    * Mapea una entidad Visita a VisitaResponseDto
    */
   private mapToResponseDto(visita: Visita): VisitaNewResponseDto {
-    const duracionProgramada = this.calcularDuracion(visita.horaInicio, visita.horaFin);
-    const duracionReal = visita.fechaIngreso && visita.fechaSalida 
-      ? this.calcularDuracionReal(visita.fechaIngreso, visita.fechaSalida)
-      : undefined;
-    const tiempoRestante = visita.estado === 'EN_CURSO' && visita.fechaIngreso
-      ? this.calcularTiempoRestante(visita.fechaIngreso, visita.horaFin)
-      : undefined;
+    const duracionProgramada = this.calcularDuracion(
+      visita.horaInicio,
+      visita.horaFin,
+    );
+    const duracionReal =
+      visita.fechaIngreso && visita.fechaSalida
+        ? this.calcularDuracionReal(visita.fechaIngreso, visita.fechaSalida)
+        : undefined;
+    const tiempoRestante =
+      visita.estado === 'EN_CURSO' && visita.fechaIngreso
+        ? this.calcularTiempoRestante(visita.fechaIngreso, visita.horaFin)
+        : undefined;
 
     return {
       idVisita: visita.idVisita,
@@ -877,8 +971,8 @@ export class VisitaService implements IVisitaService {
         estaActivo: visita.autorizadorUsuario.estaActivo,
         rol: {
           idRol: visita.autorizadorUsuario.idRol?.idRol || '',
-          nombre: visita.autorizadorUsuario.idRol?.nombre || 'Sin rol'
-        }
+          nombre: visita.autorizadorUsuario.idRol?.nombre || 'Sin rol',
+        },
       },
       propiedad: {
         idPropiedad: visita.idPropiedad.idPropiedad,
@@ -889,18 +983,19 @@ export class VisitaService implements IVisitaService {
         estaActivo: visita.idPropiedad.estaActivo,
         edificio: {
           idEdificio: visita.idPropiedad.idEdificio?.idEdificio || '',
-          nombre: visita.idPropiedad.idEdificio?.nombreEdificio || 'Sin edificio'
-        }
+          nombre:
+            visita.idPropiedad.idEdificio?.nombreEdificio || 'Sin edificio',
+        },
       },
       estadisticas: {
         duracionProgramada,
         duracionReal,
-        tiempoRestante
+        tiempoRestante,
       },
       auditoria: {
         fechaCreacion: new Date(), // Estos deberían venir de la base de datos si existen
-        fechaActualizacion: new Date()
-      }
+        fechaActualizacion: new Date(),
+      },
     };
   }
 
@@ -925,10 +1020,10 @@ export class VisitaService implements IVisitaService {
     const inicio = new Date(`2000-01-01T${horaInicio}`);
     const fin = new Date(`2000-01-01T${horaFin}`);
     const diferencia = fin.getTime() - inicio.getTime();
-    
+
     const horas = Math.floor(diferencia / (1000 * 60 * 60));
     const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     return `${horas} horas ${minutos} minutos`;
   }
 
@@ -937,10 +1032,10 @@ export class VisitaService implements IVisitaService {
    */
   private calcularDuracionReal(fechaIngreso: Date, fechaSalida: Date): string {
     const diferencia = fechaSalida.getTime() - fechaIngreso.getTime();
-    
+
     const horas = Math.floor(diferencia / (1000 * 60 * 60));
     const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     return `${horas} horas ${minutos} minutos`;
   }
 
@@ -951,16 +1046,16 @@ export class VisitaService implements IVisitaService {
     const ahora = new Date();
     const fechaBase = fechaIngreso.toISOString().split('T')[0];
     const fin = new Date(`${fechaBase}T${horaFin}`);
-    
+
     const diferencia = fin.getTime() - ahora.getTime();
-    
+
     if (diferencia <= 0) {
       return 'Tiempo excedido';
     }
-    
+
     const horas = Math.floor(diferencia / (1000 * 60 * 60));
     const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     return `${horas} horas ${minutos} minutos`;
   }
 

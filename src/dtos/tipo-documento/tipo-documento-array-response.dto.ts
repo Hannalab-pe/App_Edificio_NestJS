@@ -5,7 +5,9 @@ import { TipoDocumentoResponseDto } from './tipo-documento-response.dto';
  * DTO de respuesta para múltiples TipoDocumento con BaseResponse
  * Extiende BaseResponseDto con array de datos específicos de TipoDocumento
  */
-export declare class TipoDocumentoArrayResponseDto extends BaseResponseDto<TipoDocumentoResponseDto[]> {
+export declare class TipoDocumentoArrayResponseDto extends BaseResponseDto<
+  TipoDocumentoResponseDto[]
+> {
   /**
    * Código de estado HTTP de la respuesta
    * @example 200

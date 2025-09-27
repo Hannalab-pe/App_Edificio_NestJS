@@ -1,10 +1,10 @@
 import { Trabajador } from '../../entities/Trabajador';
-import { 
-  CreateTrabajadorDto, 
+import {
+  CreateTrabajadorDto,
   UpdateTrabajadorDto,
   TrabajadorRegisterResponseDto,
   TrabajadorSingleResponseDto,
-  TrabajadorArrayResponseDto 
+  TrabajadorArrayResponseDto,
 } from '../../dtos';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 
@@ -32,8 +32,14 @@ export interface ITrabajadorService {
     updateTrabajadorDto: UpdateTrabajadorDto,
   ): Promise<TrabajadorSingleResponseDto>;
   removeWithBaseResponse(id: string): Promise<BaseResponseDto<undefined>>;
-  findByNumeroDocumentoWithBaseResponse(numeroDocumento: string): Promise<TrabajadorSingleResponseDto>;
-  findByCargoWithBaseResponse(cargo: string): Promise<TrabajadorArrayResponseDto>;
+  findByNumeroDocumentoWithBaseResponse(
+    numeroDocumento: string,
+  ): Promise<TrabajadorSingleResponseDto>;
+  findByCargoWithBaseResponse(
+    cargo: string,
+  ): Promise<TrabajadorArrayResponseDto>;
   findActivosWithBaseResponse(): Promise<TrabajadorArrayResponseDto>;
-  findByCorreoWithBaseResponse(correo: string): Promise<TrabajadorSingleResponseDto>;
+  findByCorreoWithBaseResponse(
+    correo: string,
+  ): Promise<TrabajadorSingleResponseDto>;
 }
