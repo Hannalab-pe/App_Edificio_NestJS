@@ -35,7 +35,7 @@ import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 import { ITrabajadorService } from '../../services/interfaces/trabajador.interface';
 import { TipoDocumentoIdentidad } from '../../Enums/documento-identidad.enum';
 
-@ApiTags('👷 Trabajadores')
+@ApiTags('Trabajadores')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('api/v1/trabajadores')

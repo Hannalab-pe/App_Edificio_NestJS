@@ -32,6 +32,15 @@ export {
   PropiedadDeleteResponseDto,
 } from './propiedad';
 
+// Propiedad-Propietario DTOs
+export { CreatePropiedadPropietarioDto } from './propiedad-propietario/create-propiedad-propietario.dto';
+export { UpdatePropiedadPropietarioDto } from './propiedad-propietario/update-propiedad-propietario.dto';
+export { PropiedadPropietarioResponseDto } from './propiedad-propietario/propiedad-propietario-response.dto';
+export {
+  PropiedadPropietarioSingleResponseDto,
+  PropiedadPropietarioArrayResponseDto,
+} from './propiedad-propietario/propiedad-propietario-api-response.dto';
+
 // Incidencia DTOs
 export { CreateIncidenciaDto } from './incidencia/create-incidencia.dto';
 export { UpdateIncidenciaDto } from './incidencia/update-incidencia.dto';
@@ -97,6 +106,15 @@ export { UpdateAreaComunDto } from './area-comun/update-area-comun.dto';
 // Concepto Pago DTOs
 export { CreateConceptoPagoDto } from './concepto-pago/create-concepto-pago.dto';
 export { UpdateConceptoPagoDto } from './concepto-pago/update-concepto-pago.dto';
+
+// Historial Contrato DTOs
+export { CreateHistorialContratoDto } from './historial-contrato/create-historial-contrato.dto';
+export { UpdateHistorialContratoDto } from './historial-contrato/update-historial-contrato.dto';
+export {
+  HistorialContratoResponseDto,
+  ContratoInfoDto,
+  TrabajadorInfoHistorialDto,
+} from './historial-contrato/historial-contrato-response.dto';
 
 // Tipo Espacio DTOs
 export { CreateTipoEspacioDto } from './tipo-espacio/create-tipo-espacio.dto';
@@ -237,6 +255,53 @@ export {
   TipoContactoInfoDto,
   TipoContratoInfoDto,
 } from './contacto/contacto-response.dto';
+
+// Recibo DTOs
+export { CreateReciboDto } from './recibo/create-recibo.dto';
+export { UpdateReciboDto } from './recibo/update-recibo.dto';
+export { ReciboResponseDto } from './recibo/recibo-response.dto';
+export {
+  ReciboSingleResponseDto,
+  ReciboArrayResponseDto,
+} from './recibo/recibo-api-response.dto';
+
+// Residencia DTOs
+export { CreateResidenciaDto } from './residencia/create-residencia.dto';
+export { UpdateResidenciaDto } from './residencia/update-residencia.dto';
+export { ResidenciaResponseDto } from './residencia/residencia-response.dto';
+export {
+  ResidenciaSingleResponseDto,
+  ResidenciaArrayResponseDto,
+} from './residencia/residencia-api-response.dto';
+
+// Reserva DTOs
+export { CreateReservaDto } from './reserva/create-reserva.dto';
+export { UpdateReservaDto } from './reserva/update-reserva.dto';
+export { ReservaResponseDto } from './reserva/reserva-response.dto';
+export {
+  ReservaSingleResponseDto,
+  ReservaArrayResponseDto,
+} from './reserva/reserva-api-response.dto';
+
+// Visita DTOs
+export { CreateVisitaDto } from './visita/create-visita.dto';
+export { UpdateVisitaDto } from './visita/update-visita.dto';
+export {
+  VisitaDto,
+  VisitaResponseDto,
+  VisitaListResponseDto,
+  UsuarioAutorizadorDto,
+  PropiedadVisitaDto,
+} from './visita/visita-response.dto';
+export {
+  VisitaResponseDto as VisitaNewResponseDto,
+  UsuarioAutorizadorResponseDto,
+  PropiedadVisitaResponseDto,
+} from './visita/visitaResponse.dto';
+export {
+  VisitaSingleResponseDto,
+  VisitaArrayResponseDto,
+} from './visita/visitaBaseResponse.dto';
 
 // Opción Voto DTOs
 export { CreateOpcionVotoDto } from './opcion-voto/create-opcion-voto.dto';

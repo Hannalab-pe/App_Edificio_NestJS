@@ -62,8 +62,6 @@ export class VotacionController {
    * Crear nueva votación
    */
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear nueva votación' })
   @ApiResponse({ status: 201, type: VotacionSingleResponseDto })
@@ -78,8 +76,6 @@ export class VotacionController {
    * Obtener todas las votaciones con paginación
    */
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtener todas las votaciones' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
@@ -96,8 +92,6 @@ export class VotacionController {
    * Obtener votación por ID
    */
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtener votación por ID' })
   @ApiParam({ name: 'id', description: 'ID UUID de la votación' })
@@ -112,8 +106,6 @@ export class VotacionController {
    * Actualizar votación completa
    */
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Actualizar votación completa' })
   @ApiParam({ name: 'id', description: 'ID UUID de la votación' })
@@ -130,8 +122,6 @@ export class VotacionController {
    * Eliminar votación
    */
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Eliminar votación' })
   @ApiParam({ name: 'id', description: 'ID UUID de la votación' })
@@ -146,8 +136,6 @@ export class VotacionController {
    * Obtener votaciones por estado
    */
   @Get('estado/:estado')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtener votaciones por estado' })
   @ApiParam({ name: 'estado', description: 'Estado de la votación' })
@@ -166,8 +154,6 @@ export class VotacionController {
    * Obtener votaciones activas
    */
   @Get('estado/activas/all')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtener votaciones activas' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
@@ -184,8 +170,6 @@ export class VotacionController {
    * Cerrar votación
    */
   @Post(':id/cerrar')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cerrar votación activa' })
   @ApiParam({ name: 'id', description: 'ID UUID de la votación' })
@@ -200,8 +184,6 @@ export class VotacionController {
    * Activar votación
    */
   @Post(':id/activar')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Activar votación en borrador' })
   @ApiParam({ name: 'id', description: 'ID UUID de la votación' })
@@ -216,8 +198,6 @@ export class VotacionController {
    * Cancelar votación
    */
   @Post(':id/cancelar')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cancelar votación' })
   @ApiParam({ name: 'id', description: 'ID UUID de la votación' })
@@ -232,8 +212,6 @@ export class VotacionController {
    * Obtener estadísticas generales de votaciones
    */
   @Get('estadisticas/general')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtener estadísticas generales de votaciones' })
   @ApiResponse({ status: 200, type: VotacionArrayResponseDto })
