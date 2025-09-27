@@ -7,8 +7,6 @@ import { ServicesModule } from './services/services.module';
 import { ControllersModule } from './controllers/controllers.module';
 import { EntitiesModule } from './entities/entities.module';
 import { AuthModule } from './auth/auth.module';
-import { RolModule } from './modules/rol/rol.module';
-import { VotacionModule } from './modules/votacion/votacion.module';
 
 @Module({
   imports: [
@@ -29,8 +27,6 @@ import { VotacionModule } from './modules/votacion/votacion.module';
     ControllersModule,
     EntitiesModule,
     AuthModule,
-    RolModule,
-    VotacionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

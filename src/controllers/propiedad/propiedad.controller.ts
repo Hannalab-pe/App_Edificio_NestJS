@@ -2,13 +2,14 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Body,
   Param,
   Query,
   Res,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,13 +18,23 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { Response } from 'express';
-import { CreatePropiedadDto, UpdatePropiedadDto } from '../../dtos';
+import {
+  CreatePropiedadDto,
+  UpdatePropiedadDto,
+  PropiedadResponseDto,
+  PropiedadListResponseDto,
+  PropiedadDeleteResponseDto,
+} from '../../dtos';
 import { PropiedadService } from '../../services/implementations/propiedad/propiedad.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @ApiTags('Propiedades')
 @Controller('propiedad')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class PropiedadController {
   constructor(private readonly propiedadService: PropiedadService) {}
 
@@ -132,7 +143,7 @@ export class PropiedadController {
     }
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar una propiedad',
     description: 'Actualiza los datos de una propiedad existente',

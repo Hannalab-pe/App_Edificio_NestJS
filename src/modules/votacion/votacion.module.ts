@@ -10,7 +10,14 @@ import { OpcionVoto } from '../../entities/OpcionVoto';
 import { Usuario } from '../../entities/Usuario';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Votacion, JuntaPropietarios, OpcionVoto, Usuario])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Votacion,
+      JuntaPropietarios,
+      OpcionVoto,
+      Usuario,
+    ]),
+  ],
   providers: [
     {
       provide: 'IVotacionService',
@@ -24,6 +31,11 @@ import { Usuario } from '../../entities/Usuario';
     OpcionVotoService,
   ],
   controllers: [VotacionController, OpcionVotoController],
-  exports: ['IVotacionService', 'IOpcionVotoService', VotacionService, OpcionVotoService],
+  exports: [
+    'IVotacionService',
+    'IOpcionVotoService',
+    VotacionService,
+    OpcionVotoService,
+  ],
 })
 export class VotacionModule {}

@@ -45,7 +45,9 @@ export class CreateOpcionVotoResponseDto extends BaseResponseDto<OpcionVotoRespo
 
 export class GetOpcionVotoResponseDto extends BaseResponseDto<OpcionVotoResponseDto> {}
 
-export class GetOpcionesVotoResponseDto extends BaseResponseDto<OpcionVotoResponseDto[]> {}
+export class GetOpcionesVotoResponseDto extends BaseResponseDto<
+  OpcionVotoResponseDto[]
+> {}
 
 export class UpdateOpcionVotoResponseDto extends BaseResponseDto<OpcionVotoResponseDto> {}
 

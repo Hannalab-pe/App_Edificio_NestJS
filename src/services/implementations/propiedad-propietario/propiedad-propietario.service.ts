@@ -9,6 +9,7 @@ import { BaseResponseDto } from 'src/dtos/baseResponse/baseResponse.dto';
 import { Propiedad } from '../../../entities/Propiedad';
 import { Propietario } from '../../../entities/Propietario';
 import { CreatePropiedadPropietarioDto } from 'src/dtos/propiedad-propietario/create-propiedad-propietario.dto';
+import { UpdatePropiedadPropietarioDto } from 'src/dtos/propiedad-propietario/update-propiedad-propietario.dto';
 
 @Injectable()
 export class PropiedadPropietarioService
@@ -139,29 +140,186 @@ export class PropiedadPropietarioService
     }
   }
 
-  findAll(): Promise<BaseResponseDto<PropiedadPropietario[]>> {
-    throw new Error('Method not implemented.');
+  async findAll(): Promise<BaseResponseDto<PropiedadPropietario[]>> {
+    try {
+      const relaciones = await this.propiedadPropietarioRepository.find({
+        relations: ['idPropiedad', 'idPropietario'],
+        order: { fechaAdquisicion: 'DESC' },
+      });
+
+      return BaseResponseDto.success(
+        relaciones,
+        'Relaciones propiedad-propietario recuperadas exitosamente',
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        `Error al recuperar las relaciones: ${error.message}`,
+      );
+    }
   }
-  findOne(id: string): Promise<BaseResponseDto<PropiedadPropietario>> {
-    throw new Error('Method not implemented.');
+
+  async findOne(id: string): Promise<BaseResponseDto<PropiedadPropietario>> {
+    try {
+      const relacion = await this.propiedadPropietarioRepository.findOne({
+        where: { idPropiedadPropietario: id },
+        relations: ['idPropiedad', 'idPropietario'],
+      });
+
+      if (!relacion) {
+        throw new BadRequestException(
+          'Relación propiedad-propietario no encontrada',
+        );
+      }
+
+      return BaseResponseDto.success(
+        relacion,
+        'Relación propiedad-propietario encontrada exitosamente',
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        `Error al buscar la relación: ${error.message}`,
+      );
+    }
   }
-  update(
+
+  async update(
     id: string,
-    updatePropiedadPropietarioDto: any,
+    updatePropiedadPropietarioDto: UpdatePropiedadPropietarioDto,
   ): Promise<BaseResponseDto<PropiedadPropietario>> {
-    throw new Error('Method not implemented.');
+    const queryRunner = this.datasource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const relacionExistente = await queryRunner.manager.findOne(
+        PropiedadPropietario,
+        {
+          where: { idPropiedadPropietario: id },
+          relations: ['idPropiedad', 'idPropietario'],
+        },
+      );
+
+      if (!relacionExistente) {
+        throw new BadRequestException(
+          'Relación propiedad-propietario no encontrada',
+        );
+      }
+
+      // Actualizar solo los campos que están presentes en el DTO
+      if (updatePropiedadPropietarioDto.fechaInicio !== undefined) {
+        relacionExistente.fechaAdquisicion = updatePropiedadPropietarioDto.fechaInicio?.toString() || relacionExistente.fechaAdquisicion;
+      }
+      
+      if (updatePropiedadPropietarioDto.fechaFin !== undefined) {
+        relacionExistente.fechaFin = updatePropiedadPropietarioDto.fechaFin?.toString() || null;
+      }
+      
+      if (updatePropiedadPropietarioDto.porcentajePropiedad !== undefined) {
+        relacionExistente.porcentajePropiedad = updatePropiedadPropietarioDto.porcentajePropiedad.toString();
+      }
+      
+      if (updatePropiedadPropietarioDto.estaActivo !== undefined) {
+        relacionExistente.esPropietarioActual = updatePropiedadPropietarioDto.estaActivo;
+      }
+
+      // La entidad no tiene campo fechaActualizacion, se actualiza automáticamente en BD
+
+      const relacionActualizada = await queryRunner.manager.save(
+        PropiedadPropietario,
+        relacionExistente,
+      );
+
+      await queryRunner.commitTransaction();
+
+      return BaseResponseDto.success(
+        relacionActualizada,
+        'Relación propiedad-propietario actualizada exitosamente',
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(
+        `Error al actualizar la relación: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
-  remove(id: string): Promise<BaseResponseDto<void>> {
-    throw new Error('Method not implemented.');
+
+  async remove(id: string): Promise<BaseResponseDto<void>> {
+    const queryRunner = this.datasource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const relacionExistente = await queryRunner.manager.findOne(
+        PropiedadPropietario,
+        {
+          where: { idPropiedadPropietario: id },
+        },
+      );
+
+      if (!relacionExistente) {
+        throw new BadRequestException(
+          'Relación propiedad-propietario no encontrada',
+        );
+      }
+
+      await queryRunner.manager.remove(PropiedadPropietario, relacionExistente);
+      await queryRunner.commitTransaction();
+
+      return BaseResponseDto.success(
+        null,
+        'Relación propiedad-propietario eliminada exitosamente',
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(
+        `Error al eliminar la relación: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
-  findByPropiedad(
+
+  async findByPropiedad(
     propiedadId: string,
   ): Promise<BaseResponseDto<PropiedadPropietario[]>> {
-    throw new Error('Method not implemented.');
+    try {
+      const relaciones = await this.propiedadPropietarioRepository.find({
+        where: { idPropiedad: { idPropiedad: propiedadId } },
+        relations: ['idPropiedad', 'idPropietario'],
+        order: { fechaAdquisicion: 'DESC' },
+      });
+
+      return BaseResponseDto.success(
+        relaciones,
+        'Propietarios de la propiedad recuperados exitosamente',
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        `Error al buscar propietarios por propiedad: ${error.message}`,
+      );
+    }
   }
-  findByPropietario(
+
+  async findByPropietario(
     propietarioId: string,
   ): Promise<BaseResponseDto<PropiedadPropietario[]>> {
-    throw new Error('Method not implemented.');
+    try {
+      const relaciones = await this.propiedadPropietarioRepository.find({
+        where: { idPropietario: { idPropietario: propietarioId } },
+        relations: ['idPropiedad', 'idPropietario'],
+        order: { fechaAdquisicion: 'DESC' },
+      });
+
+      return BaseResponseDto.success(
+        relaciones,
+        'Propiedades del propietario recuperadas exitosamente',
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        `Error al buscar propiedades por propietario: ${error.message}`,
+      );
+    }
   }
 }

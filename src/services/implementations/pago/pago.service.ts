@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Pago } from '../../../entities/Pago';
@@ -46,22 +50,28 @@ export class PagoService implements IPagoService {
       idResidencia: pago.idResidencia?.idResidencia,
       idArrendamiento: pago.idArrendamiento?.idArrendamiento,
       idConceptoPago: pago.idConceptoPago?.idConceptoPago,
-      conceptoPago: pago.idConceptoPago ? {
-        idConceptoPago: pago.idConceptoPago.idConceptoPago,
-        nombre: pago.idConceptoPago.nombre,
-        descripcion: pago.idConceptoPago.descripcion || undefined,
-        monto: pago.idConceptoPago.montoBase,
-      } : undefined,
-      residencia: pago.idResidencia ? {
-        idResidencia: pago.idResidencia.idResidencia,
-        numero: pago.idResidencia.tipoOcupacion,
-        piso: pago.idResidencia.estado,
-      } : undefined,
-      arrendamiento: pago.idArrendamiento ? {
-        idArrendamiento: pago.idArrendamiento.idArrendamiento,
-        fechaInicio: pago.idArrendamiento.fechaInicio,
-        fechaFin: pago.idArrendamiento.fechaFin || '',
-      } : undefined,
+      conceptoPago: pago.idConceptoPago
+        ? {
+            idConceptoPago: pago.idConceptoPago.idConceptoPago,
+            nombre: pago.idConceptoPago.nombre,
+            descripcion: pago.idConceptoPago.descripcion || undefined,
+            monto: pago.idConceptoPago.montoBase,
+          }
+        : undefined,
+      residencia: pago.idResidencia
+        ? {
+            idResidencia: pago.idResidencia.idResidencia,
+            numero: pago.idResidencia.tipoOcupacion,
+            piso: pago.idResidencia.estado,
+          }
+        : undefined,
+      arrendamiento: pago.idArrendamiento
+        ? {
+            idArrendamiento: pago.idArrendamiento.idArrendamiento,
+            fechaInicio: pago.idArrendamiento.fechaInicio,
+            fechaFin: pago.idArrendamiento.fechaFin || '',
+          }
+        : undefined,
     };
   }
 
@@ -119,12 +129,16 @@ export class PagoService implements IPagoService {
         metodoPago: createPagoDto.metodoPago,
         referenciaPago: createPagoDto.referenciaPago,
         comprobanteUrl: createPagoDto.comprobanteUrl,
-        idConceptoPago: { idConceptoPago: createPagoDto.idConceptoPago } as ConceptoPago,
-        idResidencia: createPagoDto.idResidencia 
-          ? { idResidencia: createPagoDto.idResidencia } as Residencia 
+        idConceptoPago: {
+          idConceptoPago: createPagoDto.idConceptoPago,
+        } as ConceptoPago,
+        idResidencia: createPagoDto.idResidencia
+          ? ({ idResidencia: createPagoDto.idResidencia } as Residencia)
           : undefined,
-        idArrendamiento: createPagoDto.idArrendamiento 
-          ? { idArrendamiento: createPagoDto.idArrendamiento } as ArrendamientoEspacio 
+        idArrendamiento: createPagoDto.idArrendamiento
+          ? ({
+              idArrendamiento: createPagoDto.idArrendamiento,
+            } as ArrendamientoEspacio)
           : undefined,
       });
 
@@ -156,7 +170,7 @@ export class PagoService implements IPagoService {
         order: { fechaVencimiento: 'DESC' },
       });
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,
@@ -199,7 +213,10 @@ export class PagoService implements IPagoService {
     }
   }
 
-  async update(id: string, updatePagoDto: UpdatePagoDto): Promise<UpdatePagoResponseDto> {
+  async update(
+    id: string,
+    updatePagoDto: UpdatePagoDto,
+  ): Promise<UpdatePagoResponseDto> {
     try {
       const pago = await this.pagoRepository.findOne({
         where: { idPago: id },
@@ -261,24 +278,36 @@ export class PagoService implements IPagoService {
 
       // Actualizar campos
       if (updatePagoDto.monto !== undefined) pago.monto = updatePagoDto.monto;
-      if (updatePagoDto.fechaVencimiento) pago.fechaVencimiento = updatePagoDto.fechaVencimiento;
-      if (updatePagoDto.fechaPago !== undefined) pago.fechaPago = updatePagoDto.fechaPago;
+      if (updatePagoDto.fechaVencimiento)
+        pago.fechaVencimiento = updatePagoDto.fechaVencimiento;
+      if (updatePagoDto.fechaPago !== undefined)
+        pago.fechaPago = updatePagoDto.fechaPago;
       if (updatePagoDto.estado) pago.estado = updatePagoDto.estado;
-      if (updatePagoDto.descripcion !== undefined) pago.descripcion = updatePagoDto.descripcion;
-      if (updatePagoDto.metodoPago !== undefined) pago.metodoPago = updatePagoDto.metodoPago;
-      if (updatePagoDto.referenciaPago !== undefined) pago.referenciaPago = updatePagoDto.referenciaPago;
-      if (updatePagoDto.comprobanteUrl !== undefined) pago.comprobanteUrl = updatePagoDto.comprobanteUrl;
-      
+      if (updatePagoDto.descripcion !== undefined)
+        pago.descripcion = updatePagoDto.descripcion;
+      if (updatePagoDto.metodoPago !== undefined)
+        pago.metodoPago = updatePagoDto.metodoPago;
+      if (updatePagoDto.referenciaPago !== undefined)
+        pago.referenciaPago = updatePagoDto.referenciaPago;
+      if (updatePagoDto.comprobanteUrl !== undefined)
+        pago.comprobanteUrl = updatePagoDto.comprobanteUrl;
+
       if (updatePagoDto.idConceptoPago) {
-        pago.idConceptoPago = { idConceptoPago: updatePagoDto.idConceptoPago } as ConceptoPago;
+        pago.idConceptoPago = {
+          idConceptoPago: updatePagoDto.idConceptoPago,
+        } as ConceptoPago;
       }
-      
+
       if (updatePagoDto.idResidencia) {
-        pago.idResidencia = { idResidencia: updatePagoDto.idResidencia } as Residencia;
+        pago.idResidencia = {
+          idResidencia: updatePagoDto.idResidencia,
+        } as Residencia;
       }
-      
+
       if (updatePagoDto.idArrendamiento) {
-        pago.idArrendamiento = { idArrendamiento: updatePagoDto.idArrendamiento } as ArrendamientoEspacio;
+        pago.idArrendamiento = {
+          idArrendamiento: updatePagoDto.idArrendamiento,
+        } as ArrendamientoEspacio;
       }
 
       const savedPago = await this.pagoRepository.save(pago);
@@ -357,7 +386,7 @@ export class PagoService implements IPagoService {
         order: { fechaVencimiento: 'ASC' },
       });
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,
@@ -383,7 +412,7 @@ export class PagoService implements IPagoService {
         .orderBy('pago.fechaVencimiento', 'DESC')
         .getMany();
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,
@@ -398,7 +427,9 @@ export class PagoService implements IPagoService {
     }
   }
 
-  async findByArrendamiento(arrendamientoId: string): Promise<GetPagosResponseDto> {
+  async findByArrendamiento(
+    arrendamientoId: string,
+  ): Promise<GetPagosResponseDto> {
     try {
       const pagos = await this.pagoRepository
         .createQueryBuilder('pago')
@@ -409,7 +440,7 @@ export class PagoService implements IPagoService {
         .orderBy('pago.fechaVencimiento', 'DESC')
         .getMany();
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,
@@ -435,7 +466,7 @@ export class PagoService implements IPagoService {
         .orderBy('pago.fechaVencimiento', 'DESC')
         .getMany();
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,
@@ -453,7 +484,7 @@ export class PagoService implements IPagoService {
   async findVencidos(): Promise<GetPagosResponseDto> {
     try {
       const hoy = new Date().toISOString().split('T')[0];
-      
+
       const pagos = await this.pagoRepository
         .createQueryBuilder('pago')
         .leftJoinAndSelect('pago.idConceptoPago', 'conceptoPago')
@@ -464,7 +495,7 @@ export class PagoService implements IPagoService {
         .orderBy('pago.fechaVencimiento', 'ASC')
         .getMany();
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,
@@ -487,7 +518,7 @@ export class PagoService implements IPagoService {
         order: { fechaVencimiento: 'ASC' },
       });
 
-      const pagosMapped = pagos.map(pago => this.mapToResponseDto(pago));
+      const pagosMapped = pagos.map((pago) => this.mapToResponseDto(pago));
 
       return BaseResponseDto.success(
         pagosMapped,

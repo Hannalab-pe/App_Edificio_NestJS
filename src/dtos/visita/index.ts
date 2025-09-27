@@ -8,3 +8,14 @@ export {
   UsuarioAutorizadorDto,
   PropiedadVisitaDto,
 } from './visita-response.dto';
+
+// Nuevos DTOs con BaseResponse
+export {
+  VisitaResponseDto as VisitaNewResponseDto,
+  UsuarioAutorizadorResponseDto,
+  PropiedadVisitaResponseDto,
+} from './visitaResponse.dto';
+export {
+  VisitaSingleResponseDto,
+  VisitaArrayResponseDto,
+} from './visitaBaseResponse.dto';

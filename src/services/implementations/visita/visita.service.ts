@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
@@ -9,7 +10,13 @@ import { Visita } from '../../../entities/Visita';
 import { Usuario } from '../../../entities/Usuario';
 import { Propiedad } from '../../../entities/Propiedad';
 import { IVisitaService } from '../../interfaces/visita.interface';
-import { CreateVisitaDto, UpdateVisitaDto } from '../../../dtos/visita';
+import { 
+  CreateVisitaDto, 
+  UpdateVisitaDto, 
+  VisitaSingleResponseDto, 
+  VisitaArrayResponseDto,
+  VisitaNewResponseDto
+} from '../../../dtos';
 
 /**
  * Servicio para la gestión de visitas
@@ -17,6 +24,8 @@ import { CreateVisitaDto, UpdateVisitaDto } from '../../../dtos/visita';
  */
 @Injectable()
 export class VisitaService implements IVisitaService {
+  private readonly logger = new Logger(VisitaService.name);
+
   constructor(
     @InjectRepository(Visita)
     private readonly visitaRepository: Repository<Visita>,
@@ -487,6 +496,472 @@ export class VisitaService implements IVisitaService {
     });
 
     return this.findOne(visita.idVisita);
+  }
+
+  // ===============================
+  // NUEVOS MÉTODOS CON BASE RESPONSE
+  // ===============================
+
+  /**
+   * Crea una nueva visita y retorna BaseResponseDto
+   */
+  async createWithResponse(createVisitaDto: CreateVisitaDto): Promise<VisitaSingleResponseDto> {
+    try {
+      this.logger.log(`Creando nueva visita para ${createVisitaDto.nombreVisitante}`);
+      
+      const visita = await this.create(createVisitaDto);
+      const visitaResponse = this.mapToResponseDto(visita);
+
+      return {
+        success: true,
+        message: 'Visita creada exitosamente',
+        data: visitaResponse,
+        metadata: {
+          codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
+          requiereAutorizacion: true,
+          notificacionesEnviadas: true
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al crear visita: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene todas las visitas con paginación y BaseResponseDto
+   */
+  async findAllWithResponse(page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+    try {
+      const skip = (page - 1) * limit;
+      
+      const [visitas, total] = await this.visitaRepository.findAndCount({
+        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
+        skip,
+        take: limit,
+      });
+
+      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+
+      // Calcular estadísticas
+      const estadisticas = await this.calcularEstadisticas();
+
+      return {
+        success: true,
+        message: `${total} visitas encontradas`,
+        data: visitasResponse,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+          hasNextPage: page < Math.ceil(total / limit),
+          hasPreviousPage: page > 1,
+          estadisticas
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al obtener visitas: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene una visita por ID con BaseResponseDto
+   */
+  async findOneWithResponse(id: string): Promise<VisitaSingleResponseDto> {
+    try {
+      const visita = await this.visitaRepository.findOne({
+        where: { idVisita: id },
+        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+      });
+
+      if (!visita) {
+        throw new NotFoundException('Visita no encontrada');
+      }
+
+      const visitaResponse = this.mapToResponseDto(visita);
+
+      return {
+        success: true,
+        message: 'Visita encontrada exitosamente',
+        data: visitaResponse,
+        metadata: {
+          codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
+          requiereAutorizacion: visita.estado === 'PROGRAMADA',
+          notificacionesEnviadas: true
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al obtener visita ${id}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualiza una visita con BaseResponseDto
+   */
+  async updateWithResponse(id: string, updateVisitaDto: UpdateVisitaDto): Promise<VisitaSingleResponseDto> {
+    try {
+      this.logger.log(`Actualizando visita ${id}`);
+      
+      const visita = await this.update(id, updateVisitaDto);
+      const visitaResponse = this.mapToResponseDto(visita);
+
+      return {
+        success: true,
+        message: 'Visita actualizada exitosamente',
+        data: visitaResponse,
+      };
+    } catch (error) {
+      this.logger.error(`Error al actualizar visita ${id}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Elimina una visita con BaseResponseDto
+   */
+  async removeWithResponse(id: string): Promise<VisitaSingleResponseDto> {
+    try {
+      const visita = await this.findOne(id);
+      await this.remove(id);
+      
+      const visitaResponse = this.mapToResponseDto(visita);
+
+      return {
+        success: true,
+        message: 'Visita cancelada exitosamente',
+        data: visitaResponse,
+      };
+    } catch (error) {
+      this.logger.error(`Error al cancelar visita ${id}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca visitas por estado con BaseResponseDto
+   */
+  async findByEstadoWithResponse(estado: string, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+    try {
+      const skip = (page - 1) * limit;
+      
+      const [visitas, total] = await this.visitaRepository.findAndCount({
+        where: { estado },
+        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        order: { fechaProgramada: 'ASC', horaInicio: 'ASC' },
+        skip,
+        take: limit,
+      });
+
+      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+
+      return {
+        success: true,
+        message: `${total} visitas encontradas con estado ${estado}`,
+        data: visitasResponse,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+          hasNextPage: page < Math.ceil(total / limit),
+          hasPreviousPage: page > 1,
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al buscar visitas por estado: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca visitas por propiedad con BaseResponseDto
+   */
+  async findByPropiedadWithResponse(propiedadId: string, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+    try {
+      const skip = (page - 1) * limit;
+      
+      const [visitas, total] = await this.visitaRepository.findAndCount({
+        where: { idPropiedad: { idPropiedad: propiedadId } },
+        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
+        skip,
+        take: limit,
+      });
+
+      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+
+      return {
+        success: true,
+        message: `${total} visitas encontradas para la propiedad`,
+        data: visitasResponse,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+          hasNextPage: page < Math.ceil(total / limit),
+          hasPreviousPage: page > 1,
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al buscar visitas por propiedad: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca visitas en rango de fechas con BaseResponseDto
+   */
+  async findByFechaRangeWithResponse(fechaInicio: Date, fechaFin: Date, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+    try {
+      const skip = (page - 1) * limit;
+      
+      const [visitas, total] = await this.visitaRepository.findAndCount({
+        where: {
+          fechaProgramada: Between(
+            fechaInicio.toISOString().split('T')[0],
+            fechaFin.toISOString().split('T')[0],
+          ),
+        },
+        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        order: { fechaProgramada: 'ASC', horaInicio: 'ASC' },
+        skip,
+        take: limit,
+      });
+
+      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+
+      return {
+        success: true,
+        message: `${total} visitas encontradas en el rango de fechas`,
+        data: visitasResponse,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+          hasNextPage: page < Math.ceil(total / limit),
+          hasPreviousPage: page > 1,
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al buscar visitas por rango de fechas: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca visitas por usuario autorizador con BaseResponseDto
+   */
+  async findByUsuarioAutorizadorWithResponse(usuarioId: string, page = 1, limit = 10): Promise<VisitaArrayResponseDto> {
+    try {
+      const skip = (page - 1) * limit;
+      
+      const [visitas, total] = await this.visitaRepository.findAndCount({
+        where: { autorizadorUsuario: { idUsuario: usuarioId } },
+        relations: ['autorizadorUsuario', 'autorizadorUsuario.idRol', 'idPropiedad', 'idPropiedad.idEdificio'],
+        order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
+        skip,
+        take: limit,
+      });
+
+      const visitasResponse = visitas.map(visita => this.mapToResponseDto(visita));
+
+      return {
+        success: true,
+        message: `${total} visitas encontradas para el usuario autorizador`,
+        data: visitasResponse,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+          hasNextPage: page < Math.ceil(total / limit),
+          hasPreviousPage: page > 1,
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al buscar visitas por usuario autorizador: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Registra ingreso con BaseResponseDto
+   */
+  async registrarIngresoWithResponse(codigoQr: string): Promise<VisitaSingleResponseDto> {
+    try {
+      this.logger.log(`Registrando ingreso con código QR: ${codigoQr}`);
+      
+      const visita = await this.registrarIngreso(codigoQr);
+      const visitaResponse = this.mapToResponseDto(visita);
+
+      return {
+        success: true,
+        message: 'Ingreso registrado exitosamente',
+        data: visitaResponse,
+        metadata: {
+          codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
+          requiereAutorizacion: false,
+          notificacionesEnviadas: true
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al registrar ingreso: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Registra salida con BaseResponseDto
+   */
+  async registrarSalidaWithResponse(codigoQr: string): Promise<VisitaSingleResponseDto> {
+    try {
+      this.logger.log(`Registrando salida con código QR: ${codigoQr}`);
+      
+      const visita = await this.registrarSalida(codigoQr);
+      const visitaResponse = this.mapToResponseDto(visita);
+
+      return {
+        success: true,
+        message: 'Salida registrada exitosamente',
+        data: visitaResponse,
+        metadata: {
+          codigoQrUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${visita.codigoQr}`,
+          requiereAutorizacion: false,
+          notificacionesEnviadas: true
+        }
+      };
+    } catch (error) {
+      this.logger.error(`Error al registrar salida: ${error.message}`);
+      throw error;
+    }
+  }
+
+  // ===============================
+  // MÉTODOS PRIVADOS DE UTILIDAD
+  // ===============================
+
+  /**
+   * Mapea una entidad Visita a VisitaResponseDto
+   */
+  private mapToResponseDto(visita: Visita): VisitaNewResponseDto {
+    const duracionProgramada = this.calcularDuracion(visita.horaInicio, visita.horaFin);
+    const duracionReal = visita.fechaIngreso && visita.fechaSalida 
+      ? this.calcularDuracionReal(visita.fechaIngreso, visita.fechaSalida)
+      : undefined;
+    const tiempoRestante = visita.estado === 'EN_CURSO' && visita.fechaIngreso
+      ? this.calcularTiempoRestante(visita.fechaIngreso, visita.horaFin)
+      : undefined;
+
+    return {
+      idVisita: visita.idVisita,
+      codigoQr: visita.codigoQr,
+      nombreVisitante: visita.nombreVisitante,
+      documentoVisitante: visita.documentoVisitante,
+      telefonoVisitante: visita.telefonoVisitante,
+      motivo: visita.motivo,
+      fechaProgramada: visita.fechaProgramada,
+      horaInicio: visita.horaInicio,
+      horaFin: visita.horaFin,
+      fechaIngreso: visita.fechaIngreso,
+      fechaSalida: visita.fechaSalida,
+      estado: visita.estado,
+      autorizadorUsuario: {
+        idUsuario: visita.autorizadorUsuario.idUsuario,
+        correo: visita.autorizadorUsuario.correo,
+        estaActivo: visita.autorizadorUsuario.estaActivo,
+        rol: {
+          idRol: visita.autorizadorUsuario.idRol?.idRol || '',
+          nombre: visita.autorizadorUsuario.idRol?.nombre || 'Sin rol'
+        }
+      },
+      propiedad: {
+        idPropiedad: visita.idPropiedad.idPropiedad,
+        numeroDepartamento: visita.idPropiedad.numeroDepartamento,
+        tipoPropiedad: visita.idPropiedad.tipoPropiedad,
+        piso: visita.idPropiedad.piso,
+        estadoOcupacion: visita.idPropiedad.estadoOcupacion,
+        estaActivo: visita.idPropiedad.estaActivo,
+        edificio: {
+          idEdificio: visita.idPropiedad.idEdificio?.idEdificio || '',
+          nombre: visita.idPropiedad.idEdificio?.nombreEdificio || 'Sin edificio'
+        }
+      },
+      estadisticas: {
+        duracionProgramada,
+        duracionReal,
+        tiempoRestante
+      },
+      auditoria: {
+        fechaCreacion: new Date(), // Estos deberían venir de la base de datos si existen
+        fechaActualizacion: new Date()
+      }
+    };
+  }
+
+  /**
+   * Calcula estadísticas generales de visitas
+   */
+  private async calcularEstadisticas() {
+    const [programadas, enCurso, finalizadas, canceladas] = await Promise.all([
+      this.visitaRepository.count({ where: { estado: 'PROGRAMADA' } }),
+      this.visitaRepository.count({ where: { estado: 'EN_CURSO' } }),
+      this.visitaRepository.count({ where: { estado: 'FINALIZADA' } }),
+      this.visitaRepository.count({ where: { estado: 'CANCELADA' } }),
+    ]);
+
+    return { programadas, enCurso, finalizadas, canceladas };
+  }
+
+  /**
+   * Calcula duración programada entre dos horas
+   */
+  private calcularDuracion(horaInicio: string, horaFin: string): string {
+    const inicio = new Date(`2000-01-01T${horaInicio}`);
+    const fin = new Date(`2000-01-01T${horaFin}`);
+    const diferencia = fin.getTime() - inicio.getTime();
+    
+    const horas = Math.floor(diferencia / (1000 * 60 * 60));
+    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${horas} horas ${minutos} minutos`;
+  }
+
+  /**
+   * Calcula duración real entre dos timestamps
+   */
+  private calcularDuracionReal(fechaIngreso: Date, fechaSalida: Date): string {
+    const diferencia = fechaSalida.getTime() - fechaIngreso.getTime();
+    
+    const horas = Math.floor(diferencia / (1000 * 60 * 60));
+    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${horas} horas ${minutos} minutos`;
+  }
+
+  /**
+   * Calcula tiempo restante de visita en curso
+   */
+  private calcularTiempoRestante(fechaIngreso: Date, horaFin: string): string {
+    const ahora = new Date();
+    const fechaBase = fechaIngreso.toISOString().split('T')[0];
+    const fin = new Date(`${fechaBase}T${horaFin}`);
+    
+    const diferencia = fin.getTime() - ahora.getTime();
+    
+    if (diferencia <= 0) {
+      return 'Tiempo excedido';
+    }
+    
+    const horas = Math.floor(diferencia / (1000 * 60 * 60));
+    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${horas} horas ${minutos} minutos`;
   }
 
   /**

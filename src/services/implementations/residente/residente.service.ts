@@ -4,9 +4,10 @@ import {
   BadRequestException,
   ConflictException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { IResidenteService } from '../../interfaces/residente.interface';
 import { IAuthService } from '../../interfaces/auth.interface';
 import { IRolService } from '../../interfaces/rol.interface';
@@ -19,11 +20,15 @@ import {
   CreateResidenteDto,
   UpdateResidenteDto,
   ResidenteRegisterResponseDto,
+  ResidenteResponseDto,
   CreateUsuarioDto,
 } from '../../../dtos';
+import { BaseResponseDto } from '../../../dtos/baseResponse/baseResponse.dto';
 
 @Injectable()
 export class ResidenteService implements IResidenteService {
+  private readonly logger = new Logger(ResidenteService.name);
+
   constructor(
     @InjectRepository(Residente)
     private readonly residenteRepository: Repository<Residente>,
@@ -311,5 +316,248 @@ export class ResidenteService implements IResidenteService {
     }
 
     return residente;
+  }
+
+  // Métodos modernizados con BaseResponseDto
+  async createWithBaseResponse(createResidenteDto: CreateResidenteDto): Promise<BaseResponseDto<ResidenteResponseDto>> {
+    try {
+      this.logger.log('Creando nuevo residente básico');
+
+      const residente = this.residenteRepository.create(createResidenteDto);
+      const savedResidente = await this.residenteRepository.save(residente);
+
+      // Cargar relaciones para la respuesta
+      const residenteConRelaciones = await this.residenteRepository.findOne({
+        where: { idResidente: savedResidente.idResidente },
+        relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+      });
+
+      const responseData = this.mapToResponseDto(residenteConRelaciones!);
+
+      this.logger.log(`Residente creado exitosamente con ID: ${savedResidente.idResidente}`);
+      return BaseResponseDto.success(responseData, 'Residente creado exitosamente');
+
+    } catch (error) {
+      this.logger.error(`Error al crear residente: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al crear el residente', 500);
+    }
+  }
+
+  async findAllWithBaseResponse(): Promise<BaseResponseDto<ResidenteResponseDto[]>> {
+    try {
+      this.logger.log('Obteniendo todos los residentes');
+
+      const residentes = await this.residenteRepository.find({
+        relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+        where: { estaActivo: true },
+        order: { fechaRegistro: 'DESC' },
+      });
+
+      const responseData = residentes.map(residente => this.mapToResponseDto(residente));
+
+      this.logger.log(`Se encontraron ${residentes.length} residentes`);
+      return BaseResponseDto.success(responseData, 'Residentes obtenidos exitosamente');
+
+    } catch (error) {
+      this.logger.error(`Error al obtener residentes: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al obtener los residentes', 500);
+    }
+  }
+
+  async findOneWithBaseResponse(id: string): Promise<BaseResponseDto<ResidenteResponseDto>> {
+    try {
+      this.logger.log(`Buscando residente con ID: ${id}`);
+
+      const residente = await this.residenteRepository.findOne({
+        where: { idResidente: id, estaActivo: true },
+        relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+      });
+
+      if (!residente) {
+        return BaseResponseDto.error('Residente no encontrado', 404);
+      }
+
+      const responseData = this.mapToResponseDto(residente);
+
+      this.logger.log(`Residente encontrado: ${id}`);
+      return BaseResponseDto.success(responseData, 'Residente encontrado exitosamente');
+
+    } catch (error) {
+      this.logger.error(`Error al buscar residente ${id}: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al buscar el residente', 500);
+    }
+  }
+
+  async updateWithBaseResponse(id: string, updateResidenteDto: UpdateResidenteDto): Promise<BaseResponseDto<ResidenteResponseDto>> {
+    const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      this.logger.log(`Actualizando residente con ID: ${id}`);
+
+      const residente = await this.residenteRepository.findOne({
+        where: { idResidente: id, estaActivo: true },
+        relations: ['idUsuario', 'idDocumentoIdentidad'],
+      });
+
+      if (!residente) {
+        return BaseResponseDto.error('Residente no encontrado', 404);
+      }
+
+      // Verificar conflictos de correo si se actualiza
+      if (updateResidenteDto.correo && updateResidenteDto.correo !== residente.correo) {
+        const existeCorreo = await this.residenteRepository.findOne({
+          where: { correo: updateResidenteDto.correo, estaActivo: true }
+        });
+        if (existeCorreo) {
+          return BaseResponseDto.error('Ya existe un residente con este correo', 409);
+        }
+      }
+
+      // Actualizar campos del residente
+      const updateData: any = {};
+      if (updateResidenteDto.nombre !== undefined) updateData.nombre = updateResidenteDto.nombre;
+      if (updateResidenteDto.apellido !== undefined) updateData.apellido = updateResidenteDto.apellido;
+      if (updateResidenteDto.correo !== undefined) updateData.correo = updateResidenteDto.correo;
+      if (updateResidenteDto.telefono !== undefined) updateData.telefono = updateResidenteDto.telefono;
+      if (updateResidenteDto.fechaNacimiento !== undefined) updateData.fechaNacimiento = updateResidenteDto.fechaNacimiento;
+
+      await queryRunner.manager.update(Residente, id, updateData);
+
+      // También actualizar el correo en el usuario si cambió
+      if (updateResidenteDto.correo && residente.idUsuario) {
+        await queryRunner.manager.update(Usuario, residente.idUsuario.idUsuario, {
+          correo: updateResidenteDto.correo
+        });
+      }
+
+      await queryRunner.commitTransaction();
+
+      // Cargar residente actualizado con relaciones
+      const residenteActualizado = await this.residenteRepository.findOne({
+        where: { idResidente: id },
+        relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+      });
+
+      const responseData = this.mapToResponseDto(residenteActualizado!);
+
+      this.logger.log(`Residente actualizado exitosamente: ${id}`);
+      return BaseResponseDto.success(responseData, 'Residente actualizado exitosamente');
+
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error(`Error al actualizar residente ${id}: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al actualizar el residente', 500);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async removeWithBaseResponse(id: string): Promise<BaseResponseDto<ResidenteResponseDto>> {
+    try {
+      this.logger.log(`Eliminando residente con ID: ${id}`);
+
+      const residente = await this.residenteRepository.findOne({
+        where: { idResidente: id, estaActivo: true },
+        relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+      });
+
+      if (!residente) {
+        return BaseResponseDto.error('Residente no encontrado', 404);
+      }
+
+      // Preparar datos de respuesta antes de eliminar
+      const responseData = this.mapToResponseDto(residente);
+
+      // Eliminación lógica del residente
+      await this.residenteRepository.update(id, { estaActivo: false });
+
+      // También desactivar el usuario asociado
+      if (residente.idUsuario) {
+        await this.usuarioService.update(residente.idUsuario.idUsuario, {
+          estaActivo: false,
+        });
+      }
+
+      this.logger.log(`Residente eliminado exitosamente: ${id}`);
+      return BaseResponseDto.success(responseData, 'Residente eliminado exitosamente');
+
+    } catch (error) {
+      this.logger.error(`Error al eliminar residente ${id}: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al eliminar el residente', 500);
+    }
+  }
+
+  async findByPropiedadWithBaseResponse(propiedadId: string): Promise<BaseResponseDto<ResidenteResponseDto[]>> {
+    try {
+      this.logger.log(`Buscando residentes para propiedad: ${propiedadId}`);
+
+      const residentes = await this.residenteRepository
+        .createQueryBuilder('residente')
+        .leftJoinAndSelect('residente.residencias', 'residencia')
+        .leftJoinAndSelect('residencia.idPropiedad', 'propiedad')
+        .leftJoinAndSelect('residente.idUsuario', 'usuario')
+        .leftJoinAndSelect('residente.idDocumentoIdentidad', 'documentoIdentidad')
+        .leftJoinAndSelect('residente.cronogramas', 'cronogramas')
+        .where('propiedad.idPropiedad = :propiedadId', { propiedadId })
+        .andWhere('residente.estaActivo = :activo', { activo: true })
+        .getMany();
+
+      const responseData = residentes.map(residente => this.mapToResponseDto(residente));
+
+      this.logger.log(`Se encontraron ${residentes.length} residentes para la propiedad: ${propiedadId}`);
+      return BaseResponseDto.success(responseData, 'Residentes encontrados exitosamente');
+
+    } catch (error) {
+      this.logger.error(`Error al buscar residentes por propiedad ${propiedadId}: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al buscar residentes por propiedad', 500);
+    }
+  }
+
+  async findByEstadoWithBaseResponse(activo: boolean): Promise<BaseResponseDto<ResidenteResponseDto[]>> {
+    try {
+      this.logger.log(`Buscando residentes con estado activo: ${activo}`);
+
+      const residentes = await this.residenteRepository.find({
+        where: { estaActivo: activo },
+        relations: ['idUsuario', 'idDocumentoIdentidad', 'residencias', 'cronogramas'],
+        order: { fechaRegistro: 'DESC' },
+      });
+
+      const responseData = residentes.map(residente => this.mapToResponseDto(residente));
+
+      this.logger.log(`Se encontraron ${residentes.length} residentes con estado activo: ${activo}`);
+      return BaseResponseDto.success(responseData, 'Residentes encontrados exitosamente');
+
+    } catch (error) {
+      this.logger.error(`Error al buscar residentes por estado ${activo}: ${error.message}`, error.stack);
+      return BaseResponseDto.error('Error interno del servidor al buscar residentes por estado', 500);
+    }
+  }
+
+  private mapToResponseDto(residente: Residente): ResidenteResponseDto {
+    return {
+      idResidente: residente.idResidente,
+      nombre: residente.nombre,
+      apellido: residente.apellido,
+      correo: residente.correo,
+      estaActivo: residente.estaActivo,
+      telefono: residente.telefono,
+      fechaNacimiento: residente.fechaNacimiento,
+      fechaRegistro: residente.fechaRegistro,
+      usuario: residente.idUsuario ? {
+        idUsuario: residente.idUsuario.idUsuario,
+        correo: residente.idUsuario.correo,
+        estaActivo: residente.idUsuario.estaActivo,
+      } : undefined,
+      documentoIdentidad: residente.idDocumentoIdentidad ? {
+        idDocumentoIdentidad: residente.idDocumentoIdentidad.idDocumentoIdentidad,
+        tipoDocumento: residente.idDocumentoIdentidad.tipoDocumento,
+        numero: residente.idDocumentoIdentidad.numero.toString(),
+      } : undefined,
+      cantidadResidencias: residente.residencias ? residente.residencias.length : 0,
+      cantidadCronogramas: residente.cronogramas ? residente.cronogramas.length : 0,
+    };
   }
 }

@@ -22,11 +22,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { IPagoService } from '../../services/interfaces/pago.interface';
-import {
-  CreatePagoDto,
-  UpdatePagoDto,
-  PagoResponseDto,
-} from '../../dtos';
+import { CreatePagoDto, UpdatePagoDto, PagoResponseDto } from '../../dtos';
 import { BaseResponseDto } from '../../dtos/baseResponse/baseResponse.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { EstadoPago } from '../../Enums/globales.enum';
@@ -87,7 +83,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async create(@Body() createPagoDto: CreatePagoDto): Promise<BaseResponseDto<PagoResponseDto>> {
+  async create(
+    @Body() createPagoDto: CreatePagoDto,
+  ): Promise<BaseResponseDto<PagoResponseDto>> {
     return await this.pagoService.create(createPagoDto);
   }
 
@@ -97,7 +95,8 @@ export class PagoController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todos los pagos',
-    description: 'Retorna una lista de todos los pagos ordenados por fecha de vencimiento',
+    description:
+      'Retorna una lista de todos los pagos ordenados por fecha de vencimiento',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -135,7 +134,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async findByEstado(@Param('estado') estado: string): Promise<BaseResponseDto<PagoResponseDto[]>> {
+  async findByEstado(
+    @Param('estado') estado: string,
+  ): Promise<BaseResponseDto<PagoResponseDto[]>> {
     return await this.pagoService.findByEstado(estado);
   }
 
@@ -187,7 +188,8 @@ export class PagoController {
   @Get('residencia/:residenciaId')
   @ApiOperation({
     summary: 'Obtener pagos por residencia',
-    description: 'Retorna todos los pagos asociados a una residencia específica',
+    description:
+      'Retorna todos los pagos asociados a una residencia específica',
   })
   @ApiParam({
     name: 'residenciaId',
@@ -204,7 +206,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async findByResidencia(@Param('residenciaId', ParseUUIDPipe) residenciaId: string): Promise<BaseResponseDto<PagoResponseDto[]>> {
+  async findByResidencia(
+    @Param('residenciaId', ParseUUIDPipe) residenciaId: string,
+  ): Promise<BaseResponseDto<PagoResponseDto[]>> {
     return await this.pagoService.findByResidencia(residenciaId);
   }
 
@@ -214,7 +218,8 @@ export class PagoController {
   @Get('arrendamiento/:arrendamientoId')
   @ApiOperation({
     summary: 'Obtener pagos por arrendamiento',
-    description: 'Retorna todos los pagos asociados a un arrendamiento específico',
+    description:
+      'Retorna todos los pagos asociados a un arrendamiento específico',
   })
   @ApiParam({
     name: 'arrendamientoId',
@@ -231,7 +236,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async findByArrendamiento(@Param('arrendamientoId', ParseUUIDPipe) arrendamientoId: string): Promise<BaseResponseDto<PagoResponseDto[]>> {
+  async findByArrendamiento(
+    @Param('arrendamientoId', ParseUUIDPipe) arrendamientoId: string,
+  ): Promise<BaseResponseDto<PagoResponseDto[]>> {
     return await this.pagoService.findByArrendamiento(arrendamientoId);
   }
 
@@ -241,7 +248,8 @@ export class PagoController {
   @Get('concepto/:conceptoId')
   @ApiOperation({
     summary: 'Obtener pagos por concepto',
-    description: 'Retorna todos los pagos asociados a un concepto de pago específico',
+    description:
+      'Retorna todos los pagos asociados a un concepto de pago específico',
   })
   @ApiParam({
     name: 'conceptoId',
@@ -258,7 +266,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async findByConcepto(@Param('conceptoId', ParseUUIDPipe) conceptoId: string): Promise<BaseResponseDto<PagoResponseDto[]>> {
+  async findByConcepto(
+    @Param('conceptoId', ParseUUIDPipe) conceptoId: string,
+  ): Promise<BaseResponseDto<PagoResponseDto[]>> {
     return await this.pagoService.findByConcepto(conceptoId);
   }
 
@@ -299,7 +309,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<BaseResponseDto<PagoResponseDto>> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<BaseResponseDto<PagoResponseDto>> {
     return await this.pagoService.findOne(id);
   }
 
@@ -357,7 +369,8 @@ export class PagoController {
   @Delete(':id')
   @ApiOperation({
     summary: 'Eliminar pago',
-    description: 'Elimina un pago si no tiene movimientos de caja o recibos asociados',
+    description:
+      'Elimina un pago si no tiene movimientos de caja o recibos asociados',
   })
   @ApiParam({
     name: 'id',
@@ -380,7 +393,8 @@ export class PagoController {
     schema: {
       example: {
         success: false,
-        message: 'No se puede eliminar el pago porque tiene movimientos de caja asociados',
+        message:
+          'No se puede eliminar el pago porque tiene movimientos de caja asociados',
         error: {
           code: 'HAS_MOVEMENTS',
           timestamp: '2024-01-01T12:00:00.000Z',
@@ -392,7 +406,9 @@ export class PagoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<BaseResponseDto<{ idPago: string; mensaje: string }>> {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<BaseResponseDto<{ idPago: string; mensaje: string }>> {
     return await this.pagoService.remove(id);
   }
 }

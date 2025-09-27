@@ -107,27 +107,236 @@ export class PropietarioService implements IPropietarioService {
       error: null,
     };
   }
-  findAll(): Promise<BaseResponseDto<Propietario[]>> {
-    throw new Error('Method not implemented.');
+  async findAll(): Promise<BaseResponseDto<Propietario[]>> {
+    try {
+      const propietarios = await this.propietarioRepository.find({
+        relations: ['idDocumentoIdentidad', 'idUsuario'],
+        order: { fechaRegistro: 'DESC' },
+      });
+
+      return BaseResponseDto.success(
+        propietarios,
+        'Propietarios recuperados exitosamente',
+      );
+    } catch (error) {
+      return BaseResponseDto.error(
+        `Error al recuperar los propietarios: ${error.message}`,
+      );
+    }
   }
-  findOne(id: string): Promise<BaseResponseDto<Propietario>> {
-    throw new Error('Method not implemented.');
+
+  async findOne(id: string): Promise<BaseResponseDto<Propietario>> {
+    try {
+      const propietario = await this.propietarioRepository.findOne({
+        where: { idPropietario: id },
+        relations: ['idDocumentoIdentidad', 'idUsuario', 'propiedadPropietarios'],
+      });
+
+      if (!propietario) {
+        return BaseResponseDto.error('Propietario no encontrado', 404);
+      }
+
+      return BaseResponseDto.success(
+        propietario,
+        'Propietario encontrado exitosamente',
+      );
+    } catch (error) {
+      return BaseResponseDto.error(
+        `Error al buscar el propietario: ${error.message}`,
+      );
+    }
   }
-  update(
+
+  async update(
     id: string,
     updatePropietarioDto: UpdatePropietarioDto,
   ): Promise<BaseResponseDto<Propietario>> {
-    throw new Error('Method not implemented.');
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const propietarioExistente = await queryRunner.manager.findOne(
+        Propietario,
+        {
+          where: { idPropietario: id },
+          relations: ['idDocumentoIdentidad', 'idUsuario'],
+        },
+      );
+
+      if (!propietarioExistente) {
+        await queryRunner.rollbackTransaction();
+        return BaseResponseDto.error('Propietario no encontrado', 404);
+      }
+
+      // Verificar si el correo ya está en uso por otro propietario
+      if (updatePropietarioDto.correo && updatePropietarioDto.correo !== propietarioExistente.correo) {
+        const correoExistente = await queryRunner.manager.findOne(Propietario, {
+          where: { correo: updatePropietarioDto.correo },
+        });
+        
+        if (correoExistente) {
+          await queryRunner.rollbackTransaction();
+          return BaseResponseDto.error('El correo ya está registrado por otro propietario', 409);
+        }
+      }
+
+      // Actualizar campos del propietario
+      Object.assign(propietarioExistente, updatePropietarioDto);
+
+      const propietarioActualizado = await queryRunner.manager.save(
+        Propietario,
+        propietarioExistente,
+      );
+
+      await queryRunner.commitTransaction();
+
+      return BaseResponseDto.success(
+        propietarioActualizado,
+        'Propietario actualizado exitosamente',
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return BaseResponseDto.error(
+        `Error al actualizar el propietario: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
-  remove(id: string): Promise<BaseResponseDto<void>> {
-    throw new Error('Method not implemented.');
+
+  async remove(id: string): Promise<BaseResponseDto<void>> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const propietario = await queryRunner.manager.findOne(Propietario, {
+        where: { idPropietario: id },
+        relations: ['propiedadPropietarios'],
+      });
+
+      if (!propietario) {
+        await queryRunner.rollbackTransaction();
+        return BaseResponseDto.error('Propietario no encontrado', 404);
+      }
+
+      // Verificar si tiene propiedades asociadas
+      if (propietario.propiedadPropietarios && propietario.propiedadPropietarios.length > 0) {
+        await queryRunner.rollbackTransaction();
+        return BaseResponseDto.error(
+          'No se puede eliminar el propietario porque tiene propiedades asociadas',
+          409,
+        );
+      }
+
+      await queryRunner.manager.remove(Propietario, propietario);
+      await queryRunner.commitTransaction();
+
+      return BaseResponseDto.success(
+        null,
+        'Propietario eliminado exitosamente',
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return BaseResponseDto.error(
+        `Error al eliminar el propietario: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
-  findByNumeroDocumento(
+
+  async findByNumeroDocumento(
     numeroDocumento: string,
   ): Promise<BaseResponseDto<Propietario>> {
-    throw new Error('Method not implemented.');
+    try {
+      const propietario = await this.propietarioRepository
+        .createQueryBuilder('propietario')
+        .leftJoinAndSelect('propietario.idDocumentoIdentidad', 'documento')
+        .leftJoinAndSelect('propietario.idUsuario', 'usuario')
+        .where('documento.numero = :numeroDocumento', { numeroDocumento })
+        .getOne();
+
+      if (!propietario) {
+        return BaseResponseDto.error('Propietario no encontrado con ese número de documento', 404);
+      }
+
+      return BaseResponseDto.success(
+        propietario,
+        'Propietario encontrado por número de documento',
+      );
+    } catch (error) {
+      return BaseResponseDto.error(
+        `Error al buscar propietario por documento: ${error.message}`,
+      );
+    }
   }
-  findWithPropiedades(id: string): Promise<BaseResponseDto<Propietario>> {
-    throw new Error('Method not implemented.');
+
+  async findWithPropiedades(id: string): Promise<BaseResponseDto<Propietario>> {
+    try {
+      const propietario = await this.propietarioRepository.findOne({
+        where: { idPropietario: id },
+        relations: [
+          'idDocumentoIdentidad', 
+          'idUsuario', 
+          'propiedadPropietarios',
+          'propiedadPropietarios.idPropiedad'
+        ],
+      });
+
+      if (!propietario) {
+        return BaseResponseDto.error('Propietario no encontrado', 404);
+      }
+
+      return BaseResponseDto.success(
+        propietario,
+        'Propietario con propiedades recuperado exitosamente',
+      );
+    } catch (error) {
+      return BaseResponseDto.error(
+        `Error al buscar propietario con propiedades: ${error.message}`,
+      );
+    }
+  }
+
+  async create(createPropietarioDto: CreatePropietarioDto): Promise<BaseResponseDto<Propietario>> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Verificar si ya existe un propietario con el mismo correo
+      const propietarioExistente = await queryRunner.manager.findOne(Propietario, {
+        where: { correo: createPropietarioDto.correo },
+      });
+
+      if (propietarioExistente) {
+        await queryRunner.rollbackTransaction();
+        return BaseResponseDto.error('Ya existe un propietario con este correo', 409);
+      }
+
+      const nuevoPropietario = queryRunner.manager.create(Propietario, {
+        ...createPropietarioDto,
+        idDocumentoIdentidad: { idDocumentoIdentidad: createPropietarioDto.idDocumentoIdentidad } as any,
+        idUsuario: { idUsuario: createPropietarioDto.idUsuario } as any,
+        estaActivo: true,
+      });
+
+      const propietarioGuardado = await queryRunner.manager.save(Propietario, nuevoPropietario);
+      await queryRunner.commitTransaction();
+
+      return BaseResponseDto.success(
+        propietarioGuardado,
+        'Propietario creado exitosamente',
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return BaseResponseDto.error(
+        `Error al crear el propietario: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -90,7 +90,9 @@ export class OpcionVotoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async create(@Body() createOpcionVotoDto: CreateOpcionVotoDto): Promise<CreateOpcionVotoResponseDto> {
+  async create(
+    @Body() createOpcionVotoDto: CreateOpcionVotoDto,
+  ): Promise<CreateOpcionVotoResponseDto> {
     return await this.opcionVotoService.create(createOpcionVotoDto);
   }
 
@@ -100,7 +102,8 @@ export class OpcionVotoController {
   @Get()
   @ApiOperation({
     summary: 'Obtener todas las opciones de voto',
-    description: 'Retorna una lista de todas las opciones de voto ordenadas por presentación',
+    description:
+      'Retorna una lista de todas las opciones de voto ordenadas por presentación',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -121,7 +124,8 @@ export class OpcionVotoController {
   @Get('by-votacion/:votacionId')
   @ApiOperation({
     summary: 'Obtener opciones por votación',
-    description: 'Retorna todas las opciones de voto de una votación específica',
+    description:
+      'Retorna todas las opciones de voto de una votación específica',
   })
   @ApiParam({
     name: 'votacionId',
@@ -142,7 +146,9 @@ export class OpcionVotoController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'No autorizado',
   })
-  async findByVotacion(@Param('votacionId') votacionId: string): Promise<GetOpcionesVotoResponseDto> {
+  async findByVotacion(
+    @Param('votacionId') votacionId: string,
+  ): Promise<GetOpcionesVotoResponseDto> {
     return await this.opcionVotoService.findByVotacion(votacionId);
   }
 
@@ -152,7 +158,8 @@ export class OpcionVotoController {
   @Get(':id')
   @ApiOperation({
     summary: 'Obtener opción de voto por ID',
-    description: 'Retorna una opción de voto específica con su información completa',
+    description:
+      'Retorna una opción de voto específica con su información completa',
   })
   @ApiParam({
     name: 'id',
@@ -216,7 +223,8 @@ export class OpcionVotoController {
     schema: {
       example: {
         success: false,
-        message: 'No se puede cambiar el texto de una opción que ya tiene votos registrados',
+        message:
+          'No se puede cambiar el texto de una opción que ya tiene votos registrados',
         error: {
           code: 'VOTES_EXIST',
           timestamp: '2024-01-01T12:00:00.000Z',
@@ -268,7 +276,8 @@ export class OpcionVotoController {
     schema: {
       example: {
         success: false,
-        message: 'No se puede eliminar una opción que ya tiene votos registrados',
+        message:
+          'No se puede eliminar una opción que ya tiene votos registrados',
         error: {
           code: 'VOTES_EXIST',
           timestamp: '2024-01-01T12:00:00.000Z',

@@ -5,12 +5,14 @@ import {
   Get,
   HttpStatus,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -18,11 +20,20 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
-import { CreatePresupuestoDto, UpdatePresupuestoDto } from 'src/dtos';
+import {
+  CreatePresupuestoDto,
+  UpdatePresupuestoDto,
+  PresupuestoResponseDto,
+  PresupuestoListResponseDto,
+  PresupuestoDeleteResponseDto,
+} from 'src/dtos';
 import { PresupuestoService } from 'src/services/implementations/presupuesto/presupuesto.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Presupuestos')
 @Controller('presupuesto')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class PresupuestoController {
   constructor(private readonly presupuestoService: PresupuestoService) {}
 
@@ -98,6 +109,35 @@ export class PresupuestoController {
     }
   }
 
+  @Get('activos')
+  @ApiOperation({
+    summary: 'Obtener presupuestos activos',
+    description:
+      'Retorna una lista de todos los presupuestos activos del sistema',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de presupuestos activos obtenida exitosamente',
+  })
+  async findActivos(@Res() res: Response) {
+    try {
+      const result = await this.presupuestoService.findAll();
+
+      if (result.success) {
+        return res.status(HttpStatus.OK).json(result);
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json(result);
+      }
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'Error interno del servidor',
+        data: [],
+        error: error.message,
+      });
+    }
+  }
+
   @Get('anio/:anio')
   @ApiOperation({
     summary: 'Obtener presupuestos por año',
@@ -122,6 +162,50 @@ export class PresupuestoController {
         return res.status(HttpStatus.OK).json(result);
       } else {
         return res.status(HttpStatus.BAD_REQUEST).json(result);
+      }
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'Error interno del servidor',
+        data: [],
+        error: error.message,
+      });
+    }
+  }
+
+  @Get('mes/:mes')
+  @ApiOperation({
+    summary: 'Obtener presupuestos por mes del año actual',
+    description:
+      'Retorna una lista de presupuestos filtrados por mes del año actual',
+  })
+  @ApiParam({
+    name: 'mes',
+    type: 'number',
+    description: 'Mes del presupuesto (1-12)',
+    example: 3,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de presupuestos por mes obtenida exitosamente',
+  })
+  async findByMes(@Param('mes') mes: number, @Res() res: Response) {
+    try {
+      const currentYear = new Date().getFullYear();
+      const presupuestos = await this.presupuestoService.findAll();
+
+      if (presupuestos.success && presupuestos.data) {
+        const presupuestosFiltrados = presupuestos.data.filter(
+          (p) => p.mes === Number(mes) && p.anio === currentYear,
+        );
+
+        return res.status(HttpStatus.OK).json({
+          success: true,
+          message: `Presupuestos del mes ${mes} del año ${currentYear} obtenidos exitosamente`,
+          data: presupuestosFiltrados,
+        });
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json(presupuestos);
       }
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -213,7 +297,7 @@ export class PresupuestoController {
     }
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({
     summary: 'Actualizar un presupuesto',
     description: 'Actualiza los datos de un presupuesto existente',

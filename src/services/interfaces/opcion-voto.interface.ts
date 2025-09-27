@@ -1,5 +1,5 @@
-import { 
-  CreateOpcionVotoDto, 
+import {
+  CreateOpcionVotoDto,
   UpdateOpcionVotoDto,
   CreateOpcionVotoResponseDto,
   GetOpcionVotoResponseDto,
@@ -9,10 +9,15 @@ import {
 } from '../../dtos';
 
 export interface IOpcionVotoService {
-  create(createOpcionVotoDto: CreateOpcionVotoDto): Promise<CreateOpcionVotoResponseDto>;
+  create(
+    createOpcionVotoDto: CreateOpcionVotoDto,
+  ): Promise<CreateOpcionVotoResponseDto>;
   findAll(): Promise<GetOpcionesVotoResponseDto>;
   findOne(id: string): Promise<GetOpcionVotoResponseDto>;
-  update(id: string, updateOpcionVotoDto: UpdateOpcionVotoDto): Promise<UpdateOpcionVotoResponseDto>;
+  update(
+    id: string,
+    updateOpcionVotoDto: UpdateOpcionVotoDto,
+  ): Promise<UpdateOpcionVotoResponseDto>;
   remove(id: string): Promise<DeleteOpcionVotoResponseDto>;
   findByVotacion(votacionId: string): Promise<GetOpcionesVotoResponseDto>;
 }
