@@ -26,7 +26,7 @@ export class VisitaService implements IVisitaService {
 
     @InjectRepository(Propiedad)
     private readonly propiedadRepository: Repository<Propiedad>,
-  ) {}
+  ) { }
 
   /**
    * Crea una nueva visita con validaciones completas

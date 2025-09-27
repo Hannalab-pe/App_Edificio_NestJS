@@ -59,15 +59,15 @@ export class ContactoService implements IContactoService {
                 }
             }
 
-            // Validar compatibilidad de tipos
-            const compatibilidadResult = await this.validarCompatibilidadTipos(
-                createContactoDto.idTipoContacto,
-                createContactoDto.idTipoContrato
-            );
+            // // Validar compatibilidad de tipos
+            // const compatibilidadResult = await this.validarCompatibilidadTipos(
+            //     createContactoDto.idTipoContacto,
+            //     createContactoDto.idTipoContrato
+            // );
 
-            if (!compatibilidadResult.success) {
-                return BaseResponseDto.error(compatibilidadResult.message, HttpStatus.BAD_REQUEST);
-            }
+            // if (!compatibilidadResult.success) {
+            //     return BaseResponseDto.error(compatibilidadResult.message, HttpStatus.BAD_REQUEST);
+            // }
 
             // Crear el contacto
             const contactoData = {

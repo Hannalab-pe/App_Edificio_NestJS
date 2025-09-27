@@ -18,7 +18,7 @@ export class CronogramaService implements ICronogramaService {
   constructor(
     @InjectRepository(Cronograma)
     private readonly cronogramaRepository: Repository<Cronograma>,
-  ) {}
+  ) { }
 
   async create(
     createCronogramaDto: CreateCronogramaDto,
