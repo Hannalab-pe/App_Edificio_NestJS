@@ -141,6 +141,15 @@ export { UpdateMovimientoCajaDto } from './movimiento-caja/update-movimiento-caj
 export { MovimientoCajaResponseDto } from './movimiento-caja/movimiento-caja-response.dto';
 export { TipoMovimiento } from './movimiento-caja/create-movimiento-caja.dto';
 
+// Contacto DTOs
+export { CreateContactoDto } from './contacto/create-contacto.dto';
+export { UpdateContactoDto } from './contacto/update-contacto.dto';
+export {
+  ContactoResponseDto,
+  TipoContactoInfoDto,
+  TipoContratoInfoDto
+} from './contacto/contacto-response.dto';
+
 // Opción Voto DTOs
 export { CreateOpcionVotoDto } from './opcion-voto/create-opcion-voto.dto';
 export { UpdateOpcionVotoDto } from './opcion-voto/update-opcion-voto.dto';
