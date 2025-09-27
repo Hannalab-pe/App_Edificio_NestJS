@@ -29,6 +29,7 @@ export { UpdatePagoDto } from './pago/update-pago.dto';
 // Documento DTOs
 export { CreateDocumentoDto } from './documento/create-documento.dto';
 export { UpdateDocumentoDto } from './documento/update-documento.dto';
+export { DocumentoResponseDto, TipoDocumentoInfoDto, TrabajadorInfoDto } from './documento/documento-response.dto';
 
 // Documento Identidad DTOs
 export { CreateDocumentoIdentidadDto } from './documento-identidad/create-documento-identidad.dto';
@@ -70,6 +71,8 @@ export { UpdateVotacionDto } from './votacion/update-votacion.dto';
 // Encomienda DTOs
 export { CreateEncomiendaDto } from './encomienda/create-encomienda.dto';
 export { UpdateEncomiendaDto } from './encomienda/update-encomienda.dto';
+export { EncomiendaResponseDto, PropiedadInfoDto } from './encomienda/encomienda-response.dto';
+export { TrabajadorInfoDto as TrabajadorEncomiendaInfoDto } from './encomienda/encomienda-response.dto';
 
 // Trabajador DTOs
 export { CreateTrabajadorDto } from './trabajador/create-trabajador.dto';
@@ -161,3 +164,22 @@ export {
   UpdateOpcionVotoResponseDto,
   DeleteOpcionVotoResponseDto,
 } from './opcion-voto/opcion-voto-response.dto';
+
+// Historial Contrato DTOs
+export { CreateHistorialContratoDto } from './historial-contrato/create-historial-contrato.dto';
+export { UpdateHistorialContratoDto } from './historial-contrato/update-historial-contrato.dto';
+export {
+  HistorialContratoResponseDto,
+  ContratoInfoDto,
+  TrabajadorInfoHistorialDto
+} from './historial-contrato/historial-contrato-response.dto';
+
+// Junta Propietarios DTOs
+export { CreateJuntaPropietariosDto } from './junta-propietarios/create-junta-propietarios.dto';
+export { UpdateJuntaPropietariosDto } from './junta-propietarios/update-junta-propietarios.dto';
+export { JuntaPropietariosResponseDto } from './junta-propietarios/junta-propietarios-response.dto';
+
+// Mantenimiento DTOs
+export { CreateMantenimientoDto } from './mantenimiento/create-mantenimiento.dto';
+export { UpdateMantenimientoDto } from './mantenimiento/update-mantenimiento.dto';
+export { MantenimientoResponseDto } from './mantenimiento/mantenimiento-response.dto';
