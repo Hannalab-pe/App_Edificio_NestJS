@@ -41,12 +41,11 @@ export class CajaService implements ICajaService {
             }
 
             // Verificar que el trabajador no tenga una caja abierta
-            const cajaAbierta = await this.cajaRepository.findOne({
-                where: {
-                    idTrabajador: { idTrabajador: createCajaDto.idTrabajador },
-                    estado: true
-                },
-            });
+            const cajaAbierta = await this.cajaRepository
+                .createQueryBuilder('caja')
+                .where('caja.id_trabajador = :idTrabajador', { idTrabajador: createCajaDto.idTrabajador })
+                .andWhere('caja.estado = :estado', { estado: true })
+                .getOne();
 
             if (cajaAbierta) {
                 return BaseResponseDto.error('El trabajador ya tiene una caja abierta.', HttpStatus.CONFLICT);
@@ -275,13 +274,12 @@ export class CajaService implements ICajaService {
         }
 
         try {
-            const caja = await this.cajaRepository.findOne({
-                where: {
-                    idTrabajador: { idTrabajador },
-                    estado: true
-                },
-                relations: ['idTrabajador'],
-            });
+            const caja = await this.cajaRepository
+                .createQueryBuilder('caja')
+                .leftJoinAndSelect('caja.idTrabajador', 'trabajador')
+                .where('caja.id_trabajador = :idTrabajador', { idTrabajador })
+                .andWhere('caja.estado = :estado', { estado: true })
+                .getOne();
 
             if (!caja) {
                 return BaseResponseDto.error('No se encontró una caja activa para este trabajador.', HttpStatus.NOT_FOUND);
@@ -369,11 +367,12 @@ export class CajaService implements ICajaService {
 
     async findByTrabajador(idTrabajador: string): Promise<BaseResponseDto<CajaResponseDto[]>> {
         try {
-            const cajas = await this.cajaRepository.find({
-                where: { idTrabajador: { idTrabajador } },
-                relations: ['idTrabajador'],
-                order: { fechaInicio: 'DESC' },
-            });
+            const cajas = await this.cajaRepository
+                .createQueryBuilder('caja')
+                .leftJoinAndSelect('caja.idTrabajador', 'trabajador')
+                .where('caja.id_trabajador = :idTrabajador', { idTrabajador })
+                .orderBy('caja.fecha_inicio', 'DESC')
+                .getMany();
 
             const responseData = await Promise.all(
                 cajas.map(caja => this.mapToResponseDto(caja))

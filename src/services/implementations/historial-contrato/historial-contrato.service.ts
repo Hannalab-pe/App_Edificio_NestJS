@@ -221,11 +221,14 @@ export class HistorialContratoService implements IHistorialContratoService {
     // Operaciones específicas por contrato
     async findByContrato(contratoId: string): Promise<BaseResponseDto<HistorialContratoResponseDto[]>> {
         try {
-            const historiales = await this.historialContratoRepository.find({
-                where: { idContrato: { idContrato: contratoId } },
-                relations: ['idContrato', 'idContrato.idTrabajador', 'idContrato.idTipoContrato'],
-                order: { fechaRegistro: 'DESC' }
-            });
+            const historiales = await this.historialContratoRepository
+                .createQueryBuilder('historial')
+                .leftJoinAndSelect('historial.idContrato', 'contrato')
+                .leftJoinAndSelect('contrato.idTrabajador', 'trabajador')
+                .leftJoinAndSelect('contrato.idTipoContrato', 'tipoContrato')
+                .where('contrato.id_contrato = :contratoId', { contratoId })
+                .orderBy('historial.fecha_registro', 'DESC')
+                .getMany();
 
             const response = historiales.map(historial => this.mapToResponseDto(historial));
 
@@ -246,11 +249,14 @@ export class HistorialContratoService implements IHistorialContratoService {
 
     async findByContratoOrdenado(contratoId: string): Promise<BaseResponseDto<HistorialContratoResponseDto[]>> {
         try {
-            const historiales = await this.historialContratoRepository.find({
-                where: { idContrato: { idContrato: contratoId } },
-                relations: ['idContrato', 'idContrato.idTrabajador', 'idContrato.idTipoContrato'],
-                order: { fechaRegistro: 'ASC' }
-            });
+            const historiales = await this.historialContratoRepository
+                .createQueryBuilder('historial')
+                .leftJoinAndSelect('historial.idContrato', 'contrato')
+                .leftJoinAndSelect('contrato.idTrabajador', 'trabajador')
+                .leftJoinAndSelect('contrato.idTipoContrato', 'tipoContrato')
+                .where('contrato.id_contrato = :contratoId', { contratoId })
+                .orderBy('historial.fecha_registro', 'ASC')
+                .getMany();
 
             const response = historiales.map(historial => this.mapToResponseDto(historial));
 
@@ -272,11 +278,14 @@ export class HistorialContratoService implements IHistorialContratoService {
     // Operaciones por trabajador
     async findByTrabajador(trabajadorId: string): Promise<BaseResponseDto<HistorialContratoResponseDto[]>> {
         try {
-            const historiales = await this.historialContratoRepository.find({
-                where: { idContrato: { idTrabajador: { idTrabajador: trabajadorId } } },
-                relations: ['idContrato', 'idContrato.idTrabajador', 'idContrato.idTipoContrato'],
-                order: { fechaRegistro: 'DESC' }
-            });
+            const historiales = await this.historialContratoRepository
+                .createQueryBuilder('historial')
+                .leftJoinAndSelect('historial.idContrato', 'contrato')
+                .leftJoinAndSelect('contrato.idTrabajador', 'trabajador')
+                .leftJoinAndSelect('contrato.idTipoContrato', 'tipoContrato')
+                .where('contrato.id_trabajador = :trabajadorId', { trabajadorId })
+                .orderBy('historial.fecha_registro', 'DESC')
+                .getMany();
 
             const response = historiales.map(historial => this.mapToResponseDto(historial));
 
@@ -405,14 +414,15 @@ export class HistorialContratoService implements IHistorialContratoService {
 
     async findByFechaRangeAndContrato(fechaInicio: Date, fechaFin: Date, contratoId: string): Promise<BaseResponseDto<HistorialContratoResponseDto[]>> {
         try {
-            const historiales = await this.historialContratoRepository.find({
-                where: {
-                    fechaRegistro: Between(fechaInicio, fechaFin),
-                    idContrato: { idContrato: contratoId }
-                },
-                relations: ['idContrato', 'idContrato.idTrabajador', 'idContrato.idTipoContrato'],
-                order: { fechaRegistro: 'DESC' }
-            });
+            const historiales = await this.historialContratoRepository
+                .createQueryBuilder('historial')
+                .leftJoinAndSelect('historial.idContrato', 'contrato')
+                .leftJoinAndSelect('contrato.idTrabajador', 'trabajador')
+                .leftJoinAndSelect('contrato.idTipoContrato', 'tipoContrato')
+                .where('historial.fecha_registro BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
+                .andWhere('contrato.id_contrato = :contratoId', { contratoId })
+                .orderBy('historial.fecha_registro', 'DESC')
+                .getMany();
 
             const response = historiales.map(historial => this.mapToResponseDto(historial));
 
@@ -492,11 +502,14 @@ export class HistorialContratoService implements IHistorialContratoService {
 
     async obtenerUltimaAccion(contratoId: string): Promise<BaseResponseDto<HistorialContratoResponseDto>> {
         try {
-            const historial = await this.historialContratoRepository.findOne({
-                where: { idContrato: { idContrato: contratoId } },
-                relations: ['idContrato', 'idContrato.idTrabajador', 'idContrato.idTipoContrato'],
-                order: { fechaRegistro: 'DESC' }
-            });
+            const historial = await this.historialContratoRepository
+                .createQueryBuilder('historial')
+                .leftJoinAndSelect('historial.idContrato', 'contrato')
+                .leftJoinAndSelect('contrato.idTrabajador', 'trabajador')
+                .leftJoinAndSelect('contrato.idTipoContrato', 'tipoContrato')
+                .where('contrato.id_contrato = :contratoId', { contratoId })
+                .orderBy('historial.fecha_registro', 'DESC')
+                .getOne();
 
             if (!historial) {
                 return {
@@ -537,9 +550,11 @@ export class HistorialContratoService implements IHistorialContratoService {
                 .groupBy('historial.tipoAccion')
                 .getRawMany();
 
-            const totalAcciones = await this.historialContratoRepository.count({
-                where: { idContrato: { idContrato: contratoId } }
-            });
+            const totalAcciones = await this.historialContratoRepository
+                .createQueryBuilder('historial')
+                .leftJoin('historial.idContrato', 'contrato')
+                .where('contrato.id_contrato = :contratoId', { contratoId })
+                .getCount();
 
             const resumen = {
                 totalAcciones,

@@ -250,10 +250,12 @@ export class DocumentoService implements IDocumentoService {
 
     async findByTrabajador(idTrabajador: string): Promise<BaseResponseDto<DocumentoResponseDto[]>> {
         try {
-            const documentos = await this.documentoRepository.find({
-                where: { idTrabajador: { idTrabajador } },
-                relations: ['idTipoDocumento', 'idTrabajador']
-            });
+            const documentos = await this.documentoRepository
+                .createQueryBuilder('documento')
+                .leftJoinAndSelect('documento.idTipoDocumento', 'tipoDocumento')
+                .leftJoinAndSelect('documento.idTrabajador', 'trabajador')
+                .where('documento.id_trabajador = :idTrabajador', { idTrabajador })
+                .getMany();
 
             const documentosResponse = documentos.map(doc => this.mapToResponseDto(doc));
 

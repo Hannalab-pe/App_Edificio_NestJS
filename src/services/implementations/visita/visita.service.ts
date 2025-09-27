@@ -346,11 +346,14 @@ export class VisitaService implements IVisitaService {
       });
     }
 
-    return await this.visitaRepository.find({
-      where: { idPropiedad: { idPropiedad: propiedadId } },
-      relations: ['autorizadorUsuario', 'idPropiedad'],
-      order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
-    });
+    return await this.visitaRepository
+      .createQueryBuilder('visita')
+      .leftJoinAndSelect('visita.autorizadorUsuario', 'autorizador')
+      .leftJoinAndSelect('visita.idPropiedad', 'propiedad')
+      .where('propiedad.id_propiedad = :propiedadId', { propiedadId })
+      .orderBy('visita.fecha_programada', 'DESC')
+      .addOrderBy('visita.hora_inicio', 'ASC')
+      .getMany();
   }
 
   /**
@@ -400,11 +403,14 @@ export class VisitaService implements IVisitaService {
       });
     }
 
-    return await this.visitaRepository.find({
-      where: { autorizadorUsuario: { idUsuario: usuarioId } },
-      relations: ['autorizadorUsuario', 'idPropiedad'],
-      order: { fechaProgramada: 'DESC', horaInicio: 'ASC' },
-    });
+    return await this.visitaRepository
+      .createQueryBuilder('visita')
+      .leftJoinAndSelect('visita.autorizadorUsuario', 'autorizador')
+      .leftJoinAndSelect('visita.idPropiedad', 'propiedad')
+      .where('autorizador.id_usuario = :usuarioId', { usuarioId })
+      .orderBy('visita.fecha_programada', 'DESC')
+      .addOrderBy('visita.hora_inicio', 'ASC')
+      .getMany();
   }
 
   /**
