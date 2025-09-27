@@ -58,12 +58,11 @@ export class MantenimientoService implements IMantenimientoService {
             }
 
             // Verificar conflictos de horario en la misma área común
-            const conflictos = await this.mantenimientoRepository.find({
-                where: {
-                    idAreaComun: { idAreaComun: createMantenimientoDto.idAreaComun },
-                    estado: 'Programado'
-                }
-            });
+            const conflictos = await this.mantenimientoRepository
+                .createQueryBuilder('mantenimiento')
+                .where('mantenimiento.id_area_comun = :idAreaComun', { idAreaComun: createMantenimientoDto.idAreaComun })
+                .andWhere('mantenimiento.estado = :estado', { estado: 'Programado' })
+                .getMany();
 
             const hayConflicto = conflictos.some(m => {
                 const inicioExistente = new Date(m.fechaInicio);
@@ -306,16 +305,14 @@ export class MantenimientoService implements IMantenimientoService {
                 throw new NotFoundException('Área común no encontrada');
             }
 
-            const mantenimientos = await this.mantenimientoRepository.find({
-                where: { idAreaComun: { idAreaComun: areaComunId } },
-                relations: {
-                    idAreaComun: true,
-                    idContacto: {
-                        idTipoContacto: true,
-                    },
-                },
-                order: { fechaInicio: 'DESC' },
-            });
+            const mantenimientos = await this.mantenimientoRepository
+                .createQueryBuilder('mantenimiento')
+                .leftJoinAndSelect('mantenimiento.idAreaComun', 'areaComun')
+                .leftJoinAndSelect('mantenimiento.idContacto', 'contacto')
+                .leftJoinAndSelect('contacto.idTipoContacto', 'tipoContacto')
+                .where('mantenimiento.id_area_comun = :areaComunId', { areaComunId })
+                .orderBy('mantenimiento.fechaInicio', 'DESC')
+                .getMany();
 
             const mantenimientosFormateados = mantenimientos.map(m => this.formatMantenimientoForResponse(m));
 
@@ -342,16 +339,14 @@ export class MantenimientoService implements IMantenimientoService {
                 throw new NotFoundException('Contacto no encontrado');
             }
 
-            const mantenimientos = await this.mantenimientoRepository.find({
-                where: { idContacto: { idContacto: contactoId } },
-                relations: {
-                    idAreaComun: true,
-                    idContacto: {
-                        idTipoContacto: true,
-                    },
-                },
-                order: { fechaInicio: 'DESC' },
-            });
+            const mantenimientos = await this.mantenimientoRepository
+                .createQueryBuilder('mantenimiento')
+                .leftJoinAndSelect('mantenimiento.idAreaComun', 'areaComun')
+                .leftJoinAndSelect('mantenimiento.idContacto', 'contacto')
+                .leftJoinAndSelect('contacto.idTipoContacto', 'tipoContacto')
+                .where('mantenimiento.id_contacto = :contactoId', { contactoId })
+                .orderBy('mantenimiento.fechaInicio', 'DESC')
+                .getMany();
 
             const mantenimientosFormateados = mantenimientos.map(m => this.formatMantenimientoForResponse(m));
 

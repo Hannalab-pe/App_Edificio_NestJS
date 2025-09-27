@@ -4,6 +4,8 @@ import {
     IsDecimal,
     IsString,
     IsEnum,
+    IsNumber,
+    Min,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { TipoMovimiento } from './create-movimiento-caja.dto';
@@ -35,11 +37,15 @@ export class UpdateMovimientoCajaDto {
         type: Number,
     })
     @IsOptional()
-    @Transform(({ value }) => parseFloat(value))
-    @IsDecimal(
-        { decimal_digits: '1,2' },
-        { message: 'El monto debe ser un número decimal válido' },
+    @Transform(({ value }) => {
+        const num = typeof value === 'string' ? parseFloat(value) : value;
+        return isNaN(num) ? value : num;
+    })
+    @IsNumber(
+        { maxDecimalPlaces: 2 },
+        { message: 'El monto debe ser un número decimal válido con máximo 2 decimales' },
     )
+    @Min(0.01, { message: 'El monto debe ser mayor a 0' })
     monto?: number;
 
     @ApiPropertyOptional({

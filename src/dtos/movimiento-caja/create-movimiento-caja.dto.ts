@@ -6,6 +6,7 @@ import {
     IsOptional,
     IsString,
     IsEnum,
+    IsNumber,
     Min,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -43,10 +44,13 @@ export class CreateMovimientoCajaDto {
         type: Number,
     })
     @IsNotEmpty({ message: 'El monto es obligatorio' })
-    @Transform(({ value }) => parseFloat(value))
-    @IsDecimal(
-        { decimal_digits: '1,2' },
-        { message: 'El monto debe ser un número decimal válido' },
+    @Transform(({ value }) => {
+        const num = typeof value === 'string' ? parseFloat(value) : value;
+        return isNaN(num) ? value : num;
+    })
+    @IsNumber(
+        { maxDecimalPlaces: 2 },
+        { message: 'El monto debe ser un número decimal válido con máximo 2 decimales' },
     )
     @Min(0.01, { message: 'El monto debe ser mayor a 0' })
     monto: number;
@@ -82,8 +86,10 @@ export class CreateMovimientoCajaDto {
         description: 'ID del pago asociado (si aplica)',
         example: '123e4567-e89b-12d3-a456-426614174001',
         type: String,
+        required: false,
     })
     @IsOptional()
     @IsUUID('4', { message: 'El ID del pago debe ser un UUID válido' })
+    @Transform(({ value }) => value === '' || value === null ? undefined : value)
     idPago?: string;
 }
